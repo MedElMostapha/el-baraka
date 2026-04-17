@@ -1,0 +1,91 @@
+{
+  "Dashboard": {
+    "subtitle": "Gestion Avicole",
+    "connectivity": "Connectivité",
+    "cloud": "Cloud",
+    "activeBatches": "Lots actifs",
+    "welcome": "Bienvenue !",
+    "welcomeMessage": "Commencez par créer votre premier lot pour débloquer le suivi en temps réel.",
+    "addFirstBatch": "Ajouter le premier lot"
+  },
+  "DailyTracking": {
+    "title": "Suivi Journalier",
+    "selectBatch": "Sélectionner un Lot",
+    "chooseBatch": "Choisir le lot...",
+    "mortality": "Mortalité",
+    "feed": "Aliment",
+    "water": "Eau",
+    "medications": "Médicaments / Vaccins",
+    "medsPlaceholder": "ex: Vitamines, Gumboro...",
+    "save": "Enregistrer le suivi",
+    "success": "Enregistré avec succès !",
+    "error": "Erreur lors de l'enregistrement."
+  },
+  "Batches": {
+    "title": "Gestion des Lots",
+    "subtitle": "Cycle de vie",
+    "addNew": "Nouveau Lot",
+    "name": "Nom du Lot",
+    "breed": "Race / Souche",
+    "arrivalDate": "Date d'arrivée",
+    "quantity": "Quantité initiale",
+    "cost": "Coût par poussin",
+    "status": "Statut",
+    "active": "En cours",
+    "closed": "Terminé",
+    "save": "Créer le lot",
+    "empty": "Aucun lot enregistré",
+    "createError": "Erreur lors de la création du lot"
+  },
+  "Inventory": {
+    "title": "Stocks & Fournitures",
+    "subtitle": "Fournitures & Stock",
+    "addNew": "Ajouter un article",
+    "name": "Nom de l'article",
+    "category": "Catégorie",
+    "quantity": "Quantité en stock",
+    "unit": "Unité",
+    "feed": "Aliment",
+    "medicine": "Médicament",
+    "packaging": "Emballage",
+    "other": "Autre",
+    "save": "Ajouter au stock"
+  },
+  "Sales": {
+    "title": "Gestion des Ventes",
+    "subtitle": "Revenus & Dettes",
+    "addNew": "Nouvelle Vente",
+    "client": "Client",
+    "quantity": "Quantité soldée",
+    "unitPrice": "Prix unitaire",
+    "total": "Total",
+    "paid": "Montant payé",
+    "type": "Type de vente",
+    "wholesale": "En gros",
+    "retail": "Détail",
+    "save": "Enregistrer la vente",
+    "debt": "Dette restante",
+    "selectBatch": "Sélectionner Lot",
+    "cashClient": "Passant / Cash",
+    "paidFull": "PAYÉ",
+    "batch": "Lot"
+  },
+  "Clients": {
+    "title": "Répertoire Clients",
+    "addNew": "Nouveau Client",
+    "name": "Nom du client",
+    "phone": "Téléphone",
+    "balance": "Solde (Dettes)"
+  },
+  "Navigation": {
+    "dashboard": "Tableau de bord",
+    "batches": "Lots",
+    "inventory": "Stocks",
+    "sales": "Ventes"
+  },
+  "Errors": {
+    "title": "Une erreur est survenue",
+    "message": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "retry": "Réessayer"
+  }
+}
