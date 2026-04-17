@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from 'react';
+import React, { useState, useTransition, useEffect } from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -21,7 +21,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface SalesFormProps {
-  batches: { id: string; name: string }[];
+  batches: { id: string; name: string; remainingQuantity: number }[];
   clients: { id: string; name: string }[];
 }
 
@@ -31,14 +31,29 @@ export function SalesForm({ batches, clients: initialClients }: SalesFormProps) 
   const [isPending, startTransition] = useTransition();
   const [showNewClient, setShowNewClient] = useState(false);
 
-  const { register, handleSubmit, watch, reset } = useForm<FormValues>({
+  const { register, handleSubmit, watch, reset, setValue } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { quantity: 1, unitPrice: 0, amountPaid: 0, type: 'wholesale' }
   });
 
+  const batchId = watch('batchId');
+
+  useEffect(() => {
+    if (batchId) {
+      const selectedBatch = batches.find(b => b.id === batchId);
+      if (selectedBatch) {
+        setValue('quantity', selectedBatch.remainingQuantity);
+      }
+    }
+  }, [batchId, batches, setValue]);
+
   const quantity = watch('quantity') || 0;
   const unitPrice = watch('unitPrice') || 0;
   const total = quantity * unitPrice;
+
+  useEffect(() => {
+    setValue('amountPaid', total);
+  }, [total, setValue]);
 
   const onSubmit = (values: FormValues) => {
     startTransition(async () => {
@@ -132,7 +147,7 @@ export function SalesForm({ batches, clients: initialClients }: SalesFormProps) 
           <div className="p-6 bg-orange-50 rounded-[2rem] space-y-2 border border-orange-100/50">
              <div className="flex justify-between items-center">
                 <span className="text-xs font-black text-orange-400 uppercase tracking-widest">{t('total')}</span>
-                <span className="text-2xl font-[1000] text-orange-600 tracking-tighter">{total.toLocaleString()} DH</span>
+                <span className="text-2xl font-[1000] text-orange-600 tracking-tighter">{total.toLocaleString()} {t('currency')}</span>
              </div>
              <div className="pt-4 space-y-2">
                 <label className="text-[10px] font-black text-orange-400 uppercase tracking-widest ml-1">{t('paid')}</label>

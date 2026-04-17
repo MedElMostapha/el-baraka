@@ -4,6 +4,7 @@ import { batches } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { PageHeader } from '@/components/PageHeader';
 
 export default async function Home() {
   const t = await getTranslations('Dashboard');
@@ -21,20 +22,7 @@ export default async function Home() {
   return (
     <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full">
       <div className="space-y-10">
-        <header className="flex items-center justify-between mt-4">
-          <div>
-            <h1 className="text-4xl font-[900] text-slate-900 tracking-tight leading-none">
-              EL BARAKA
-            </h1>
-            <p className="text-orange-500 font-black text-xs uppercase tracking-[0.2em] mt-2">{t('subtitle')}</p>
-          </div>
-          <div className="relative">
-             <div className="w-14 h-14 bg-gradient-to-br from-orange-400 to-orange-600 rounded-[1.25rem] flex items-center justify-center text-white font-black text-xl shadow-xl shadow-orange-200">
-              EB
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-4 border-[#f8fafc] rounded-full"></div>
-          </div>
-        </header>
+        <PageHeader title="EL BARAKA" subtitle={t('subtitle')} />
 
         <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <DailyLogForm batches={activeBatches} />

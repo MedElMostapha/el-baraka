@@ -35,7 +35,8 @@
     "closed": "مغلقة",
     "save": "إنشاء الدفعة",
     "empty": "لا توجد دفعات مسجلة",
-    "createError": "خطأ أثناء إنشاء الدفعة"
+    "createError": "خطأ أثناء إنشاء الدفعة",
+    "remaining": "المتبقي"
   },
   "Inventory": {
     "title": "المخزون والمؤونة",
@@ -68,7 +69,13 @@
     "selectBatch": "اختر الدفعة",
     "cashClient": "زبون عابر / نقدي",
     "paidFull": "مدفوع",
-    "batch": "الدفعة"
+    "batch": "الدفعة",
+    "currency": "أوقية",
+    "filterAll": "كل الوقت",
+    "filterToday": "اليوم",
+    "filterWeek": "هذا الأسبوع",
+    "filterMonth": "هذا الشهر",
+    "empty": "لا توجد مبيعات"
   },
   "Clients": {
     "title": "قائمة الزبناء",
@@ -81,7 +88,21 @@
     "dashboard": "لوحة التحكم",
     "batches": "الدفعات",
     "inventory": "المخزون",
-    "sales": "المبيعات"
+    "sales": "المبيعات",
+    "settings": "الإعدادات"
+  },
+  "Settings": {
+    "title": "الإعدادات",
+    "subtitle": "التفضيلات",
+    "language": "اللغة",
+    "languageDesc": "اختر لغة التطبيق",
+    "french": "Français",
+    "arabic": "العربية",
+    "currentLanguage": "اللغة الحالية",
+    "appInfo": "حول التطبيق",
+    "appName": "البركة",
+    "appDescription": "تطبيق إدارة مزرعة الدواجن",
+    "version": "الإصدار"
   },
   "Errors": {
     "title": "حدث خطأ",

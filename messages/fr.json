@@ -35,7 +35,8 @@
     "closed": "Terminé",
     "save": "Créer le lot",
     "empty": "Aucun lot enregistré",
-    "createError": "Erreur lors de la création du lot"
+    "createError": "Erreur lors de la création du lot",
+    "remaining": "Restant"
   },
   "Inventory": {
     "title": "Stocks & Fournitures",
@@ -68,7 +69,13 @@
     "selectBatch": "Sélectionner Lot",
     "cashClient": "Passant / Cash",
     "paidFull": "PAYÉ",
-    "batch": "Lot"
+    "batch": "Lot",
+    "currency": "MRU",
+    "filterAll": "Tout le temps",
+    "filterToday": "Aujourd'hui",
+    "filterWeek": "Cette semaine",
+    "filterMonth": "Ce mois",
+    "empty": "Aucune vente trouvée"
   },
   "Clients": {
     "title": "Répertoire Clients",
@@ -81,7 +88,21 @@
     "dashboard": "Tableau de bord",
     "batches": "Lots",
     "inventory": "Stocks",
-    "sales": "Ventes"
+    "sales": "Ventes",
+    "settings": "Réglages"
+  },
+  "Settings": {
+    "title": "Réglages",
+    "subtitle": "Préférences",
+    "language": "Langue",
+    "languageDesc": "Choisir la langue de l'application",
+    "french": "Français",
+    "arabic": "العربية",
+    "currentLanguage": "Langue actuelle",
+    "appInfo": "À propos",
+    "appName": "El Baraka",
+    "appDescription": "Application de gestion de ferme avicole",
+    "version": "Version"
   },
   "Errors": {
     "title": "Une erreur est survenue",

@@ -14,6 +14,7 @@ export function BottomNav() {
     { icon: Bird, label: t('batches'), href: '/batches' },
     { icon: ClipboardList, label: t('inventory'), href: '/inventory' },
     { icon: Wallet, label: t('sales'), href: '/sales' },
+    { icon: Settings, label: t('settings'), href: '/settings' },
   ];
 
   return (

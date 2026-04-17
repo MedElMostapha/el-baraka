@@ -4,12 +4,14 @@ import React from 'react';
 import { BatchForm } from "@/components/BatchForm";
 import { Bird, Calendar, Hash, ArrowRight } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/PageHeader';
 
 interface Batch {
   id: string;
   name: string;
   arrivalDate: Date;
   initialQuantity: number;
+  remainingQuantity: number;
   status: string;
 }
 
@@ -18,6 +20,7 @@ interface BatchTranslations {
   subtitle: string;
   addNew: string;
   empty: string;
+  remaining: string;
 }
 
 export default function BatchesClient({ initialBatches, t }: { initialBatches: Batch[], t: BatchTranslations }) {
@@ -30,12 +33,7 @@ export default function BatchesClient({ initialBatches, t }: { initialBatches: B
   return (
     <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
       <div className="space-y-10">
-        <header>
-          <h1 className="text-4xl font-[900] text-slate-900 tracking-tight leading-none">
-            {t.title}
-          </h1>
-          <p className="text-orange-500 font-black text-xs uppercase tracking-[0.2em] mt-2">{t.subtitle}</p>
-        </header>
+        <PageHeader title={t.title} subtitle={t.subtitle} />
 
         <section>
           <BatchForm onComplete={handleComplete} />
@@ -69,6 +67,9 @@ export default function BatchesClient({ initialBatches, t }: { initialBatches: B
                       <div className="flex items-center gap-1 text-[10px] font-bold text-slate-400 uppercase">
                         <Hash className="w-3 h-3" />
                         {batch.initialQuantity}
+                      </div>
+                      <div className="flex items-center gap-1 text-[10px] font-bold text-orange-500 uppercase ml-2 bg-orange-50 px-2 py-0.5 rounded-md">
+                        {t.remaining}: {batch.remainingQuantity}
                       </div>
                     </div>
                   </div>

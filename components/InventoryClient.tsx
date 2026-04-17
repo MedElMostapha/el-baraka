@@ -4,6 +4,7 @@ import React from 'react';
 import { InventoryForm } from "@/components/InventoryForm";
 import { Package, Layers } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { PageHeader } from '@/components/PageHeader';
 
 interface InventoryItem {
   id: string;
@@ -35,12 +36,7 @@ export default function InventoryClient({ initialItems, t }: { initialItems: Inv
   return (
     <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
       <div className="space-y-10">
-        <header>
-          <h1 className="text-4xl font-[900] text-slate-900 tracking-tight leading-none">
-            {t.title}
-          </h1>
-          <p className="text-orange-500 font-black text-xs uppercase tracking-[0.2em] mt-2">{t.subtitle}</p>
-        </header>
+        <PageHeader title={t.title} subtitle={t.subtitle} />
 
         <section>
           <InventoryForm onComplete={handleComplete} />
