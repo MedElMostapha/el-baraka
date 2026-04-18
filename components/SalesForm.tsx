@@ -14,7 +14,7 @@ const formSchema = z.object({
   newClientName: z.string().optional(),
   quantity: z.number().min(1),
   unitPrice: z.number().min(0),
-  amountPaid: z.number().min(0),
+  amountPaid: z.union([z.number(), z.string().transform(v => v === '' ? 0 : Number(v))]).optional().default(0),
   type: z.enum(['wholesale', 'retail']),
 });
 
@@ -60,6 +60,8 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   const unitPrice = watch('unitPrice') || 0;
   const total = quantity * unitPrice;
 
+  // Auto-fill amountPaid only for NEW sales and only once when total changes, 
+  // but allow user to override it.
   useEffect(() => {
     if (!editData) {
       setValue('amountPaid', total);
@@ -173,11 +175,21 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
                 <span className="text-xl font-[1000] text-orange-600 tracking-tighter leading-none mt-1">{total.toLocaleString()} {t('currency')}</span>
              </div>
              <div className="flex flex-col items-end">
-                <label className="text-[9px] font-black text-orange-400 uppercase tracking-widest mr-1 mb-1">{t('paid')}</label>
+                <div className="flex items-center gap-2 mb-1">
+                   <button 
+                     type="button"
+                     onClick={() => setValue('amountPaid', 0)}
+                     className="text-[8px] font-black text-red-400 uppercase tracking-widest hover:text-red-600 transition-colors"
+                   >
+                     Effacer (Dette)
+                   </button>
+                   <label className="text-[9px] font-black text-orange-400 uppercase tracking-widest">{t('paid')}</label>
+                </div>
                 <input 
                   type="number"
                   {...register('amountPaid', { valueAsNumber: true })}
                   className="w-32 h-10 px-4 rounded-xl border-none bg-white text-base font-black text-slate-800 outline-none focus:ring-2 focus:ring-orange-200 text-right"
+                  placeholder="0"
                 />
              </div>
           </div>

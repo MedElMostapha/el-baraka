@@ -6,7 +6,14 @@
     "activeBatches": "الدفعات النشطة",
     "welcome": "مرحبا!",
     "welcomeMessage": "ابدأ بإنشاء دفعتك الأولى لفتح المتابعة في الوقت الحقيقي.",
-    "addFirstBatch": "إضافة الدفعة الأولى"
+    "addFirstBatch": "إضافة الدفعة الأولى",
+    "revenue": "إجمالي الإيرادات",
+    "expenses": "إجمالي المصاريف",
+    "mortalityRate": "معدل النفوق",
+    "performance": "الأداء المالي",
+    "recentActivity": "النشاط الأخير",
+    "last7Days": "آخر 7 أيام",
+    "cashOnHand": "النقد المتوفر (صافي)"
   },
   "DailyTracking": {
     "title": "المتابعة اليومية",

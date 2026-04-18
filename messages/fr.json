@@ -6,7 +6,14 @@
     "activeBatches": "Lots actifs",
     "welcome": "Bienvenue !",
     "welcomeMessage": "Commencez par créer votre premier lot pour débloquer le suivi en temps réel.",
-    "addFirstBatch": "Ajouter le premier lot"
+    "addFirstBatch": "Ajouter le premier lot",
+    "revenue": "Chiffre d'Affaires",
+    "expenses": "Total Dépenses",
+    "mortalityRate": "Taux de Mortalité",
+    "performance": "Performance financière",
+    "recentActivity": "Activité Récente",
+    "last7Days": "7 derniers jours",
+    "cashOnHand": "Encaissé (Net)"
   },
   "DailyTracking": {
     "title": "Suivi Journalier",
