@@ -24,3 +24,27 @@ export async function addExpense(data: {
     return { success: false };
   }
 }
+
+import { eq } from "drizzle-orm";
+
+export async function deleteExpense(id: string) {
+  try {
+    await db.delete(expenses).where(eq(expenses.id, id));
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete expense:", error);
+    return { success: false };
+  }
+}
+
+export async function updateExpense(id: string, data: Partial<{ amount: number; description: string }>) {
+  try {
+    await db.update(expenses).set(data).where(eq(expenses.id, id));
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to update expense:", error);
+    return { success: false };
+  }
+}

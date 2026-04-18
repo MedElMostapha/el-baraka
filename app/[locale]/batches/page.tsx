@@ -36,9 +36,11 @@ export default async function BatchesPage() {
     return {
       id: b.id,
       name: b.name,
+      breed: b.breed,
       arrivalDate: b.arrivalDate,
       initialQuantity: b.initialQuantity,
       remainingQuantity,
+      costPerChick: b.costPerChick,
       status: b.status
     };
   });
@@ -48,7 +50,10 @@ export default async function BatchesPage() {
     subtitle: t('subtitle'),
     addNew: t('addNew'),
     empty: t('empty'),
-    remaining: t('remaining')
+    remaining: t('remaining'),
+    editTitle: t('editTitle'),
+    deleteTitle: t('deleteTitle'),
+    deleteConfirm: t('deleteConfirm')
   };
 
   return <BatchesClient initialBatches={serializedBatches} t={translations} />;

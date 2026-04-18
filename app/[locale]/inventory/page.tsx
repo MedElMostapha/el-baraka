@@ -38,7 +38,11 @@ export default async function InventoryPage() {
     feed: t('feed'),
     medicine: t('medicine'),
     packaging: t('packaging'),
-    other: t('other')
+    other: t('other'),
+    editTitle: t('editTitle'),
+    deleteTitle: t('deleteTitle'),
+    deleteConfirm: t('deleteConfirm'),
+    lastUpdated: t('lastUpdated')
   };
 
   return <InventoryClient initialItems={stockItems} t={translations} />;

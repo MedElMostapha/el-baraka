@@ -36,7 +36,15 @@
     "save": "Créer le lot",
     "empty": "Aucun lot enregistré",
     "createError": "Erreur lors de la création du lot",
-    "remaining": "Restant"
+    "remaining": "Restant",
+    "editTitle": "Modifier le Lot",
+    "deleteTitle": "Supprimer le Lot",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce lot ? Cette action est irréversible.",
+    "breeds": {
+      "broiler": "Chair / Broiler",
+      "layer": "Pondeuse / Layer",
+      "other": "Autre / Other"
+    }
   },
   "Inventory": {
     "title": "Stocks & Fournitures",
@@ -50,7 +58,11 @@
     "medicine": "Médicament",
     "packaging": "Emballage",
     "other": "Autre",
-    "save": "Ajouter au stock"
+    "save": "Ajouter au stock",
+    "editTitle": "Modifier l'article",
+    "deleteTitle": "Supprimer l'article",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet article ?",
+    "lastUpdated": "Dernière mise à jour"
   },
   "Sales": {
     "title": "Gestion des Ventes",
@@ -75,7 +87,11 @@
     "filterToday": "Aujourd'hui",
     "filterWeek": "Cette semaine",
     "filterMonth": "Ce mois",
-    "empty": "Aucune vente trouvée"
+    "filterUnpaid": "Impayés",
+    "empty": "Aucune vente trouvée",
+    "editTitle": "Modifier la Vente",
+    "deleteTitle": "Supprimer la Vente",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette vente ?"
   },
   "Clients": {
     "title": "Répertoire Clients",
@@ -120,6 +136,7 @@
     "filterToday": "Aujourd'hui",
     "filterWeek": "Cette semaine",
     "filterMonth": "Ce mois",
+    "filterUnpaid": "Impayés",
     "empty": "Aucune dépense trouvée",
     "categories": {
       "feed": "Aliment",
@@ -128,7 +145,10 @@
       "utilities": "Électricité/Eau",
       "salaries": "Salaires",
       "other": "Autre"
-    }
+    },
+    "editTitle": "Modifier la Dépense",
+    "deleteTitle": "Supprimer la Dépense",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette dépense ?"
   },
   "Errors": {
     "title": "Une erreur est survenue",

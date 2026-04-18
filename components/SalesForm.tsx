@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Wallet, Plus, Save, Loader2, User, Hash, Banknote } from 'lucide-react';
-import { recordSale, createClient } from '@/actions/sales';
+import { recordSale, updateSale, createClient } from '@/actions/sales';
 
 const formSchema = z.object({
   batchId: z.string().min(1),
@@ -23,9 +23,11 @@ type FormValues = z.infer<typeof formSchema>;
 interface SalesFormProps {
   batches: { id: string; name: string; remainingQuantity: number }[];
   clients: { id: string; name: string }[];
+  onComplete?: () => void;
+  editData?: any;
 }
 
-export function SalesForm({ batches, clients: initialClients }: SalesFormProps) {
+export function SalesForm({ batches, clients: initialClients, onComplete, editData }: SalesFormProps) {
   const t = useTranslations('Sales');
   const tc = useTranslations('Clients');
   const [isPending, startTransition] = useTransition();
@@ -33,27 +35,36 @@ export function SalesForm({ batches, clients: initialClients }: SalesFormProps) 
 
   const { register, handleSubmit, watch, reset, setValue } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { quantity: 1, unitPrice: 0, amountPaid: 0, type: 'wholesale' }
+    defaultValues: { 
+      batchId: editData?.batchId || '',
+      clientId: editData?.clientId || '',
+      quantity: editData?.quantity || 1, 
+      unitPrice: editData?.unitPrice || 0, 
+      amountPaid: editData?.amountPaid || 0, 
+      type: editData?.type || 'wholesale' 
+    }
   });
 
   const batchId = watch('batchId');
 
   useEffect(() => {
-    if (batchId) {
+    if (batchId && !editData) {
       const selectedBatch = batches.find(b => b.id === batchId);
       if (selectedBatch) {
         setValue('quantity', selectedBatch.remainingQuantity);
       }
     }
-  }, [batchId, batches, setValue]);
+  }, [batchId, batches, setValue, editData]);
 
   const quantity = watch('quantity') || 0;
   const unitPrice = watch('unitPrice') || 0;
   const total = quantity * unitPrice;
 
   useEffect(() => {
-    setValue('amountPaid', total);
-  }, [total, setValue]);
+    if (!editData) {
+      setValue('amountPaid', total);
+    }
+  }, [total, setValue, editData]);
 
   const onSubmit = (values: FormValues) => {
     startTransition(async () => {
@@ -64,49 +75,72 @@ export function SalesForm({ batches, clients: initialClients }: SalesFormProps) 
         if (clientResult.success) clientId = clientResult.id;
       }
 
-      const result = await recordSale({
-        batchId: values.batchId,
-        clientId: clientId || undefined,
-        quantity: values.quantity,
-        unitPrice: values.unitPrice,
-        amountPaid: values.amountPaid,
-        type: values.type,
-      });
+      const result = editData 
+        ? await updateSale(editData.id, {
+            batchId: values.batchId,
+            clientId: clientId || undefined,
+            quantity: values.quantity,
+            unitPrice: values.unitPrice,
+            amountPaid: values.amountPaid,
+            type: values.type,
+          })
+        : await recordSale({
+            batchId: values.batchId,
+            clientId: clientId || undefined,
+            quantity: values.quantity,
+            unitPrice: values.unitPrice,
+            amountPaid: values.amountPaid,
+            type: values.type,
+          });
 
       if (result.success) {
-        reset();
+        if (!editData) reset();
         setShowNewClient(false);
+        if (onComplete) onComplete();
       }
     });
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40">
-      <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8">{t('addNew')}</h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-4">
+    <div className={`${editData ? '' : 'bg-white/70 backdrop-blur-xl p-6 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40'}`}>
+      {!editData && <h2 className="text-xl font-black text-slate-800 tracking-tight mb-6">{t('addNew')}</h2>}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div className="space-y-3">
           
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('type')}</label>
-            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl">
-              {(['wholesale', 'retail'] as const).map((type) => (
-                <label key={type} className="relative">
-                   <input type="radio" {...register('type')} value={type} className="peer sr-only" />
-                   <div className="h-10 flex items-center justify-center rounded-xl font-bold text-sm peer-checked:bg-white peer-checked:text-orange-600 peer-checked:shadow-sm transition-all cursor-pointer">
-                     {t(type)}
-                   </div>
-                </label>
-              ))}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('type')}</label>
+              <div className="grid grid-cols-2 gap-1 p-1 bg-slate-100 rounded-xl">
+                {(['wholesale', 'retail'] as const).map((type) => (
+                  <label key={type} className="relative">
+                     <input type="radio" {...register('type')} value={type} className="peer sr-only" />
+                     <div className="h-8 flex items-center justify-center rounded-lg font-bold text-[11px] peer-checked:bg-white peer-checked:text-orange-600 peer-checked:shadow-sm transition-all cursor-pointer">
+                       {t(type)}
+                     </div>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+               <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('batch')}</label>
+               <select 
+                  {...register('batchId')}
+                  className="w-full h-10 px-4 rounded-xl border-none bg-slate-100/50 text-sm font-bold text-slate-700 outline-none"
+                >
+                  <option value="">{t('selectBatch')}</option>
+                  {batches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                </select>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('client')}</label>
+          <div className="space-y-1.5">
+            <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('client')}</label>
             <div className="flex gap-2">
               {!showNewClient ? (
                 <select 
                   {...register('clientId')}
-                  className="flex-1 h-14 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+                  className="flex-1 h-12 px-4 rounded-2xl border-none bg-slate-100/50 text-base font-bold text-slate-700 outline-none"
                 >
                   <option value="">{t('cashClient')}</option>
                   {initialClients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -115,46 +149,35 @@ export function SalesForm({ batches, clients: initialClients }: SalesFormProps) 
                 <input 
                   placeholder={tc('name')}
                   {...register('newClientName')}
-                  className="flex-1 h-14 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+                  className="flex-1 h-12 px-4 rounded-2xl border-none bg-slate-100/50 text-base font-bold text-slate-700 outline-none"
                 />
               )}
               <button 
                 type="button"
                 onClick={() => setShowNewClient(!showNewClient)}
-                className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 active:scale-90 transition-all"
+                className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 active:scale-90 transition-all"
               >
-                {showNewClient ? <User className="w-6 h-6 text-orange-500" /> : <Plus className="w-6 h-6" />}
+                {showNewClient ? <User className="w-5 h-5 text-orange-500" /> : <Plus className="w-5 h-5" />}
               </button>
             </div>
           </div>
 
-          <div className="space-y-2">
-             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('batch')}</label>
-             <select 
-                {...register('batchId')}
-                className="w-full h-14 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
-              >
-                <option value="">{t('selectBatch')}</option>
-                {batches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-              </select>
+          <div className="grid grid-cols-2 gap-3">
+            <InputGroup label={t('quantity')} icon={<Hash className="w-4 h-4 text-blue-500" />} register={register('quantity', { valueAsNumber: true })} type="number" />
+            <InputGroup label={t('unitPrice')} icon={<Banknote className="w-4 h-4 text-green-500" />} register={register('unitPrice', { valueAsNumber: true })} type="number" />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <InputGroup label={t('quantity')} icon={<Hash className="w-5 h-5 text-blue-500" />} register={register('quantity', { valueAsNumber: true })} type="number" />
-            <InputGroup label={t('unitPrice')} icon={<Banknote className="w-5 h-5 text-green-500" />} register={register('unitPrice', { valueAsNumber: true })} type="number" />
-          </div>
-
-          <div className="p-6 bg-orange-50 rounded-[2rem] space-y-2 border border-orange-100/50">
-             <div className="flex justify-between items-center">
-                <span className="text-xs font-black text-orange-400 uppercase tracking-widest">{t('total')}</span>
-                <span className="text-2xl font-[1000] text-orange-600 tracking-tighter">{total.toLocaleString()} {t('currency')}</span>
+          <div className="p-4 bg-orange-50 rounded-[1.5rem] flex items-center justify-between border border-orange-100/50">
+             <div className="flex flex-col">
+                <span className="text-[9px] font-black text-orange-400 uppercase tracking-widest">{t('total')}</span>
+                <span className="text-xl font-[1000] text-orange-600 tracking-tighter leading-none mt-1">{total.toLocaleString()} {t('currency')}</span>
              </div>
-             <div className="pt-4 space-y-2">
-                <label className="text-[10px] font-black text-orange-400 uppercase tracking-widest ml-1">{t('paid')}</label>
+             <div className="flex flex-col items-end">
+                <label className="text-[9px] font-black text-orange-400 uppercase tracking-widest mr-1 mb-1">{t('paid')}</label>
                 <input 
                   type="number"
                   {...register('amountPaid', { valueAsNumber: true })}
-                  className="w-full h-14 px-6 rounded-2xl border-none bg-white text-xl font-black text-slate-800 outline-none focus:ring-2 focus:ring-orange-200"
+                  className="w-32 h-10 px-4 rounded-xl border-none bg-white text-base font-black text-slate-800 outline-none focus:ring-2 focus:ring-orange-200 text-right"
                 />
              </div>
           </div>
@@ -162,9 +185,9 @@ export function SalesForm({ batches, clients: initialClients }: SalesFormProps) 
 
         <button 
           disabled={isPending}
-          className="w-full h-20 bg-slate-900 text-white text-xl font-black rounded-3xl flex items-center justify-center gap-4 active:scale-95 transition-all shadow-2xl shadow-slate-200"
+          className="w-full h-14 bg-slate-900 text-white text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-slate-200 mt-2"
         >
-          {isPending ? <Loader2 className="w-8 h-8 animate-spin" /> : <><Wallet className="w-7 h-7" /><span>{t('save')}</span></>}
+          {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Wallet className="w-5 h-5" /><span>{t('save')}</span></>}
         </button>
       </form>
     </div>
@@ -180,14 +203,14 @@ interface InputGroupProps {
 
 function InputGroup({ label, icon, register, type = "text" }: InputGroupProps) {
   return (
-    <div className="space-y-2">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+    <div className="space-y-1.5">
+      <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
       <div className="relative">
-        <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
+        <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
         <input 
           type={type}
           {...register}
-          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none" 
+          className="w-full h-12 pl-12 pr-4 rounded-2xl border-none bg-slate-100/50 text-base font-bold text-slate-700 outline-none" 
         />
       </div>
     </div>

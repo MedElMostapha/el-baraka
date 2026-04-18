@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Wallet, Save, Loader2, FileText, Banknote } from 'lucide-react';
-import { addExpense } from '@/actions/expenses';
+import { addExpense, updateExpense } from '@/actions/expenses';
 
 const formSchema = z.object({
   amount: z.number().min(0.01),
@@ -19,33 +19,45 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface ExpenseFormProps {
   batches: { id: string; name: string }[];
+  onComplete?: () => void;
+  editData?: any;
 }
 
-export function ExpenseForm({ batches }: ExpenseFormProps) {
+export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps) {
   const t = useTranslations('Expenses');
   const [isPending, startTransition] = useTransition();
 
   const { register, handleSubmit, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { amount: 0, category: 'other' }
+    defaultValues: { 
+      amount: editData?.amount || 0, 
+      category: editData?.category || 'other',
+      description: editData?.description || '',
+      batchId: editData?.batchId || ''
+    }
   });
 
   const onSubmit = (values: FormValues) => {
     startTransition(async () => {
-      const result = await addExpense({
+      const data = {
         ...values,
         batchId: values.batchId || undefined,
-      });
+      };
+
+      const result = editData 
+        ? await updateExpense(editData.id, data)
+        : await addExpense(data);
 
       if (result.success) {
-        reset();
+        if (!editData) reset();
+        if (onComplete) onComplete();
       }
     });
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40">
-      <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8">{t('addNew')}</h2>
+    <div className={`${editData ? '' : 'bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40'}`}>
+      {!editData && <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8">{t('addNew')}</h2>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
           

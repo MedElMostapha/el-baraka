@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Package, Plus, Save, Loader2, Tag } from 'lucide-react';
-import { addInventoryItem } from '@/actions/inventory';
+import { addInventoryItem, updateInventoryItem } from '@/actions/inventory';
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -17,28 +17,35 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function InventoryForm({ onComplete }: { onComplete: () => void }) {
+export function InventoryForm({ onComplete, editData }: { onComplete: () => void, editData?: any }) {
   const t = useTranslations('Inventory');
   const [isPending, startTransition] = useTransition();
 
   const { register, handleSubmit, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { name: '', category: 'feed', quantity: 0, unit: 'kg' }
+    defaultValues: { 
+      name: editData?.name || '', 
+      category: editData?.category || 'feed', 
+      quantity: editData?.quantity || 0, 
+      unit: editData?.unit || 'kg' 
+    }
   });
 
   const onSubmit = (values: FormValues) => {
     startTransition(async () => {
-      const result = await addInventoryItem(values);
+      const result = editData 
+        ? await updateInventoryItem(editData.id, values)
+        : await addInventoryItem(values);
       if (result.success) {
-        reset();
+        if (!editData) reset();
         onComplete();
       }
     });
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40">
-      <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8">{t('addNew')}</h2>
+    <div className={`${editData ? '' : 'bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40'}`}>
+      {!editData && <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8">{t('addNew')}</h2>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
           <InputGroup label={t('name')} icon={<Package className="w-5 h-5 text-orange-500" />} register={register('name')} />

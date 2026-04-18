@@ -36,7 +36,15 @@
     "save": "إنشاء الدفعة",
     "empty": "لا توجد دفعات مسجلة",
     "createError": "خطأ أثناء إنشاء الدفعة",
-    "remaining": "المتبقي"
+    "remaining": "المتبقي",
+    "editTitle": "تعديل الدفعة",
+    "deleteTitle": "حذف الدفعة",
+    "deleteConfirm": "هل أنت متأكد من حذف هذه الدفعة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "breeds": {
+      "broiler": "لحم / Broiler",
+      "layer": "بياض / Layer",
+      "other": "أخرى / Other"
+    }
   },
   "Inventory": {
     "title": "المخزون والمؤونة",
@@ -50,7 +58,11 @@
     "medicine": "دواء",
     "packaging": "تغليف",
     "other": "أخرى",
-    "save": "إضافة للمخزون"
+    "save": "إضافة للمخزون",
+    "editTitle": "تعديل المادة",
+    "deleteTitle": "حذف المادة",
+    "deleteConfirm": "هل أنت متأكد من حذف هذه المادة؟",
+    "lastUpdated": "آخر تحديث"
   },
   "Sales": {
     "title": "إدارة المبيعات",
@@ -75,7 +87,11 @@
     "filterToday": "اليوم",
     "filterWeek": "هذا الأسبوع",
     "filterMonth": "هذا الشهر",
-    "empty": "لا توجد مبيعات"
+    "filterUnpaid": "غير مدفوعة",
+    "empty": "لا توجد مبيعات",
+    "editTitle": "تعديل البيع",
+    "deleteTitle": "حذف البيع",
+    "deleteConfirm": "هل أنت متأكد من حذف عملية البيع هذه؟"
   },
   "Clients": {
     "title": "قائمة الزبناء",
@@ -120,6 +136,7 @@
     "filterToday": "اليوم",
     "filterWeek": "هذا الأسبوع",
     "filterMonth": "هذا الشهر",
+    "filterUnpaid": "غير مدفوعة",
     "empty": "لا توجد مصاريف",
     "categories": {
       "feed": "علف",
@@ -128,7 +145,10 @@
       "utilities": "كهرباء/ماء",
       "salaries": "رواتب",
       "other": "أخرى"
-    }
+    },
+    "editTitle": "تعديل المصروف",
+    "deleteTitle": "حذف المصروف",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا المصروف؟"
   },
   "Errors": {
     "title": "حدث خطأ",

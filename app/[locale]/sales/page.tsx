@@ -13,7 +13,10 @@ export default async function SalesPage() {
     .select({
       id: sales.id,
       date: sales.date,
+      batchId: sales.batchId,
+      clientId: sales.clientId,
       quantity: sales.quantity,
+      unitPrice: sales.unitPrice,
       totalPrice: sales.totalPrice,
       amountPaid: sales.amountPaid,
       type: sales.type,
@@ -68,6 +71,8 @@ export default async function SalesPage() {
 
         <SalesListClient 
           sales={allSales} 
+          batches={activeBatches}
+          clients={allClients}
           t={{
             currency: t('currency'),
             cashClient: t('cashClient'),
@@ -76,7 +81,11 @@ export default async function SalesPage() {
             filterToday: t('filterToday'),
             filterWeek: t('filterWeek'),
             filterMonth: t('filterMonth'),
-            empty: t('empty')
+            filterUnpaid: t('filterUnpaid'),
+            empty: t('empty'),
+            editTitle: t('editTitle'),
+            deleteTitle: t('deleteTitle'),
+            deleteConfirm: t('deleteConfirm')
           }} 
         />
       </div>

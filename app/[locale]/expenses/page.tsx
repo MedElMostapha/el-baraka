@@ -35,6 +35,7 @@ export default async function ExpensesPage() {
 
         <ExpensesListClient 
           expenses={allExpenses} 
+          batches={activeBatches}
           t={{
             currency: t('currency'),
             filterAll: t('filterAll'),
@@ -43,6 +44,9 @@ export default async function ExpensesPage() {
             filterMonth: t('filterMonth'),
             empty: t('empty'),
             generalExpense: t('generalExpense'),
+            editTitle: t('editTitle'),
+            deleteTitle: t('deleteTitle'),
+            deleteConfirm: t('deleteConfirm'),
             categories: {
               feed: t('categories.feed'),
               medication: t('categories.medication'),
