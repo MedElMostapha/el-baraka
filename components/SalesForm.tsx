@@ -40,6 +40,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   const tc = useTranslations('Clients');
   const [isPending, startTransition] = useTransition();
   const [showNewClient, setShowNewClient] = useState(false);
+  const [isDebt, setIsDebt] = useState(editData ? editData.amountPaid === 0 : false);
 
   const { register, handleSubmit, watch, reset, setValue } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -71,10 +72,12 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   // Auto-fill amountPaid only for NEW sales and only once when total changes, 
   // but allow user to override it.
   useEffect(() => {
-    if (!editData) {
+    if (!editData && !isDebt) {
       setValue('amountPaid', total);
+    } else if (isDebt) {
+      setValue('amountPaid', 0);
     }
-  }, [total, setValue, editData]);
+  }, [total, setValue, editData, isDebt]);
 
   const onSubmit = (values: FormValues) => {
     startTransition(async () => {
@@ -177,26 +180,29 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
             <InputGroup label={t('unitPrice')} icon={<Banknote className="w-4 h-4 text-green-500" />} register={register('unitPrice', { valueAsNumber: true })} type="number" />
           </div>
 
+          <div className="flex items-center justify-between px-2 pt-2">
+             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('debt')}</label>
+             <button 
+                type="button"
+                onClick={() => setIsDebt(!isDebt)}
+                className={`relative w-12 h-6 rounded-full transition-all duration-300 ${isDebt ? 'bg-red-500' : 'bg-slate-200'}`}
+             >
+                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${isDebt ? 'left-7 shadow-sm' : 'left-1'}`} />
+             </button>
+          </div>
+
           <div className="p-4 bg-orange-50 rounded-[1.5rem] flex items-center justify-between border border-orange-100/50">
              <div className="flex flex-col">
                 <span className="text-[9px] font-black text-orange-400 uppercase tracking-widest">{t('total')}</span>
                 <span className="text-xl font-[1000] text-orange-600 tracking-tighter leading-none mt-1">{total.toLocaleString()} {t('currency')}</span>
              </div>
              <div className="flex flex-col items-end">
-                <div className="flex items-center gap-2 mb-1">
-                   <button 
-                     type="button"
-                     onClick={() => setValue('amountPaid', 0)}
-                     className="text-[8px] font-black text-red-400 uppercase tracking-widest hover:text-red-600 transition-colors"
-                   >
-                     Effacer (Dette)
-                   </button>
-                   <label className="text-[9px] font-black text-orange-400 uppercase tracking-widest">{t('paid')}</label>
-                </div>
+                <label className="text-[9px] font-black text-orange-400 uppercase tracking-widest mr-1 mb-1">{t('paid')}</label>
                 <input 
                   type="number"
+                  disabled={isDebt}
                   {...register('amountPaid', { valueAsNumber: true })}
-                  className="w-32 h-10 px-4 rounded-xl border-none bg-white text-base font-black text-slate-800 outline-none focus:ring-2 focus:ring-orange-200 text-right"
+                  className={`w-32 h-10 px-4 rounded-xl border-none text-base font-black outline-none focus:ring-2 focus:ring-orange-200 text-right transition-all ${isDebt ? 'bg-slate-100/50 text-slate-300 cursor-not-allowed' : 'bg-white text-slate-800'}`}
                   placeholder="0"
                 />
              </div>
