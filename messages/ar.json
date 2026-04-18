@@ -89,6 +89,7 @@
     "batches": "الدفعات",
     "inventory": "المخزون",
     "sales": "المبيعات",
+    "expenses": "المصاريف",
     "settings": "الإعدادات"
   },
   "Settings": {
@@ -103,6 +104,31 @@
     "appName": "البركة",
     "appDescription": "تطبيق إدارة مزرعة الدواجن",
     "version": "الإصدار"
+  },
+  "Expenses": {
+    "title": "إدارة المصاريف",
+    "subtitle": "مصاريف المزرعة",
+    "addNew": "مصروف جديد",
+    "category": "الفئة",
+    "amount": "المبلغ",
+    "description": "الوصف (اختياري)",
+    "batch": "الدفعة المرتبطة",
+    "generalExpense": "مصروف عام",
+    "save": "تسجيل المصروف",
+    "currency": "أوقية",
+    "filterAll": "الكل",
+    "filterToday": "اليوم",
+    "filterWeek": "هذا الأسبوع",
+    "filterMonth": "هذا الشهر",
+    "empty": "لا توجد مصاريف",
+    "categories": {
+      "feed": "علف",
+      "medication": "أدوية",
+      "transport": "نقل",
+      "utilities": "كهرباء/ماء",
+      "salaries": "رواتب",
+      "other": "أخرى"
+    }
   },
   "Errors": {
     "title": "حدث خطأ",

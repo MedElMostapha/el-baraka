@@ -63,3 +63,13 @@ export const payments = sqliteTable('payments', {
   amount: real('amount').notNull(),
   method: text('method').default('cash').notNull(),
 });
+
+// 7. Expense Management
+export const expenses = sqliteTable('expenses', {
+  id: text('id').primaryKey(),
+  date: integer('date', { mode: 'timestamp' }).notNull(),
+  amount: real('amount').notNull(),
+  category: text('category', { enum: ['feed', 'medication', 'transport', 'utilities', 'salaries', 'other'] }).notNull(),
+  description: text('description'),
+  batchId: text('batch_id').references(() => batches.id), // Optional link to a specific batch
+});

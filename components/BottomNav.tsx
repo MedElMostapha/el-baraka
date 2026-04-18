@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Bird, ClipboardList, Wallet, Settings } from 'lucide-react';
+import { LayoutDashboard, Bird, ClipboardList, Wallet, Settings, TrendingDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export function BottomNav() {
@@ -14,6 +14,7 @@ export function BottomNav() {
     { icon: Bird, label: t('batches'), href: '/batches' },
     { icon: ClipboardList, label: t('inventory'), href: '/inventory' },
     { icon: Wallet, label: t('sales'), href: '/sales' },
+    { icon: TrendingDown, label: t('expenses'), href: '/expenses' },
     { icon: Settings, label: t('settings'), href: '/settings' },
   ];
 

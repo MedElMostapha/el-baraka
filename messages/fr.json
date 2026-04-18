@@ -89,6 +89,7 @@
     "batches": "Lots",
     "inventory": "Stocks",
     "sales": "Ventes",
+    "expenses": "Dépenses",
     "settings": "Réglages"
   },
   "Settings": {
@@ -103,6 +104,31 @@
     "appName": "El Baraka",
     "appDescription": "Application de gestion de ferme avicole",
     "version": "Version"
+  },
+  "Expenses": {
+    "title": "Gestion des Dépenses",
+    "subtitle": "Charges de la ferme",
+    "addNew": "Nouvelle Dépense",
+    "category": "Catégorie",
+    "amount": "Montant",
+    "description": "Description (Optionnel)",
+    "batch": "Lot associé",
+    "generalExpense": "Dépense Générale",
+    "save": "Enregistrer la dépense",
+    "currency": "MRU",
+    "filterAll": "Tout",
+    "filterToday": "Aujourd'hui",
+    "filterWeek": "Cette semaine",
+    "filterMonth": "Ce mois",
+    "empty": "Aucune dépense trouvée",
+    "categories": {
+      "feed": "Aliment",
+      "medication": "Médicaments",
+      "transport": "Transport",
+      "utilities": "Électricité/Eau",
+      "salaries": "Salaires",
+      "other": "Autre"
+    }
   },
   "Errors": {
     "title": "Une erreur est survenue",
