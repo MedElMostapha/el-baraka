@@ -14,11 +14,19 @@ const formSchema = z.object({
   newClientName: z.string().optional(),
   quantity: z.number().min(1),
   unitPrice: z.number().min(0),
-  amountPaid: z.union([z.number(), z.string().transform(v => v === '' ? 0 : Number(v))]).optional().default(0),
+  amountPaid: z.number().min(0),
   type: z.enum(['wholesale', 'retail']),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+interface FormValues {
+  batchId: string;
+  clientId?: string;
+  newClientName?: string;
+  quantity: number;
+  unitPrice: number;
+  amountPaid: number;
+  type: 'wholesale' | 'retail';
+}
 
 interface SalesFormProps {
   batches: { id: string; name: string; remainingQuantity: number }[];
