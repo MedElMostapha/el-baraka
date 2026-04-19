@@ -96,7 +96,7 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
 
         <button 
           disabled={isPending}
-          className="w-full h-20 bg-slate-900 text-white text-xl font-black rounded-3xl flex items-center justify-center gap-4 active:scale-95 transition-all shadow-2xl shadow-slate-200"
+          className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-3xl flex items-center justify-center gap-4 active:scale-95 transition-all shadow-2xl shadow-slate-200"
         >
           {isPending ? <Loader2 className="w-8 h-8 animate-spin" /> : <><Wallet className="w-7 h-7" /><span>{t('save')}</span></>}
         </button>

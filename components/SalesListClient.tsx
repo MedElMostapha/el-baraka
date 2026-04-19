@@ -120,7 +120,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                       <h3 className="font-black text-slate-800 text-xl tracking-tight">
                         {sale.totalPrice.toLocaleString()} <span className="text-xs text-slate-400 ml-1 font-bold uppercase">{t.currency}</span>
                       </h3>
-                      <div className="mt-1 flex items-center gap-2">
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
                         <span className="text-[10px] font-black text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg uppercase tracking-wider">
                           {sale.clientName || t.cashClient}
                         </span>
@@ -133,7 +133,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-2xl border border-slate-100/50 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                  <div className="hidden md:flex items-center gap-1 bg-slate-50 p-1 rounded-2xl border border-slate-100/50 md:opacity-0 md:group-hover:opacity-100 transition-all transform md:translate-x-2 md:group-hover:translate-x-0">
                     <button 
                       onClick={() => {
                         setEditSale(sale);
@@ -169,14 +169,49 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
 
                 <div className="flex items-center justify-between border-t border-slate-50 pt-4">
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                      <Bird className="w-3.5 h-3.5 text-orange-400" />
-                      {sale.batchName}
+                    <div className="flex flex-col gap-1.5">
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                        <Bird className="w-3.5 h-3.5 text-orange-400" />
+                        {sale.batchName}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {new Date(sale.date).toLocaleDateString()}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {new Date(sale.date).toLocaleDateString()}
-                    </div>
+                  </div>
+
+                  <div className="md:hidden flex items-center gap-1 bg-slate-50 p-1 rounded-2xl border border-slate-100/50">
+                    <button 
+                      onClick={() => {
+                        setEditSale(sale);
+                      }}
+                      className="p-2.5 rounded-xl bg-white shadow-sm text-slate-400"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    {debt > 0 && (
+                      <button 
+                        onClick={async () => {
+                          setLoadingId(sale.id);
+                          await markSalePaid(sale.id, sale.totalPrice, null);
+                          setLoadingId(null);
+                        }}
+                        disabled={loadingId === sale.id}
+                        className="p-2.5 rounded-xl bg-white shadow-sm text-green-500"
+                      >
+                        {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                      </button>
+                    )}
+                    <button 
+                      onClick={() => {
+                        setConfirmDeleteId(sale.id);
+                      }}
+                      disabled={loadingId === sale.id}
+                      className="p-2.5 rounded-xl hover:bg-red-50 text-slate-400"
+                    >
+                      {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                    </button>
                   </div>
                 </div>
               </div>

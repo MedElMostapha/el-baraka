@@ -71,7 +71,7 @@ export function InventoryForm({ onComplete, editData }: { onComplete: () => void
 
         <button 
           disabled={isPending}
-          className="w-full h-16 bg-slate-900 text-white font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all"
+          className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all"
         >
           {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Save className="w-6 h-6" /><span>{t('save')}</span></>}
         </button>

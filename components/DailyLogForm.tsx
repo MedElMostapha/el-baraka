@@ -137,7 +137,7 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
           <button 
             type="submit" 
             disabled={isPending}
-            className="w-full h-20 bg-gradient-to-br from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 active:scale-95 text-white text-xl font-black rounded-3xl shadow-[0_20px_40px_rgba(249,115,22,0.3)] transition-all flex items-center justify-center gap-4 disabled:opacity-70 mt-4"
+            className="w-full h-14 md:h-16 bg-gradient-to-br from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 active:scale-95 text-white text-base md:text-lg font-black rounded-3xl shadow-[0_20px_40px_rgba(249,115,22,0.3)] transition-all flex items-center justify-center gap-4 disabled:opacity-70 mt-4"
           >
             {isPending ? (
               <Loader2 className="w-8 h-8 animate-spin" />

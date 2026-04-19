@@ -211,7 +211,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
 
         <button 
           disabled={isPending}
-          className="w-full h-14 bg-slate-900 text-white text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-slate-200 mt-2"
+          className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-slate-200 mt-2"
         >
           {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Wallet className="w-5 h-5" /><span>{t('save')}</span></>}
         </button>

@@ -80,7 +80,7 @@ export function BatchForm({ onComplete, editData }: { onComplete: () => void, ed
         <button 
           type="submit" 
           disabled={isPending}
-          className="w-full h-16 bg-slate-900 hover:bg-black text-white text-lg font-black rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-70 mt-4"
+          className="w-full h-14 md:h-16 bg-slate-900 hover:bg-black text-white text-base md:text-lg font-black rounded-2xl shadow-xl transition-all flex items-center justify-center gap-3 disabled:opacity-70 mt-4"
         >
           {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Save className="w-6 h-6" /><span>{t('save')}</span></>}
         </button>

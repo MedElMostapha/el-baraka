@@ -60,31 +60,25 @@ export default function BatchesClient({ initialBatches, t }: { initialBatches: B
             initialBatches.map((batch) => (
               <div 
                 key={batch.id} 
-                className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center justify-between group active:scale-95 transition-all"
+                className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 group active:scale-[0.98] transition-all"
               >
-                <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${
-                    batch.status === 'active' ? 'bg-orange-50 text-orange-600' : 'bg-slate-50 text-slate-400'
-                  }`}>
-                    <Bird className="w-7 h-7" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-black text-slate-800 text-lg tracking-tight truncate">{batch.name}</h3>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
-                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {new Date(batch.arrivalDate).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
-                        <Hash className="w-3.5 h-3.5" />
-                        {batch.initialQuantity}
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${
+                      batch.status === 'active' ? 'bg-orange-50 text-orange-600' : 'bg-slate-50 text-slate-400'
+                    }`}>
+                      <Bird className="w-7 h-7" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-black text-slate-800 text-lg tracking-tight truncate">{batch.name}</h3>
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide mt-1">
+                        <Bird className="w-3.5 h-3.5 text-orange-400" />
+                        {batch.breed || '--'}
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex flex-col items-end mr-2">
+                  <div className="flex flex-col items-end">
                     <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-0.5">{t.remaining}</span>
                     <span className={`text-sm font-black px-3 py-1 rounded-xl shadow-sm ${
                       batch.remainingQuantity > 0 ? 'bg-orange-500 text-white shadow-orange-100' : 'bg-slate-100 text-slate-400'
@@ -92,14 +86,27 @@ export default function BatchesClient({ initialBatches, t }: { initialBatches: B
                       {batch.remainingQuantity}
                     </span>
                   </div>
-                  
-                  <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-2xl border border-slate-100/50 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                </div>
+
+                <div className="flex items-center justify-between border-t border-slate-50 pt-4">
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                      <Calendar className="w-3.5 h-3.5" />
+                      {new Date(batch.arrivalDate).toLocaleDateString()}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                      <Hash className="w-3.5 h-3.5" />
+                      {batch.initialQuantity}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-2xl border border-slate-100/50">
                     <button 
                       onClick={(e) => {
                         e.stopPropagation();
                         setEditBatch(batch);
                       }}
-                      className="p-2.5 rounded-xl hover:bg-white hover:shadow-sm text-slate-400 hover:text-slate-600 transition-all"
+                      className="p-2.5 rounded-xl bg-white shadow-sm text-slate-400 hover:text-slate-600 transition-all"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -113,10 +120,9 @@ export default function BatchesClient({ initialBatches, t }: { initialBatches: B
                     >
                       {loadingId === batch.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     </button>
-                  </div>
-
-                  <div className="w-10 h-10 rounded-2xl bg-white border border-slate-100 flex items-center justify-center text-slate-300 shadow-sm group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all">
-                    <ArrowRight className="w-5 h-5" />
+                    <div className="hidden md:flex w-10 h-10 rounded-xl bg-slate-900 text-white items-center justify-center ml-1">
+                      <ArrowRight className="w-4 h-4" />
+                    </div>
                   </div>
                 </div>
               </div>
