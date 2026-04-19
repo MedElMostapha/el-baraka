@@ -89,9 +89,9 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
         {/* Filters */}
         <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl w-fit">
           {[
-            { id: '7d', label: '7D' },
-            { id: '30d', label: '30D' },
-            { id: 'all', label: 'ALL' }
+            { id: '7d', label: t('filter7d') },
+            { id: '30d', label: t('filter30d') },
+            { id: 'all', label: t('filterAll') }
           ].map((f) => (
             <Link 
               key={f.id}

@@ -127,7 +127,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-sm ${
               batch.status === 'active' ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-500'
             }`}>
-              {batch.status === 'active' ? 'En Cours' : 'Clôturé'}
+              {batch.status === 'active' ? t.statusActive : t.statusClosed}
             </div>
             <div className="bg-white px-4 py-1.5 rounded-full border border-slate-100 shadow-sm text-xs font-black text-slate-400 uppercase tracking-widest">
               {safeDaysActive} {t.daysSinceArrival}
@@ -142,6 +142,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             label={t.netProfit} 
             value={`${stats.netProfit.toLocaleString()} ${t.currency}`}
             trend={stats.netProfit >= 0 ? 'up' : 'down'}
+            trendLabel={stats.netProfit >= 0 ? t.profit : t.loss}
             color={stats.netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}
             bgColor={stats.netProfit >= 0 ? 'bg-emerald-50' : 'bg-red-50'}
           />
@@ -177,7 +178,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
           <div className="md:col-span-1 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4">
             <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
               <PieChartIcon className="w-4 h-4 text-orange-500" />
-              Distribution
+              {t.distribution}
             </h3>
             <div className="h-[200px] w-full relative">
               {mounted && dimensions.width > 0 && (
@@ -218,7 +219,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
           <div className="md:col-span-2 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4">
             <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
               <Activity className="w-4 h-4 text-blue-500" />
-              Consommation & Mortalité
+              {t.activityTrend}
             </h3>
             <div className="h-[250px] w-full relative">
               {mounted && dimensions.width > 0 && (
@@ -253,7 +254,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             </div>
             <div>
               <h2 className="text-xl font-black">{t.financials}</h2>
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Résumé économique</p>
+              <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">{t.economicSummary}</p>
             </div>
           </div>
 
@@ -292,16 +293,16 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
           </div>
         </div>
 
-        {/* Lists Tabs (Simplified for now) */}
+        {/* Lists Tabs */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-black text-slate-800">{t.activity}</h2>
             <div className="flex gap-2">
               <span className="bg-white border border-slate-100 px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-slate-400 shadow-sm">
-                {sales.length} Ventes
+                {sales.length} {t.salesLabel}
               </span>
               <span className="bg-white border border-slate-100 px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-slate-400 shadow-sm">
-                {expenses.length} Dépenses
+                {expenses.length} {t.expensesLabel}
               </span>
             </div>
           </div>
@@ -359,7 +360,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   );
 }
 
-function StatCard({ icon, label, value, subtext, trend, color, bgColor }: any) {
+function StatCard({ icon, label, value, subtext, trend, trendLabel, color, bgColor }: any) {
   return (
     <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm space-y-3">
       <div className={`w-10 h-10 ${bgColor} ${color} rounded-xl flex items-center justify-center shadow-inner`}>
@@ -375,7 +376,7 @@ function StatCard({ icon, label, value, subtext, trend, color, bgColor }: any) {
       {trend && (
         <div className={`flex items-center gap-1 text-[10px] font-bold ${trend === 'up' ? 'text-emerald-500' : 'text-red-500'}`}>
           {trend === 'up' ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-          {trend === 'up' ? 'Profit' : 'Perte'}
+          {trendLabel}
         </div>
       )}
     </div>

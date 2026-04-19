@@ -13,7 +13,10 @@
     "performance": "الأداء المالي",
     "recentActivity": "النشاط الأخير",
     "last7Days": "آخر 7 أيام",
-    "cashOnHand": "النقد المتوفر (صافي)"
+    "cashOnHand": "النقد المتوفر (صافي)",
+    "filter7d": "7 أيام",
+    "filter30d": "30 يوم",
+    "filterAll": "الكل"
   },
   "DailyTracking": {
     "title": "المتابعة اليومية",
@@ -187,6 +190,15 @@
     "chicks": "كتكوت",
     "mortalityRate": "معدل النفوق",
     "avgPrice": "متوسط سعر البيع",
-    "feedPerBird": "العلف / طير"
+    "feedPerBird": "العلف / طير",
+    "statusActive": "نشط",
+    "statusClosed": "مغلق",
+    "distribution": "التوزيع",
+    "activityTrend": "الاستهلاك والنفوق",
+    "economicSummary": "ملخص اقتصادي",
+    "profit": "ربح",
+    "loss": "خسارة",
+    "salesLabel": "مبيعات",
+    "expensesLabel": "مصاريف"
   }
 }

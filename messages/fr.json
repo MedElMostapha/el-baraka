@@ -13,7 +13,10 @@
     "performance": "Performance financière",
     "recentActivity": "Activité Récente",
     "last7Days": "7 derniers jours",
-    "cashOnHand": "Encaissé (Net)"
+    "cashOnHand": "Encaissé (Net)",
+    "filter7d": "7J",
+    "filter30d": "30J",
+    "filterAll": "TOUT"
   },
   "DailyTracking": {
     "title": "Suivi Journalier",
@@ -187,6 +190,15 @@
     "chicks": "poussins",
     "mortalityRate": "Taux de mortalité",
     "avgPrice": "Prix moyen de vente",
-    "feedPerBird": "Aliment / sujet"
+    "feedPerBird": "Aliment / sujet",
+    "statusActive": "En Cours",
+    "statusClosed": "Clôturé",
+    "distribution": "Distribution",
+    "activityTrend": "Consommation & Mortalité",
+    "economicSummary": "Résumé économique",
+    "profit": "Profit",
+    "loss": "Perte",
+    "salesLabel": "Ventes",
+    "expensesLabel": "Dépenses"
   }
 }

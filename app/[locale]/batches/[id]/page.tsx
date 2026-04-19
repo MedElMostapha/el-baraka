@@ -85,6 +85,15 @@ export default async function BatchDetailServerPage({
     avgPrice: t('avgPrice'),
     feedPerBird: t('feedPerBird'),
     currency: tSales('currency'),
+    statusActive: t('statusActive'),
+    statusClosed: t('statusClosed'),
+    distribution: t('distribution'),
+    activityTrend: t('activityTrend'),
+    economicSummary: t('economicSummary'),
+    profit: t('profit'),
+    loss: t('loss'),
+    salesLabel: t('salesLabel'),
+    expensesLabel: t('expensesLabel'),
   };
 
   return (
