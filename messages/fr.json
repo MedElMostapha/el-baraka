@@ -199,6 +199,8 @@
     "profit": "Profit",
     "loss": "Perte",
     "salesLabel": "Ventes",
-    "expensesLabel": "Dépenses"
+    "expensesLabel": "Dépenses",
+    "feedLabel": "Aliment",
+    "mortalityLabel": "Mortalité"
   }
 }

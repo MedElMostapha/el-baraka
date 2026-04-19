@@ -199,6 +199,8 @@
     "profit": "ربح",
     "loss": "خسارة",
     "salesLabel": "مبيعات",
-    "expensesLabel": "مصاريف"
+    "expensesLabel": "مصاريف",
+    "feedLabel": "العلف",
+    "mortalityLabel": "النفوق"
   }
 }

@@ -94,6 +94,8 @@ export default async function BatchDetailServerPage({
     loss: t('loss'),
     salesLabel: t('salesLabel'),
     expensesLabel: t('expensesLabel'),
+    feedLabel: t('feedLabel'),
+    mortalityLabel: t('mortalityLabel'),
   };
 
   return (

@@ -30,7 +30,8 @@ import {
   CartesianGrid,
   PieChart,
   Pie,
-  Cell
+  Cell,
+  Legend
 } from 'recharts';
 
 interface Batch {
@@ -256,8 +257,9 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
                     <Tooltip 
                       contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                     />
-                    <Area type="monotone" dataKey="feed" stroke="#3b82f6" fillOpacity={1} fill="url(#colorFeed)" strokeWidth={3} />
-                    <Area type="monotone" dataKey="mortality" stroke="#ef4444" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
+                    <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }} />
+                    <Area type="monotone" dataKey="feed" name={t.feedLabel} stroke="#3b82f6" fillOpacity={1} fill="url(#colorFeed)" strokeWidth={3} />
+                    <Area type="monotone" dataKey="mortality" name={t.mortalityLabel} stroke="#ef4444" fill="transparent" strokeWidth={2} strokeDasharray="5 5" />
                   </AreaChart>
                 </ResponsiveContainer>
               )}
