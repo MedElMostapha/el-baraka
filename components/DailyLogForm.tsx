@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Skull, Utensils, Droplets, Pill, Save, Loader2, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { createDailyLog } from '@/actions/daily-log';
 
 const formSchema = z.object({
@@ -25,6 +26,7 @@ interface DailyLogFormProps {
 
 export function DailyLogForm({ batches }: DailyLogFormProps) {
   const t = useTranslations('DailyTracking');
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
   
@@ -47,6 +49,7 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
       if (result.success) {
         setMessage({ type: 'success', text: t('success') });
         reset();
+        router.refresh();
       } else {
         setMessage({ type: 'error', text: t('error') });
       }
