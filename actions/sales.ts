@@ -1,8 +1,9 @@
 "use server";
 
 import { db } from "@/db";
-import { sales, clients, payments } from "@/db/schema";
+import { sales, clients, payments, batches, dailyLogs } from "@/db/schema";
 import { revalidatePath } from "next/cache";
+import { eq, sql } from "drizzle-orm";
 
 export async function createClient(data: { name: string; phone?: string; address?: string }) {
   try {
@@ -47,6 +48,23 @@ export async function recordSale(data: {
       });
     }
 
+    // Auto-close batch if fully sold
+    const batch = await db.query.batches.findFirst({
+      where: eq(batches.id, data.batchId)
+    });
+
+    if (batch) {
+      const totalSoldResult = await db.select({ sum: sql<number>`sum(${sales.quantity})` }).from(sales).where(eq(sales.batchId, data.batchId));
+      const totalMortalityResult = await db.select({ sum: sql<number>`sum(${dailyLogs.mortality})` }).from(dailyLogs).where(eq(dailyLogs.batchId, data.batchId));
+      
+      const totalSold = totalSoldResult[0]?.sum || 0;
+      const totalMortality = totalMortalityResult[0]?.sum || 0;
+      
+      if (totalSold + totalMortality >= batch.initialQuantity) {
+        await db.update(batches).set({ status: 'closed' }).where(eq(batches.id, data.batchId));
+      }
+    }
+
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
@@ -54,8 +72,6 @@ export async function recordSale(data: {
     return { success: false };
   }
 }
-
-import { eq } from "drizzle-orm";
 
 export async function deleteSale(id: string) {
   try {
@@ -77,7 +93,7 @@ export async function markSalePaid(id: string, totalPrice: number, clientId: str
         id: crypto.randomUUID(),
         clientId: clientId,
         saleId: id,
-        amount: totalPrice, // Assuming we mark the remaining as paid, but let's just insert a record for the rest if needed. For simplicity, just update amountPaid in sales. Wait, if there was a previous payment we shouldn't insert the full totalPrice. Just updating sales amountPaid is enough for now.
+        amount: totalPrice,
         date: new Date(),
         method: 'cash',
       });
