@@ -13,10 +13,13 @@ import {
   Calendar, 
   ArrowLeft,
   PieChart as PieChartIcon,
-  BarChart3
+  BarChart3,
+  CheckCircle2,
+  XCircle
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
+import { updateBatch } from '@/actions/batch';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -69,6 +72,15 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const toggleStatus = async () => {
+    setIsUpdating(true);
+    const newStatus = batch.status === 'active' ? 'closed' : 'active';
+    await updateBatch(batch.id, { status: newStatus });
+    setIsUpdating(false);
+    router.refresh();
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -124,11 +136,18 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             subtitle={`${batch.breed || '--'} • ${new Date(batch.arrivalDate).toLocaleDateString()}`} 
           />
           <div className="flex items-center gap-3">
-            <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-sm ${
-              batch.status === 'active' ? 'bg-orange-500 text-white' : 'bg-slate-200 text-slate-500'
-            }`}>
+            <button 
+              onClick={toggleStatus}
+              disabled={isUpdating}
+              className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 ${
+                batch.status === 'active' 
+                  ? 'bg-orange-500 text-white hover:bg-orange-600' 
+                  : 'bg-emerald-500 text-white hover:bg-emerald-600'
+              } disabled:opacity-50`}
+            >
+              {batch.status === 'active' ? <XCircle className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
               {batch.status === 'active' ? t.statusActive : t.statusClosed}
-            </div>
+            </button>
             <div className="bg-white px-4 py-1.5 rounded-full border border-slate-100 shadow-sm text-xs font-black text-slate-400 uppercase tracking-widest">
               {safeDaysActive} {t.daysSinceArrival}
             </div>
