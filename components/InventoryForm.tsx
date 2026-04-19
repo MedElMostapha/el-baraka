@@ -50,22 +50,34 @@ export function InventoryForm({ onComplete, editData }: { onComplete: () => void
         <div className="space-y-4">
           <InputGroup label={t('name')} icon={<Package className="w-5 h-5 text-orange-500" />} register={register('name')} />
           
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('category')}</label>
-            <select 
-              {...register('category')}
-              className="w-full h-14 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none focus:ring-2 focus:ring-orange-500/20"
-            >
-              <option value="feed">{t('feed')}</option>
-              <option value="medicine">{t('medicine')}</option>
-              <option value="packaging">{t('packaging')}</option>
-              <option value="other">{t('other')}</option>
-            </select>
-          </div>
+          <SelectGroup 
+            label={t('category')} 
+            icon={<Tag className="w-5 h-5 text-orange-500" />} 
+            register={register('category')}
+            options={[
+              { label: t('feed'), value: 'feed' },
+              { label: t('medicine'), value: 'medicine' },
+              { label: t('packaging'), value: 'packaging' },
+              { label: t('other'), value: 'other' }
+            ]}
+          />
 
           <div className="grid grid-cols-2 gap-4">
-            <InputGroup label={t('quantity')} icon={<Tag className="w-5 h-5 text-green-500" />} register={register('quantity', { valueAsNumber: true })} type="number" />
-            <InputGroup label={t('unit')} icon={<Plus className="w-5 h-5 text-blue-500" />} register={register('unit')} />
+            <InputGroup label={t('quantity')} icon={<Package className="w-5 h-5 text-green-500" />} register={register('quantity', { valueAsNumber: true })} type="number" />
+            <SelectGroup 
+              label={t('unit')} 
+              icon={<Plus className="w-5 h-5 text-blue-500" />} 
+              register={register('unit')}
+              options={[
+                { label: 'kg', value: 'kg' },
+                { label: 'g', value: 'g' },
+                { label: 'L', value: 'L' },
+                { label: 'ml', value: 'ml' },
+                { label: 'Sac', value: 'sac' },
+                { label: 'Unité', value: 'unit' },
+                { label: 'Boîte', value: 'box' }
+              ]}
+            />
           </div>
         </div>
 
@@ -98,6 +110,30 @@ function InputGroup({ label, icon, register, type = "text" }: InputGroupProps) {
           {...register}
           className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none" 
         />
+      </div>
+    </div>
+  );
+}
+
+interface SelectGroupProps {
+  label: string;
+  icon: React.ReactNode;
+  register: UseFormRegisterReturn;
+  options: { label: string; value: string }[];
+}
+
+function SelectGroup({ label, icon, register, options }: SelectGroupProps) {
+  return (
+    <div className="space-y-2">
+      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+      <div className="relative">
+        <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
+        <select 
+          {...register}
+          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none appearance-none" 
+        >
+          {options.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+        </select>
       </div>
     </div>
   );
