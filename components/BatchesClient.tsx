@@ -3,7 +3,7 @@
 import React from 'react';
 import { BatchForm } from './BatchForm';
 import { Bird, Calendar, Hash, ArrowRight, Trash2, Pencil, Loader2 } from "lucide-react";
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
 import { deleteBatch, updateBatch } from '@/actions/batch';
 import { ConfirmModal } from './ConfirmModal';
@@ -33,6 +33,8 @@ interface BatchTranslations {
 
 export default function BatchesClient({ initialBatches, t }: { initialBatches: Batch[], t: BatchTranslations }) {
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale;
   const [loadingId, setLoadingId] = React.useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
   const [editBatch, setEditBatch] = React.useState<Batch | null>(null);
@@ -60,7 +62,8 @@ export default function BatchesClient({ initialBatches, t }: { initialBatches: B
             initialBatches.map((batch) => (
               <div 
                 key={batch.id} 
-                className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 group active:scale-[0.98] transition-all"
+                onClick={() => router.push(`/batches/${batch.id}`)}
+                className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 group active:scale-[0.98] transition-all cursor-pointer hover:border-orange-200"
               >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-4">

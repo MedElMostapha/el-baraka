@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useTransition } from 'react';
+import React, { useTransition, useEffect } from 'react';
 import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
-import { Wallet, Save, Loader2, FileText, Banknote } from 'lucide-react';
+import { Wallet, Save, Loader2, FileText, Banknote, Hash, DollarSign } from 'lucide-react';
 import { addExpense, updateExpense } from '@/actions/expenses';
 
 const formSchema = z.object({
   amount: z.number().min(0.01),
+  unitPrice: z.number().min(0).optional(),
+  quantity: z.number().min(0).optional(),
   category: z.enum(['feed', 'medication', 'transport', 'utilities', 'salaries', 'other']),
   description: z.string().optional(),
   batchId: z.string().optional(),
@@ -27,15 +29,30 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
   const t = useTranslations('Expenses');
   const [isPending, startTransition] = useTransition();
 
-  const { register, handleSubmit, reset } = useForm<FormValues>({
+  const { register, handleSubmit, reset, watch, setValue } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { 
       amount: editData?.amount || 0, 
+      unitPrice: editData?.unitPrice || 0,
+      quantity: editData?.quantity || 0,
       category: editData?.category || 'other',
       description: editData?.description || '',
       batchId: editData?.batchId || ''
     }
   });
+
+  const watchUnitPrice = watch('unitPrice');
+  const watchQuantity = watch('quantity');
+
+  // Automatically calculate total amount
+  useEffect(() => {
+    if (watchUnitPrice && watchQuantity) {
+      const total = Number(watchUnitPrice) * Number(watchQuantity);
+      if (!isNaN(total)) {
+        setValue('amount', total);
+      }
+    }
+  }, [watchUnitPrice, watchQuantity, setValue]);
 
   const onSubmit = (values: FormValues) => {
     startTransition(async () => {
@@ -75,19 +92,36 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <div className="space-y-2">
-               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('batch')}</label>
-               <select 
-                  {...register('batchId')}
-                  className="w-full h-14 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
-                >
-                  <option value="">{t('generalExpense')}</option>
-                  {batches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                </select>
-             </div>
-             
-             <InputGroup label={t('amount')} icon={<Banknote className="w-5 h-5 text-red-500" />} register={register('amount', { valueAsNumber: true })} type="number" />
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('batch')}</label>
+            <select 
+              {...register('batchId')}
+              className="w-full h-14 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+            >
+              <option value="">{t('generalExpense')}</option>
+              {batches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+             <InputGroup 
+               label={t('unitPrice')} 
+               icon={<Banknote className="w-5 h-5 text-emerald-500" />} 
+               register={register('unitPrice', { valueAsNumber: true })} 
+               type="number" 
+             />
+             <InputGroup 
+               label={t('quantity')} 
+               icon={<Hash className="w-5 h-5 text-blue-500" />} 
+               register={register('quantity', { valueAsNumber: true })} 
+               type="number" 
+             />
+             <InputGroup 
+               label={t('amount')} 
+               icon={<DollarSign className="w-5 h-5 text-red-500" />} 
+               register={register('amount', { valueAsNumber: true })} 
+               type="number" 
+             />
           </div>
 
           <InputGroup label={t('description')} icon={<FileText className="w-5 h-5 text-slate-400" />} register={register('description')} />
@@ -98,7 +132,7 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
           disabled={isPending}
           className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-3xl flex items-center justify-center gap-4 active:scale-95 transition-all shadow-2xl shadow-slate-200"
         >
-          {isPending ? <Loader2 className="w-8 h-8 animate-spin" /> : <><Wallet className="w-7 h-7" /><span>{t('save')}</span></>}
+          {isPending ? <Loader2 className="w-8 h-8 animate-spin" /> : <><Save className="w-7 h-7" /><span>{t('save')}</span></>}
         </button>
       </form>
     </div>

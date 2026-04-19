@@ -3,9 +3,12 @@
 import { db } from "@/db";
 import { expenses } from "@/db/schema";
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
 
 export async function addExpense(data: {
   amount: number;
+  unitPrice?: number;
+  quantity?: number;
   category: "feed" | "medication" | "transport" | "utilities" | "salaries" | "other";
   description?: string;
   batchId?: string;
@@ -25,8 +28,6 @@ export async function addExpense(data: {
   }
 }
 
-import { eq } from "drizzle-orm";
-
 export async function deleteExpense(id: string) {
   try {
     await db.delete(expenses).where(eq(expenses.id, id));
@@ -38,7 +39,14 @@ export async function deleteExpense(id: string) {
   }
 }
 
-export async function updateExpense(id: string, data: Partial<{ amount: number; description: string }>) {
+export async function updateExpense(id: string, data: Partial<{ 
+  amount: number; 
+  unitPrice?: number;
+  quantity?: number;
+  category: "feed" | "medication" | "transport" | "utilities" | "salaries" | "other";
+  description: string;
+  batchId?: string;
+}>) {
   try {
     await db.update(expenses).set(data).where(eq(expenses.id, id));
     revalidatePath("/", "layout");
