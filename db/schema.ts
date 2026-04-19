@@ -44,7 +44,7 @@ export const clients = sqliteTable('clients', {
 // 5. Sales Management
 export const sales = sqliteTable('sales', {
   id: text('id').primaryKey(),
-  batchId: text('batch_id').references(() => batches.id).notNull(),
+  batchId: text('batch_id').references(() => batches.id, { onDelete: 'cascade' }).notNull(),
   clientId: text('client_id').references(() => clients.id),
   date: integer('date', { mode: 'timestamp' }).notNull(),
   quantity: integer('quantity').notNull(),
@@ -73,5 +73,5 @@ export const expenses = sqliteTable('expenses', {
   quantity: real('quantity'),
   category: text('category', { enum: ['feed', 'medication', 'transport', 'utilities', 'salaries', 'other'] }).notNull(),
   description: text('description'),
-  batchId: text('batch_id').references(() => batches.id), // Optional link to a specific batch
+  batchId: text('batch_id').references(() => batches.id, { onDelete: 'cascade' }), // Optional link to a specific batch
 });
