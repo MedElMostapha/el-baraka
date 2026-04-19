@@ -1,4 +1,11 @@
 {
+  "Common": {
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "edit": "Modifier"
+  },
   "Dashboard": {
     "subtitle": "Gestion Avicole",
     "connectivity": "Connectivité",

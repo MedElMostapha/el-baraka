@@ -1,4 +1,11 @@
 {
+  "Common": {
+    "confirm": "تأكيد",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "save": "حفظ",
+    "edit": "تعديل"
+  },
   "Dashboard": {
     "subtitle": "إدارة الدواجن",
     "connectivity": "الاتصال",

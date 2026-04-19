@@ -4,6 +4,8 @@ import React from 'react';
 import { Modal } from './Modal';
 import { Loader2 } from 'lucide-react';
 
+import { useTranslations } from 'next-intl';
+
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -14,8 +16,12 @@ interface ConfirmModalProps {
   cancelText?: string;
 }
 
-export function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmText = "Confirm", cancelText = "Cancel" }: ConfirmModalProps) {
+export function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confirmText, cancelText }: ConfirmModalProps) {
+  const t = useTranslations('Common');
   const [isPending, setIsPending] = React.useState(false);
+
+  const displayConfirm = confirmText || t('confirm');
+  const displayCancel = cancelText || t('cancel');
 
   const handleConfirm = async () => {
     setIsPending(true);
@@ -33,14 +39,14 @@ export function ConfirmModal({ isOpen, onClose, onConfirm, title, message, confi
           disabled={isPending}
           className="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition-colors disabled:opacity-50"
         >
-          {cancelText}
+          {displayCancel}
         </button>
         <button 
           onClick={handleConfirm}
           disabled={isPending}
           className="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-2xl transition-colors flex items-center justify-center disabled:opacity-50 shadow-lg shadow-red-200"
         >
-          {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : confirmText}
+          {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : displayConfirm}
         </button>
       </div>
     </Modal>
