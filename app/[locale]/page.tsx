@@ -44,8 +44,16 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   const feedResult = await db.select({ sum: sql<number>`sum(${dailyLogs.feedConsumed})` }).from(dailyLogs);
   const totalFeed = feedResult[0]?.sum || 0;
 
-  // 4. Stock Alerts (Low stock < 5 units)
-  const lowStock = await db.select().from(inventory).where(sql`${inventory.quantity} < 5`);
+  // 4. Stock Alerts (Group by category, sum quantities, alert if total < 5)
+  const lowStockGrouped = await db
+    .select({
+      category: inventory.category,
+      totalQuantity: sql<number>`sum(${inventory.quantity})`,
+      unit: sql<string>`min(${inventory.unit})`,
+    })
+    .from(inventory)
+    .groupBy(inventory.category)
+    .having(sql`sum(${inventory.quantity}) < 5`);
 
   // 5. Chart Data Logic based on Range
   const now = new Date();
@@ -87,17 +95,17 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
         <PageHeader title="EL BARAKA" subtitle={t('subtitle')} />
 
         {/* Stock Alerts - Top of page for visibility */}
-        {lowStock.length > 0 && (
+        {lowStockGrouped.length > 0 && (
           <div className="bg-red-50 p-6 rounded-[2rem] border border-red-100 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
              <div className="flex items-center gap-2 text-red-600">
                 <AlertCircle className="w-5 h-5" />
                 <span className="text-xs font-black uppercase tracking-widest">{t('lowStockAlert')}</span>
              </div>
              <div className="space-y-2">
-                {lowStock.map(item => (
-                  <div key={item.id} className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-red-50">
-                    <span className="font-bold text-slate-700">{item.name}</span>
-                    <span className="text-red-500 font-black">{item.quantity} {item.unit}</span>
+                {lowStockGrouped.map(item => (
+                  <div key={item.category} className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-red-50">
+                    <span className="font-bold text-slate-700">{ti(item.category)}</span>
+                    <span className="text-red-500 font-black">{item.totalQuantity} {item.unit}</span>
                   </div>
                 ))}
              </div>
