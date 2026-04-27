@@ -23,7 +23,8 @@
     "cashOnHand": "Encaissé (Net)",
     "filter7d": "7J",
     "filter30d": "30J",
-    "filterAll": "TOUT"
+    "filterAll": "TOUT",
+    "lowStockAlert": "Alertes Stock Bas"
   },
   "DailyTracking": {
     "title": "Suivi Journalier",
@@ -123,6 +124,7 @@
     "inventory": "Stocks",
     "sales": "Ventes",
     "expenses": "Dépenses",
+    "debts": "Dettes",
     "settings": "Réglages"
   },
   "Settings": {
@@ -209,5 +211,35 @@
     "expensesLabel": "Dépenses",
     "feedLabel": "Aliment",
     "mortalityLabel": "Mortalité"
+  },
+  "Debts": {
+    "title": "Gestion des Dettes",
+    "subtitle": "Emprunts & Prêts",
+    "addNew": "Nouvelle Dette",
+    "personName": "Nom de la personne",
+    "amount": "Montant",
+    "description": "Description (Optionnel)",
+    "type": "Type",
+    "borrowing": "J'ai emprunté",
+    "lending": "J'ai prêté",
+    "save": "Enregistrer la dette",
+    "currency": "MRU",
+    "filterAll": "Tout",
+    "filterBorrowing": "Emprunts",
+    "filterLending": "Prêts",
+    "filterPending": "En cours",
+    "filterPaid": "Réglées",
+    "empty": "Aucune dette trouvée",
+    "editTitle": "Modifier la dette",
+    "deleteTitle": "Supprimer la dette",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette dette ?",
+    "markPaid": "Marquer payée",
+    "statusPending": "En cours",
+    "statusPaid": "Réglée",
+    "iOwe": "Je dois",
+    "owesMe": "On me doit",
+    "totalBorrowed": "Total emprunté",
+    "totalLent": "Total prêté",
+    "date": "Date"
   }
 }

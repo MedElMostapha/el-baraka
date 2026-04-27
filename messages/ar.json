@@ -23,7 +23,8 @@
     "cashOnHand": "النقد المتوفر (صافي)",
     "filter7d": "7 أيام",
     "filter30d": "30 يوم",
-    "filterAll": "الكل"
+    "filterAll": "الكل",
+    "lowStockAlert": "تنبيهات المخزون المنخفض"
   },
   "DailyTracking": {
     "title": "المتابعة اليومية",
@@ -123,6 +124,7 @@
     "inventory": "المخزون",
     "sales": "المبيعات",
     "expenses": "المصاريف",
+    "debts": "الديون",
     "settings": "الإعدادات"
   },
   "Settings": {
@@ -209,5 +211,35 @@
     "expensesLabel": "مصاريف",
     "feedLabel": "العلف",
     "mortalityLabel": "النفوق"
+  },
+  "Debts": {
+    "title": "إدارة الديون",
+    "subtitle": "القروض والسلف",
+    "addNew": "دين جديد",
+    "personName": "اسم الشخص",
+    "amount": "المبلغ",
+    "description": "الوصف (اختياري)",
+    "type": "النوع",
+    "borrowing": "اقترضت",
+    "lending": "أقرضت",
+    "save": "تسجيل الدين",
+    "currency": "أوقية",
+    "filterAll": "الكل",
+    "filterBorrowing": "اقتراض",
+    "filterLending": "إقراض",
+    "filterPending": "قيد التسديد",
+    "filterPaid": "مسددة",
+    "empty": "لا توجد ديون",
+    "editTitle": "تعديل الدين",
+    "deleteTitle": "حذف الدين",
+    "deleteConfirm": "هل أنت متأكد من حذف هذا الدين؟",
+    "markPaid": "تسديد",
+    "statusPending": "قيد التسديد",
+    "statusPaid": "مسدد",
+    "iOwe": "أنا مدين",
+    "owesMe": "مدين لي",
+    "totalBorrowed": "إجمالي الاقتراض",
+    "totalLent": "إجمالي الإقراض",
+    "date": "التاريخ"
   }
 }

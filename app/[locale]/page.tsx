@@ -86,6 +86,24 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
       <div className="space-y-10">
         <PageHeader title="EL BARAKA" subtitle={t('subtitle')} />
 
+        {/* Stock Alerts - Top of page for visibility */}
+        {lowStock.length > 0 && (
+          <div className="bg-red-50 p-6 rounded-[2rem] border border-red-100 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
+             <div className="flex items-center gap-2 text-red-600">
+                <AlertCircle className="w-5 h-5" />
+                <span className="text-xs font-black uppercase tracking-widest">{t('lowStockAlert')}</span>
+             </div>
+             <div className="space-y-2">
+                {lowStock.map(item => (
+                  <div key={item.id} className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-red-50">
+                    <span className="font-bold text-slate-700">{item.name}</span>
+                    <span className="text-red-500 font-black">{item.quantity} {item.unit}</span>
+                  </div>
+                ))}
+             </div>
+          </div>
+        )}
+
         {/* Filters */}
         <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl w-fit">
           {[
@@ -151,23 +169,7 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
           </div>
         </div>
 
-        {/* Stock Alerts */}
-        {lowStock.length > 0 && (
-          <div className="bg-red-50 p-6 rounded-[2rem] border border-red-100 space-y-4">
-             <div className="flex items-center gap-2 text-red-600">
-                <AlertCircle className="w-5 h-5" />
-                <span className="text-xs font-black uppercase tracking-widest">Alertes Stock Bas</span>
-             </div>
-             <div className="space-y-2">
-                {lowStock.map(item => (
-                  <div key={item.id} className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-red-50">
-                    <span className="font-bold text-slate-700">{item.name}</span>
-                    <span className="text-red-500 font-black">{item.quantity} {item.unit}</span>
-                  </div>
-                ))}
-             </div>
-          </div>
-        )}
+
 
         <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
           <DashboardCharts 

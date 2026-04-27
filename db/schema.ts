@@ -75,3 +75,15 @@ export const expenses = sqliteTable('expenses', {
   description: text('description'),
   batchId: text('batch_id').references(() => batches.id, { onDelete: 'cascade' }), // Optional link to a specific batch
 });
+
+// 8. Debt Management (Personal borrowing/lending)
+export const debts = sqliteTable('debts', {
+  id: text('id').primaryKey(),
+  personName: text('person_name').notNull(),
+  amount: real('amount').notNull(),
+  type: text('type', { enum: ['borrowing', 'lending'] }).notNull(), // borrowing = I owe them, lending = they owe me
+  description: text('description'),
+  date: integer('date', { mode: 'timestamp' }).notNull(),
+  isPaid: integer('is_paid', { mode: 'boolean' }).default(false).notNull(),
+  paidDate: integer('paid_date', { mode: 'timestamp' }),
+});
