@@ -33,7 +33,7 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      batchId: '',
+      batchId: batches.length > 0 ? batches[0].id : '',
       mortality: 0,
       feedConsumed: 0,
       waterConsumed: 0,
