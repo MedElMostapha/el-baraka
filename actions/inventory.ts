@@ -4,6 +4,8 @@ import { db } from "@/db";
 import { inventory } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 
+import { eq, and } from "drizzle-orm";
+
 export async function addInventoryItem(data: {
   name: string;
   category: 'feed' | 'medicine' | 'packaging' | 'other';
@@ -11,11 +13,27 @@ export async function addInventoryItem(data: {
   unit: string;
 }) {
   try {
-    await db.insert(inventory).values({
-      id: crypto.randomUUID(),
-      ...data,
-      lastUpdated: new Date(),
-    });
+    const existing = await db.select().from(inventory).where(
+      and(
+        eq(inventory.name, data.name),
+        eq(inventory.category, data.category)
+      )
+    );
+
+    if (existing.length > 0) {
+      await db.update(inventory)
+        .set({ 
+          quantity: existing[0].quantity + data.quantity, 
+          lastUpdated: new Date() 
+        })
+        .where(eq(inventory.id, existing[0].id));
+    } else {
+      await db.insert(inventory).values({
+        id: crypto.randomUUID(),
+        ...data,
+        lastUpdated: new Date(),
+      });
+    }
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
@@ -24,7 +42,7 @@ export async function addInventoryItem(data: {
   }
 }
 
-import { eq } from "drizzle-orm";
+
 
 export async function deleteInventoryItem(id: string) {
   try {

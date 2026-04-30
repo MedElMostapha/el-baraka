@@ -9,7 +9,7 @@ import { Package, Plus, Save, Loader2, Tag } from 'lucide-react';
 import { addInventoryItem, updateInventoryItem } from '@/actions/inventory';
 
 const formSchema = z.object({
-  name: z.string().min(1),
+  name: z.string().optional(),
   category: z.enum(['feed', 'medicine', 'packaging', 'other']),
   quantity: z.number().min(0),
   unit: z.string().min(1),
@@ -23,19 +23,21 @@ export function InventoryForm({ onComplete, editData }: { onComplete: () => void
 
   const { register, handleSubmit, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { 
-      name: editData?.name || '', 
-      category: editData?.category || 'feed', 
-      quantity: editData?.quantity || 0, 
-      unit: editData?.unit || 'kg' 
+    defaultValues: {
+      name: editData?.name || '',
+      category: editData?.category || 'feed',
+      quantity: editData?.quantity || 0,
+      unit: editData?.unit || 'kg'
     }
   });
 
   const onSubmit = (values: FormValues) => {
     startTransition(async () => {
-      const result = editData 
-        ? await updateInventoryItem(editData.id, values)
-        : await addInventoryItem(values);
+      const finalName = values.name && values.name.trim() !== '' ? values.name : (t(values.category) || values.category);
+      const finalValues = { ...values, name: finalName };
+      const result = editData
+        ? await updateInventoryItem(editData.id, finalValues)
+        : await addInventoryItem(finalValues as any);
       if (result.success) {
         if (!editData) reset();
         onComplete();
@@ -49,10 +51,10 @@ export function InventoryForm({ onComplete, editData }: { onComplete: () => void
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
           <InputGroup label={t('name')} icon={<Package className="w-5 h-5 text-orange-500" />} register={register('name')} />
-          
-          <SelectGroup 
-            label={t('category')} 
-            icon={<Tag className="w-5 h-5 text-orange-500" />} 
+
+          <SelectGroup
+            label={t('category')}
+            icon={<Tag className="w-5 h-5 text-orange-500" />}
             register={register('category')}
             options={[
               { label: t('feed'), value: 'feed' },
@@ -64,9 +66,9 @@ export function InventoryForm({ onComplete, editData }: { onComplete: () => void
 
           <div className="grid grid-cols-2 gap-4">
             <InputGroup label={t('quantity')} icon={<Package className="w-5 h-5 text-green-500" />} register={register('quantity', { valueAsNumber: true })} type="number" />
-            <SelectGroup 
-              label={t('unit')} 
-              icon={<Plus className="w-5 h-5 text-blue-500" />} 
+            <SelectGroup
+              label={t('unit')}
+              icon={<Plus className="w-5 h-5 text-blue-500" />}
               register={register('unit')}
               options={[
                 { label: 'kg', value: 'kg' },
@@ -81,7 +83,7 @@ export function InventoryForm({ onComplete, editData }: { onComplete: () => void
           </div>
         </div>
 
-        <button 
+        <button
           disabled={isPending}
           className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all"
         >
@@ -105,10 +107,10 @@ function InputGroup({ label, icon, register, type = "text" }: InputGroupProps) {
       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
       <div className="relative">
         <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
-        <input 
+        <input
           type={type}
           {...register}
-          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none" 
+          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
         />
       </div>
     </div>
@@ -128,9 +130,9 @@ function SelectGroup({ label, icon, register, options }: SelectGroupProps) {
       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
       <div className="relative">
         <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
-        <select 
+        <select
           {...register}
-          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none appearance-none" 
+          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none appearance-none"
         >
           {options.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
         </select>

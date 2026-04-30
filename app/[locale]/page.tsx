@@ -14,7 +14,7 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   const t = await getTranslations('Dashboard');
   const ts = await getTranslations('Sales');
   const ti = await getTranslations('Inventory');
-  
+
   // 1. Fetch Active Batches
   const activeBatches = await db
     .select({ id: batches.id, name: batches.name, initialQuantity: batches.initialQuantity })
@@ -26,7 +26,7 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   const expensesResult = await db.select({ sum: sql<number>`sum(${expenses.amount})` }).from(expenses);
   const debtResult = await db.select({ sum: sql<number>`sum(${sales.totalPrice} - ${sales.amountPaid})` }).from(sales);
   const paidResult = await db.select({ sum: sql<number>`sum(${sales.amountPaid})` }).from(sales);
-  
+
   const totalRevenue = revenueResult[0]?.sum || 0;
   const totalExpenses = expensesResult[0]?.sum || 0;
   const totalDebt = debtResult[0]?.sum || 0;
@@ -36,12 +36,12 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   // 3. Performance Stats
   const mortalityResult = await db.select({ sum: sql<number>`sum(${dailyLogs.mortality})` }).from(dailyLogs);
   const totalMortality = mortalityResult[0]?.sum || 0;
-  
+
   const totalBirdsEver = await db.select({ sum: sql<number>`sum(${batches.initialQuantity})` }).from(batches);
   const totalBirds = totalBirdsEver[0]?.sum || 1;
   const mortalityRate = ((totalMortality / totalBirds) * 100).toFixed(1);
 
-  const feedResult = await db.select({ sum: sql<number>`sum(${dailyLogs.feedConsumed})` }).from(dailyLogs);
+  const feedResult = await db.select({ sum: sql<number>`sum(${inventory.quantity})` }).from(inventory).where(eq(inventory.category, 'feed'));
   const totalFeed = feedResult[0]?.sum || 0;
 
   // 4. Stock Alerts (Group by category, sum quantities, alert if total < 5)
@@ -59,7 +59,7 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   const now = new Date();
   let startDate = new Date();
   let days = 7;
-  
+
   if (range === '30d') { startDate.setDate(now.getDate() - 30); days = 30; }
   else if (range === 'all') { startDate = new Date(0); days = 30; } // Fallback to 30 for chart viz
   else { startDate.setDate(now.getDate() - 7); days = 7; }
@@ -97,18 +97,18 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
         {/* Stock Alerts - Top of page for visibility */}
         {lowStockGrouped.length > 0 && (
           <div className="bg-red-50 p-6 rounded-[2rem] border border-red-100 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-             <div className="flex items-center gap-2 text-red-600">
-                <AlertCircle className="w-5 h-5" />
-                <span className="text-xs font-black uppercase tracking-widest">{t('lowStockAlert')}</span>
-             </div>
-             <div className="space-y-2">
-                {lowStockGrouped.map(item => (
-                  <div key={item.category} className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-red-50">
-                    <span className="font-bold text-slate-700">{ti(item.category)}</span>
-                    <span className="text-red-500 font-black">{item.totalQuantity} {item.unit}</span>
-                  </div>
-                ))}
-             </div>
+            <div className="flex items-center gap-2 text-red-600">
+              <AlertCircle className="w-5 h-5" />
+              <span className="text-xs font-black uppercase tracking-widest">{t('lowStockAlert')}</span>
+            </div>
+            <div className="space-y-2">
+              {lowStockGrouped.map(item => (
+                <div key={item.category} className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-red-50">
+                  <span className="font-bold text-slate-700">{ti(item.category)}</span>
+                  <span className="text-red-500 font-black">{item.totalQuantity} {item.unit}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -119,12 +119,11 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
             { id: '30d', label: t('filter30d') },
             { id: 'all', label: t('filterAll') }
           ].map((f) => (
-            <Link 
+            <Link
               key={f.id}
               href={`?range=${f.id}`}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black transition-all ${
-                range === f.id ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-400'
-              }`}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black transition-all ${range === f.id ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-400'
+                }`}
             >
               {f.label}
             </Link>
@@ -140,63 +139,63 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
               <span className="text-[10px] font-black uppercase tracking-widest">{t('revenue')}</span>
             </div>
             <h2 className="text-4xl font-[1000] tracking-tighter mb-1">{totalRevenue.toLocaleString()} <span className="text-xl text-orange-400">{ts('currency')}</span></h2>
-            
+
             <div className="mt-8 grid grid-cols-2 gap-4 border-t border-white/5 pt-6">
-               <div className="flex flex-col">
-                  <span className="text-[9px] font-black opacity-40 uppercase tracking-widest mb-1">{t('expenses')}</span>
-                  <span className="text-lg font-black text-slate-300">-{totalExpenses.toLocaleString()}</span>
-               </div>
-               <div className="flex flex-col">
-                  <span className="text-[9px] font-black opacity-40 uppercase tracking-widest mb-1 text-red-400">{ts('debt')}</span>
-                  <span className="text-lg font-black text-red-400/80">{totalDebt.toLocaleString()}</span>
-               </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] font-black opacity-40 uppercase tracking-widest mb-1">{t('expenses')}</span>
+                <span className="text-lg font-black text-slate-300">-{totalExpenses.toLocaleString()}</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[9px] font-black opacity-40 uppercase tracking-widest mb-1 text-red-400">{ts('debt')}</span>
+                <span className="text-lg font-black text-red-400/80">{totalDebt.toLocaleString()}</span>
+              </div>
             </div>
           </div>
 
           <div className="bg-orange-500 p-8 rounded-[2.5rem] text-white shadow-xl shadow-orange-100 relative overflow-hidden">
-             <div className="absolute right-0 bottom-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mb-8 blur-2xl"></div>
-             <p className="text-[10px] font-black opacity-60 uppercase tracking-widest mb-2">{t('cashOnHand')}</p>
-             <h3 className="text-3xl font-[1000] tracking-tighter">{cashOnHand.toLocaleString()} <span className="text-base font-black opacity-60">{ts('currency')}</span></h3>
+            <div className="absolute right-0 bottom-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mb-8 blur-2xl"></div>
+            <p className="text-[10px] font-black opacity-60 uppercase tracking-widest mb-2">{t('cashOnHand')}</p>
+            <h3 className="text-3xl font-[1000] tracking-tighter">{cashOnHand.toLocaleString()} <span className="text-base font-black opacity-60">{ts('currency')}</span></h3>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-             <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-4">
-                  <AlertCircle className="w-5 h-5 text-red-500" />
-                </div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('mortalityRate')}</p>
-                <p className="text-2xl font-[1000] text-slate-900 tracking-tighter">{mortalityRate}%</p>
-             </div>
-             <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-                <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                  <Package className="w-5 h-5 text-orange-500" />
-                </div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{ti('feed')}</p>
-                <p className="text-2xl font-[1000] text-slate-900 tracking-tighter">{totalFeed}<span className="text-xs ml-1 opacity-40">KG</span></p>
-             </div>
+            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-4">
+                <AlertCircle className="w-5 h-5 text-red-500" />
+              </div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('mortalityRate')}</p>
+              <p className="text-2xl font-[1000] text-slate-900 tracking-tighter">{mortalityRate}%</p>
+            </div>
+            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+              <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
+                <Package className="w-5 h-5 text-orange-500" />
+              </div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{ti('feed')}</p>
+              <p className="text-2xl font-[1000] text-slate-900 tracking-tighter">{totalFeed}<span className="text-xs ml-1 opacity-40">KG</span></p>
+            </div>
           </div>
         </div>
 
 
 
         <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <DashboardCharts 
-            data={chartData} 
-            t={{ 
+          <DashboardCharts
+            data={chartData}
+            t={{
               performance: t('performance'),
               revenue: t('revenue'),
               expenses: t('expenses')
-            }} 
+            }}
           />
         </section>
 
         <section className="animate-in fade-in slide-in-from-bottom-8 duration-700">
           <DailyLogForm batches={activeBatches.map(b => ({ id: b.id, name: b.name }))} />
         </section>
-        
+
         {activeBatches.length === 0 && (
           <div className="bg-orange-500 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-orange-200 relative overflow-hidden">
-             <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+            <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
             <p className="font-black text-xl mb-2">{t('welcome')}</p>
             <p className="text-orange-50 font-bold text-sm leading-relaxed opacity-90">
               {t('welcomeMessage')}

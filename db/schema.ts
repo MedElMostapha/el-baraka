@@ -87,3 +87,9 @@ export const debts = sqliteTable('debts', {
   isPaid: integer('is_paid', { mode: 'boolean' }).default(false).notNull(),
   paidDate: integer('paid_date', { mode: 'timestamp' }),
 });
+
+// 9. App Settings (key-value store)
+export const appSettings = sqliteTable('app_settings', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+});
