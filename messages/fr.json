@@ -56,6 +56,7 @@
     "empty": "Aucun lot enregistré",
     "createError": "Erreur lors de la création du lot",
     "remaining": "Restant",
+    "defaultName": "Lot",
     "editTitle": "Modifier le Lot",
     "deleteTitle": "Supprimer le Lot",
     "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce lot ? Cette action est irréversible.",

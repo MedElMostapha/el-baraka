@@ -1,11 +1,11 @@
 "use client";
 
-import React from 'react';
-import { BatchForm } from './BatchForm';
-import { Bird, Calendar, Hash, ArrowRight, Trash2, Pencil, Loader2 } from "lucide-react";
+import React, { useState, useTransition } from 'react';
+import { Bird, Calendar, Hash, ArrowRight, Trash2, Pencil, Loader2, Plus, Save, CircleDollarSign } from "lucide-react";
 import { useRouter, useParams } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
-import { deleteBatch, updateBatch } from '@/actions/batch';
+import { BatchForm } from './BatchForm';
+import { deleteBatch, createBatch } from '@/actions/batch';
 import { ConfirmModal } from './ConfirmModal';
 import { Modal } from './Modal';
 
@@ -29,34 +29,71 @@ interface BatchTranslations {
   editTitle: string;
   deleteTitle: string;
   deleteConfirm: string;
+  defaultName: string;
+  quantity: string;
+  cost: string;
+  save: string;
 }
 
 export default function BatchesClient({ initialBatches, t }: { initialBatches: Batch[], t: BatchTranslations }) {
   const router = useRouter();
   const params = useParams();
   const locale = params.locale;
-  const [loadingId, setLoadingId] = React.useState<string | null>(null);
-  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
-  const [editBatch, setEditBatch] = React.useState<Batch | null>(null);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [editBatch, setEditBatch] = useState<Batch | null>(null);
+  const [showCreate, setShowCreate] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [quantity, setQuantity] = useState(100);
+  const [unitPrice, setUnitPrice] = useState(0);
 
   const handleComplete = () => {
     router.refresh();
   };
 
+  const handleCreate = () => {
+    startTransition(async () => {
+      await createBatch({
+        name: t.defaultName,
+        breed: 'broiler',
+        arrivalDate: new Date(),
+        initialQuantity: quantity,
+        costPerChick: unitPrice,
+        feedStock: 0,
+      });
+      setShowCreate(false);
+      setQuantity(100);
+      setUnitPrice(0);
+      router.refresh();
+    });
+  };
+
   return (
     <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
       <div className="space-y-10">
-        <PageHeader title={t.title} subtitle={t.subtitle} />
-
-        <section>
-          <BatchForm onComplete={handleComplete} />
-        </section>
+        <div className="flex items-end justify-between">
+          <PageHeader title={t.title} subtitle={t.subtitle} />
+          <button
+            onClick={() => setShowCreate(true)}
+            className="h-12 px-5 bg-slate-900 text-white text-sm font-black rounded-2xl flex items-center gap-2 active:scale-95 transition-all shadow-xl shadow-slate-200"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">{t.addNew}</span>
+          </button>
+        </div>
 
         <section className="space-y-4">
           {initialBatches.length === 0 ? (
             <div className="text-center py-12 bg-white/50 rounded-[2.5rem] border border-dashed border-slate-300">
               <Bird className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-400 font-bold">{t.empty}</p>
+              <p className="text-slate-400 font-bold mb-4">{t.empty}</p>
+              <button
+                onClick={() => setShowCreate(true)}
+                className="h-12 px-6 bg-slate-900 text-white text-sm font-black rounded-2xl flex items-center gap-2 mx-auto active:scale-95 transition-all shadow-xl shadow-slate-200"
+              >
+                <Plus className="w-4 h-4" />
+                <span>{t.addNew}</span>
+              </button>
             </div>
           ) : (
             initialBatches.map((batch) => (
@@ -133,6 +170,49 @@ export default function BatchesClient({ initialBatches, t }: { initialBatches: B
           )}
         </section>
       </div>
+
+      <Modal isOpen={showCreate} onClose={() => setShowCreate(false)} title={t.addNew}>
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.quantity}</label>
+            <div className="relative">
+              <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                <Hash className="w-5 h-5 text-green-500" />
+              </div>
+              <input
+                type="number"
+                min="1"
+                value={quantity}
+                onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
+                className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.cost}</label>
+            <div className="relative">
+              <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                <CircleDollarSign className="w-5 h-5 text-yellow-500" />
+              </div>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                value={unitPrice}
+                onChange={(e) => setUnitPrice(parseFloat(e.target.value) || 0)}
+                className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+              />
+            </div>
+          </div>
+          <button
+            onClick={handleCreate}
+            disabled={isPending || quantity < 1}
+            className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-slate-200 disabled:opacity-50"
+          >
+            {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Save className="w-5 h-5" /><span>{t.save}</span></>}
+          </button>
+        </div>
+      </Modal>
 
       <ConfirmModal 
         isOpen={!!confirmDeleteId}

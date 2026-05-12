@@ -53,7 +53,11 @@ export default async function BatchesPage() {
     remaining: t('remaining'),
     editTitle: t('editTitle'),
     deleteTitle: t('deleteTitle'),
-    deleteConfirm: t('deleteConfirm')
+    deleteConfirm: t('deleteConfirm'),
+    defaultName: t('defaultName'),
+    quantity: t('quantity'),
+    cost: t('cost'),
+    save: t('save'),
   };
 
   return <BatchesClient initialBatches={serializedBatches} t={translations} />;
