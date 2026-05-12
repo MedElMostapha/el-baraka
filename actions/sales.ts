@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { sales, clients, payments, batches, dailyLogs } from "@/db/schema";
 import { revalidatePath } from "next/cache";
-import { eq, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 
 export async function createClient(data: { name: string; phone?: string; address?: string }) {
   try {
@@ -75,6 +75,7 @@ export async function recordSale(data: {
 
 export async function deleteSale(id: string) {
   try {
+    await db.delete(payments).where(eq(payments.saleId, id));
     await db.delete(sales).where(eq(sales.id, id));
     revalidatePath("/", "layout");
     return { success: true };

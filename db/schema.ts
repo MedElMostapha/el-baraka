@@ -8,6 +8,7 @@ export const batches = sqliteTable('batches', {
   arrivalDate: integer('arrival_date', { mode: 'timestamp' }).notNull(),
   initialQuantity: integer('initial_quantity').notNull(),
   costPerChick: real('cost_per_chick').notNull(),
+  feedStock: real('feed_stock').default(0).notNull(),
   status: text('status', { enum: ['active', 'closed'] }).default('active').notNull(),
 });
 
@@ -58,7 +59,7 @@ export const sales = sqliteTable('sales', {
 export const payments = sqliteTable('payments', {
   id: text('id').primaryKey(),
   clientId: text('client_id').references(() => clients.id).notNull(),
-  saleId: text('sale_id').references(() => sales.id), // Optional: link to specific sale
+  saleId: text('sale_id').references(() => sales.id, { onDelete: 'cascade' }), // Optional: link to specific sale
   date: integer('date', { mode: 'timestamp' }).notNull(),
   amount: real('amount').notNull(),
   method: text('method').default('cash').notNull(),
