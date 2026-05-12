@@ -13,6 +13,7 @@ export default async function BatchDetailServerPage({
   const { locale, id } = await params;
   
   const t = await getTranslations('BatchDetails');
+  const tBatches = await getTranslations('Batches');
   const tSales = await getTranslations('Sales');
 
   const batch = await db.query.batches.findFirst({
@@ -96,6 +97,9 @@ export default async function BatchDetailServerPage({
     expensesLabel: t('expensesLabel'),
     feedLabel: t('feedLabel'),
     mortalityLabel: t('mortalityLabel'),
+    breedBroiler: tBatches('breeds.broiler'),
+    breedLayer: tBatches('breeds.layer'),
+    breedOther: tBatches('breeds.other'),
   };
 
   return (

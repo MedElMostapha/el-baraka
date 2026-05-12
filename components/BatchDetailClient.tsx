@@ -15,11 +15,14 @@ import {
   PieChart as PieChartIcon,
   BarChart3,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Package,
+  Plus
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
 import { updateBatch } from '@/actions/batch';
+import { Modal } from '@/components/Modal';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -41,6 +44,7 @@ interface Batch {
   arrivalDate: Date;
   initialQuantity: number;
   costPerChick: number;
+  feedStock: number;
   status: string;
 }
 
@@ -68,12 +72,37 @@ interface BatchDetailClientProps {
 
 const COLORS = ['#f97316', '#64748b', '#ef4444'];
 
+function formatBreed(breed: string | null, t: any): string {
+  if (!breed) return '--';
+  const map: Record<string, string> = {
+    broiler: t.breedBroiler,
+    layer: t.breedLayer,
+    other: t.breedOther,
+  };
+  return map[breed] || breed;
+}
+
 export default function BatchDetailClient({ batch, logs, sales, expenses, stats, t }: BatchDetailClientProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showRechargeModal, setShowRechargeModal] = useState(false);
+  const [rechargeAmount, setRechargeAmount] = useState('');
+
+  const handleRecharge = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const amount = parseFloat(rechargeAmount);
+    if (!amount || amount <= 0) return;
+    
+    setIsUpdating(true);
+    await updateBatch(batch.id, { feedStock: (batch.feedStock || 0) + amount });
+    setRechargeAmount('');
+    setShowRechargeModal(false);
+    setIsUpdating(false);
+    router.refresh();
+  };
 
   const toggleStatus = async () => {
     setIsUpdating(true);
@@ -134,7 +163,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <PageHeader 
             title={batch.name} 
-            subtitle={`${batch.breed || '--'} • ${new Date(batch.arrivalDate).toLocaleDateString()}`} 
+            subtitle={`${formatBreed(batch.breed, t)} • ${new Date(batch.arrivalDate).toLocaleDateString()}`} 
           />
           <div className="flex items-center gap-3">
             <button 
@@ -156,7 +185,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <StatCard 
             icon={<DollarSign className="w-5 h-5" />} 
             label={t.netProfit} 
@@ -190,6 +219,28 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             color="text-blue-600"
             bgColor="bg-blue-50"
           />
+          <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm space-y-3 relative group">
+            <div className={`w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center shadow-inner`}>
+              <Package className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Stock Restant</p>
+              <div className="flex items-baseline gap-1">
+                <span className={`text-lg font-black ${((batch.feedStock || 0) - stats.totalFeed) <= 0 ? 'text-red-500' : 'text-orange-600'}`}>
+                  {((batch.feedStock || 0) - stats.totalFeed).toFixed(1)}
+                </span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase">kg</span>
+              </div>
+            </div>
+            {batch.status === 'active' && (
+              <button 
+                onClick={() => setShowRechargeModal(true)}
+                className="absolute top-4 right-4 w-8 h-8 bg-slate-50 text-slate-400 hover:bg-orange-500 hover:text-white rounded-full flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Charts Section */}
@@ -377,6 +428,34 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
           </div>
         </div>
       </div>
+
+      <Modal 
+        isOpen={showRechargeModal} 
+        onClose={() => setShowRechargeModal(false)} 
+        title="Recharger le Stock d'Aliment"
+      >
+        <form onSubmit={handleRecharge} className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-slate-500 uppercase">Quantité à ajouter (kg)</label>
+            <input 
+              type="number" 
+              step="0.1"
+              value={rechargeAmount}
+              onChange={(e) => setRechargeAmount(e.target.value)}
+              className="w-full h-12 px-4 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all"
+              placeholder="ex: 50"
+              autoFocus
+            />
+          </div>
+          <button 
+            type="submit" 
+            disabled={isUpdating || !rechargeAmount}
+            className="w-full h-12 bg-slate-900 text-white rounded-xl font-black uppercase tracking-wider hover:bg-black transition-all active:scale-95 disabled:opacity-50"
+          >
+            {isUpdating ? 'Chargement...' : 'Confirmer la recharge'}
+          </button>
+        </form>
+      </Modal>
     </main>
   );
 }

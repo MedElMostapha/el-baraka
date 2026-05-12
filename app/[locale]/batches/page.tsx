@@ -85,6 +85,9 @@ export default async function BatchesPage() {
     restockHistory: t('restockHistory'),
     chicks: t('chicks'),
     unit: t('unit'),
+    breedBroiler: t('breeds.broiler'),
+    breedLayer: t('breeds.layer'),
+    breedOther: t('breeds.other'),
   };
 
   return (
