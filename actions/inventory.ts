@@ -1,10 +1,39 @@
 "use server";
 
 import { db } from "@/db";
-import { inventory } from "@/db/schema";
+import { inventory, appSettings } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 
 import { eq, and } from "drizzle-orm";
+
+async function getKgPerSac(): Promise<number> {
+  try {
+    const row = await db.select().from(appSettings).where(eq(appSettings.key, 'kg_per_sac'));
+    return row.length > 0 ? parseFloat(row[0].value) || 0 : 0;
+  } catch {
+    return 0;
+  }
+}
+
+async function upsertInventory(name: string, category: 'feed' | 'medicine' | 'packaging' | 'other', quantity: number, unit: string) {
+  const existing = await db.select().from(inventory).where(
+    and(eq(inventory.name, name), eq(inventory.category, category), eq(inventory.unit, unit))
+  );
+  if (existing.length > 0) {
+    await db.update(inventory)
+      .set({ quantity: existing[0].quantity + quantity, lastUpdated: new Date() })
+      .where(eq(inventory.id, existing[0].id));
+  } else {
+    await db.insert(inventory).values({
+      id: crypto.randomUUID(),
+      name,
+      category,
+      quantity,
+      unit,
+      lastUpdated: new Date(),
+    });
+  }
+}
 
 export async function addInventoryItem(data: {
   name: string;
@@ -13,26 +42,22 @@ export async function addInventoryItem(data: {
   unit: string;
 }) {
   try {
-    const existing = await db.select().from(inventory).where(
-      and(
-        eq(inventory.name, data.name),
-        eq(inventory.category, data.category)
-      )
-    );
-
-    if (existing.length > 0) {
-      await db.update(inventory)
-        .set({ 
-          quantity: existing[0].quantity + data.quantity, 
-          lastUpdated: new Date() 
-        })
-        .where(eq(inventory.id, existing[0].id));
+    if (data.category === 'feed' && data.unit === 'kg') {
+      const kgPerSac = await getKgPerSac();
+      if (kgPerSac > 0) {
+        const fullSacs = Math.floor(data.quantity / kgPerSac);
+        const remainder = data.quantity % kgPerSac;
+        if (fullSacs > 0) {
+          await upsertInventory(data.name, data.category, fullSacs, 'sac');
+        }
+        if (remainder > 0) {
+          await upsertInventory(data.name, data.category, remainder, 'kg');
+        }
+      } else {
+        await upsertInventory(data.name, data.category, data.quantity, data.unit);
+      }
     } else {
-      await db.insert(inventory).values({
-        id: crypto.randomUUID(),
-        ...data,
-        lastUpdated: new Date(),
-      });
+      await upsertInventory(data.name, data.category, data.quantity, data.unit);
     }
     revalidatePath("/", "layout");
     return { success: true };

@@ -34,18 +34,33 @@ export async function createDailyLog(formData: {
 
         const feedItems = await tx.select().from(inventory).where(eq(inventory.category, 'feed'));
 
-        for (const item of feedItems) {
-          let amountToSubtract = formData.feedConsumed;
-          if (item.unit === 'sac' && kgPerSac > 0) {
-            amountToSubtract = formData.feedConsumed / kgPerSac;
+        if (kgPerSac > 0) {
+          const fullSacs = Math.floor(formData.feedConsumed / kgPerSac);
+          const remainderKg = formData.feedConsumed % kgPerSac;
+
+          if (fullSacs > 0) {
+            const sacItem = feedItems.find(i => i.unit === 'sac');
+            if (sacItem) {
+              await tx.update(inventory)
+                .set({ quantity: sql`MAX(0, ${inventory.quantity} - ${fullSacs})`, lastUpdated: new Date() })
+                .where(eq(inventory.id, sacItem.id));
+            }
           }
-          await tx.update(inventory)
-            .set({
-              quantity: sql`MAX(0, ${inventory.quantity} - ${amountToSubtract})`,
-              lastUpdated: new Date()
-            })
-            .where(eq(inventory.id, item.id));
-          break;
+          if (remainderKg > 0) {
+            const kgItem = feedItems.find(i => i.unit === 'kg');
+            if (kgItem) {
+              await tx.update(inventory)
+                .set({ quantity: sql`MAX(0, ${inventory.quantity} - ${remainderKg})`, lastUpdated: new Date() })
+                .where(eq(inventory.id, kgItem.id));
+            }
+          }
+        } else {
+          const kgItem = feedItems.find(i => i.unit === 'kg');
+          if (kgItem) {
+            await tx.update(inventory)
+              .set({ quantity: sql`MAX(0, ${inventory.quantity} - ${formData.feedConsumed})`, lastUpdated: new Date() })
+              .where(eq(inventory.id, kgItem.id));
+          }
         }
       }
 
