@@ -5,33 +5,9 @@ import { batches, inventory, restocks, appSettings } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { eq, and } from "drizzle-orm";
 
-async function getKgPerSac(): Promise<number> {
-  try {
-    const row = await db.select().from(appSettings).where(eq(appSettings.key, 'kg_per_sac'));
-    return row.length > 0 ? parseFloat(row[0].value) || 0 : 0;
-  } catch {
-    return 0;
-  }
-}
-
-async function upsertInventory(name: string, category: 'feed' | 'medicine' | 'packaging' | 'other', quantity: number, unit: string) {
-  const existing = await db.select().from(inventory).where(
-    and(eq(inventory.name, name), eq(inventory.category, category), eq(inventory.unit, unit))
-  );
-  if (existing.length > 0) {
-    await db.update(inventory)
-      .set({ quantity: existing[0].quantity + quantity, lastUpdated: new Date() })
-      .where(eq(inventory.id, existing[0].id));
-  } else {
-    await db.insert(inventory).values({
-      id: crypto.randomUUID(),
-      name,
-      category,
-      quantity,
-      unit,
-      lastUpdated: new Date(),
-    });
-  }
+function toBaseUnit(quantity: number, unit: string, kgPerSac: number): number {
+  if (unit === 'sac' && kgPerSac > 0) return quantity * kgPerSac;
+  return quantity;
 }
 
 export async function createBatch(data: {
@@ -79,18 +55,36 @@ export async function createBatch(data: {
     });
 
     if (data.feedStock && data.feedStock > 0) {
-      const kgPerSac = await getKgPerSac();
-      if (kgPerSac > 0) {
-        const fullSacs = Math.floor(data.feedStock / kgPerSac);
-        const remainder = data.feedStock % kgPerSac;
-        if (fullSacs > 0) {
-          await upsertInventory('Aliment', 'feed', fullSacs, 'sac');
-        }
-        if (remainder > 0) {
-          await upsertInventory('Aliment', 'feed', remainder, 'kg');
+      const kgPerSacRow = await db.select().from(appSettings).where(eq(appSettings.key, 'kg_per_sac'));
+      const kgPerSac = kgPerSacRow.length > 0 ? parseFloat(kgPerSacRow[0].value) || 0 : 0;
+
+      const existing = await db.select().from(inventory).where(
+        and(eq(inventory.name, 'Aliment'), eq(inventory.category, 'feed'))
+      );
+
+      if (existing.length > 0) {
+        const item = existing[0];
+        const existingKg = toBaseUnit(item.quantity, item.unit, kgPerSac);
+        const totalKg = existingKg + data.feedStock;
+
+        if (item.unit === 'sac' && kgPerSac > 0) {
+          await db.update(inventory)
+            .set({ quantity: totalKg / kgPerSac, lastUpdated: new Date() })
+            .where(eq(inventory.id, item.id));
+        } else {
+          await db.update(inventory)
+            .set({ quantity: totalKg, lastUpdated: new Date() })
+            .where(eq(inventory.id, item.id));
         }
       } else {
-        await upsertInventory('Aliment', 'feed', data.feedStock, 'kg');
+        await db.insert(inventory).values({
+          id: crypto.randomUUID(),
+          name: 'Aliment',
+          category: 'feed',
+          quantity: data.feedStock,
+          unit: 'kg',
+          lastUpdated: new Date()
+        });
       }
     }
 

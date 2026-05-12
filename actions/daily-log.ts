@@ -32,34 +32,21 @@ export async function createDailyLog(formData: {
         const kgPerSacRow = await tx.select().from(appSettings).where(eq(appSettings.key, 'kg_per_sac'));
         const kgPerSac = kgPerSacRow.length > 0 ? parseFloat(kgPerSacRow[0].value) || 0 : 0;
 
-        const feedItems = await tx.select().from(inventory).where(eq(inventory.category, 'feed'));
+        const feedItem = (await tx.select().from(inventory).where(eq(inventory.category, 'feed')))[0];
+        if (feedItem) {
+          const existingKg = feedItem.unit === 'sac' && kgPerSac > 0
+            ? feedItem.quantity * kgPerSac
+            : feedItem.quantity;
+          const remainingKg = Math.max(0, existingKg - formData.feedConsumed);
 
-        if (kgPerSac > 0) {
-          const fullSacs = Math.floor(formData.feedConsumed / kgPerSac);
-          const remainderKg = formData.feedConsumed % kgPerSac;
-
-          if (fullSacs > 0) {
-            const sacItem = feedItems.find(i => i.unit === 'sac');
-            if (sacItem) {
-              await tx.update(inventory)
-                .set({ quantity: sql`MAX(0, ${inventory.quantity} - ${fullSacs})`, lastUpdated: new Date() })
-                .where(eq(inventory.id, sacItem.id));
-            }
-          }
-          if (remainderKg > 0) {
-            const kgItem = feedItems.find(i => i.unit === 'kg');
-            if (kgItem) {
-              await tx.update(inventory)
-                .set({ quantity: sql`MAX(0, ${inventory.quantity} - ${remainderKg})`, lastUpdated: new Date() })
-                .where(eq(inventory.id, kgItem.id));
-            }
-          }
-        } else {
-          const kgItem = feedItems.find(i => i.unit === 'kg');
-          if (kgItem) {
+          if (feedItem.unit === 'sac' && kgPerSac > 0) {
             await tx.update(inventory)
-              .set({ quantity: sql`MAX(0, ${inventory.quantity} - ${formData.feedConsumed})`, lastUpdated: new Date() })
-              .where(eq(inventory.id, kgItem.id));
+              .set({ quantity: remainingKg / kgPerSac, lastUpdated: new Date() })
+              .where(eq(inventory.id, feedItem.id));
+          } else {
+            await tx.update(inventory)
+              .set({ quantity: remainingKg, lastUpdated: new Date() })
+              .where(eq(inventory.id, feedItem.id));
           }
         }
       }

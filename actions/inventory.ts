@@ -15,24 +15,9 @@ async function getKgPerSac(): Promise<number> {
   }
 }
 
-async function upsertInventory(name: string, category: 'feed' | 'medicine' | 'packaging' | 'other', quantity: number, unit: string) {
-  const existing = await db.select().from(inventory).where(
-    and(eq(inventory.name, name), eq(inventory.category, category), eq(inventory.unit, unit))
-  );
-  if (existing.length > 0) {
-    await db.update(inventory)
-      .set({ quantity: existing[0].quantity + quantity, lastUpdated: new Date() })
-      .where(eq(inventory.id, existing[0].id));
-  } else {
-    await db.insert(inventory).values({
-      id: crypto.randomUUID(),
-      name,
-      category,
-      quantity,
-      unit,
-      lastUpdated: new Date(),
-    });
-  }
+function toBaseUnit(quantity: number, unit: string, kgPerSac: number): number {
+  if (unit === 'sac' && kgPerSac > 0) return quantity * kgPerSac;
+  return quantity;
 }
 
 export async function addInventoryItem(data: {
@@ -42,22 +27,32 @@ export async function addInventoryItem(data: {
   unit: string;
 }) {
   try {
-    if (data.category === 'feed' && data.unit === 'kg') {
+    const existing = await db.select().from(inventory).where(
+      and(eq(inventory.name, data.name), eq(inventory.category, data.category))
+    );
+
+    if (existing.length > 0) {
+      const item = existing[0];
       const kgPerSac = await getKgPerSac();
-      if (kgPerSac > 0) {
-        const fullSacs = Math.floor(data.quantity / kgPerSac);
-        const remainder = data.quantity % kgPerSac;
-        if (fullSacs > 0) {
-          await upsertInventory(data.name, data.category, fullSacs, 'sac');
-        }
-        if (remainder > 0) {
-          await upsertInventory(data.name, data.category, remainder, 'kg');
-        }
+      const existingKg = toBaseUnit(item.quantity, item.unit, kgPerSac);
+      const addedKg = toBaseUnit(data.quantity, data.unit, kgPerSac);
+      const totalKg = existingKg + addedKg;
+
+      if (item.unit === 'sac' && kgPerSac > 0) {
+        await db.update(inventory)
+          .set({ quantity: totalKg / kgPerSac, lastUpdated: new Date() })
+          .where(eq(inventory.id, item.id));
       } else {
-        await upsertInventory(data.name, data.category, data.quantity, data.unit);
+        await db.update(inventory)
+          .set({ quantity: totalKg, lastUpdated: new Date() })
+          .where(eq(inventory.id, item.id));
       }
     } else {
-      await upsertInventory(data.name, data.category, data.quantity, data.unit);
+      await db.insert(inventory).values({
+        id: crypto.randomUUID(),
+        ...data,
+        lastUpdated: new Date(),
+      });
     }
     revalidatePath("/", "layout");
     return { success: true };
