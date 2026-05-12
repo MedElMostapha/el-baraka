@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useTransition } from 'react';
-import { Bird, Calendar, Hash, Plus, Save, Loader2, CircleDollarSign, History } from "lucide-react";
+import React, { useState, useTransition, useMemo } from 'react';
+import { Bird, Calendar, Hash, Plus, Save, Loader2, CircleDollarSign, History, Filter } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
 import { createBatch } from '@/actions/batch';
@@ -47,6 +47,10 @@ interface BatchTranslations {
   breedBroiler: string;
   breedLayer: string;
   breedOther: string;
+  filterAll: string;
+  filterToday: string;
+  filterWeek: string;
+  filterMonth: string;
 }
 
 function formatBreed(breed: string | null, t: BatchTranslations): string {
@@ -75,6 +79,31 @@ export default function BatchesClient({
   const [isPending, startTransition] = useTransition();
   const [newQuantity, setNewQuantity] = useState(100);
   const [newUnitPrice, setNewUnitPrice] = useState(0);
+  const [restockFilter, setRestockFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
+
+  const filteredRestocks = useMemo(() => {
+    const now = new Date();
+    return restocks.filter((r) => {
+      const d = new Date(r.date);
+      if (restockFilter === 'today') {
+        return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      }
+      if (restockFilter === 'week') {
+        return d >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      }
+      if (restockFilter === 'month') {
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      }
+      return true;
+    });
+  }, [restocks, restockFilter]);
+
+  const restockFilters = [
+    { id: 'all' as const, label: t.filterAll },
+    { id: 'today' as const, label: t.filterToday },
+    { id: 'week' as const, label: t.filterWeek },
+    { id: 'month' as const, label: t.filterMonth },
+  ];
 
   const handleCreate = () => {
     startTransition(async () => {
@@ -167,8 +196,30 @@ export default function BatchesClient({
               </div>
               <h2 className="font-black text-slate-800 tracking-tight text-lg">{t.restockHistory}</h2>
             </div>
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-2xl border border-slate-100">
+                <Filter className="w-4 h-4 text-slate-400 ml-2" />
+                {restockFilters.map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setRestockFilter(f.id)}
+                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                      restockFilter === f.id
+                        ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
+                        : 'text-slate-500 hover:bg-slate-100'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
-              {restocks.map((r, i) => (
+              {filteredRestocks.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-slate-400 font-bold text-sm">{t.empty}</p>
+                </div>
+              ) : filteredRestocks.map((r, i) => (
                 <div
                   key={r.id}
                   onClick={() => router.push(`/batches/${r.batchId}`)}
