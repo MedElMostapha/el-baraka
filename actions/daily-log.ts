@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { dailyLogs, inventory, batches, sales } from "@/db/schema";
+import { dailyLogs, inventory, batches, sales, appSettings } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { eq, sql } from "drizzle-orm";
 
@@ -29,12 +29,24 @@ export async function createDailyLog(formData: {
 
       // 2. Subtract feed from inventory if any was consumed
       if (formData.feedConsumed > 0) {
-        await tx.update(inventory)
-          .set({ 
-            quantity: sql`MAX(0, ${inventory.quantity} - ${formData.feedConsumed})`,
-            lastUpdated: new Date()
-          })
-          .where(eq(inventory.category, 'feed'));
+        const kgPerSacRow = await tx.select().from(appSettings).where(eq(appSettings.key, 'kg_per_sac'));
+        const kgPerSac = kgPerSacRow.length > 0 ? parseFloat(kgPerSacRow[0].value) || 0 : 0;
+
+        const feedItems = await tx.select().from(inventory).where(eq(inventory.category, 'feed'));
+
+        for (const item of feedItems) {
+          let amountToSubtract = formData.feedConsumed;
+          if (item.unit === 'sac' && kgPerSac > 0) {
+            amountToSubtract = formData.feedConsumed / kgPerSac;
+          }
+          await tx.update(inventory)
+            .set({
+              quantity: sql`MAX(0, ${inventory.quantity} - ${amountToSubtract})`,
+              lastUpdated: new Date()
+            })
+            .where(eq(inventory.id, item.id));
+          break;
+        }
       }
 
       // 3. Auto-close batch if fully sold/died
