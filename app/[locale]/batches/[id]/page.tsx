@@ -100,6 +100,7 @@ export default async function BatchDetailServerPage({
     breedBroiler: tBatches('breeds.broiler'),
     breedLayer: tBatches('breeds.layer'),
     breedOther: tBatches('breeds.other'),
+    batchName: tBatches('defaultName'),
   };
 
   return (

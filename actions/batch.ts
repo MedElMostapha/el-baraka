@@ -31,7 +31,7 @@ export async function createBatch(data: {
       batchId = crypto.randomUUID();
       await db.insert(batches).values({
         id: batchId,
-        name: data.name,
+        name: data.name || 'lot',
         breed: data.breed,
         arrivalDate: new Date(data.arrivalDate),
         initialQuantity: data.initialQuantity,

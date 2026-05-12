@@ -79,7 +79,7 @@ export default function BatchesClient({
   const handleCreate = () => {
     startTransition(async () => {
       await createBatch({
-        name: t.defaultName,
+        name: '',
         breed: 'broiler',
         arrivalDate: new Date(),
         initialQuantity: newQuantity,
@@ -118,7 +118,7 @@ export default function BatchesClient({
                   <Bird className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="font-black text-slate-800 text-lg tracking-tight">{activeBatch.name}</h3>
+                  <h3 className="font-black text-slate-800 text-lg tracking-tight">{t.defaultName}</h3>
                   <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide mt-1">
                     <Bird className="w-3.5 h-3.5 text-orange-400" />
                     {formatBreed(activeBatch.breed, t)}
@@ -181,7 +181,7 @@ export default function BatchesClient({
                       <Plus className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="font-bold text-slate-800 text-sm">{r.batchName || t.defaultName}</p>
+                      <p className="font-bold text-slate-800 text-sm">{t.defaultName}</p>
                       {r.batchBreed && <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{formatBreed(r.batchBreed, t)}</p>}
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
                         {new Date(r.date).toLocaleDateString()}

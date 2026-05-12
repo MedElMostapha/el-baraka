@@ -162,7 +162,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <PageHeader 
-            title={batch.name} 
+            title={batch.name === 'lot' ? t.batchName : batch.name} 
             subtitle={`${formatBreed(batch.breed, t)} • ${new Date(batch.arrivalDate).toLocaleDateString()}`} 
           />
           <div className="flex items-center gap-3">
