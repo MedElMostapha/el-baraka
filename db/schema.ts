@@ -89,7 +89,16 @@ export const debts = sqliteTable('debts', {
   paidDate: integer('paid_date', { mode: 'timestamp' }),
 });
 
-// 9. App Settings (key-value store)
+// 9. Restock History (log of each batch restock event)
+export const restocks = sqliteTable('restocks', {
+  id: text('id').primaryKey(),
+  batchId: text('batch_id').references(() => batches.id, { onDelete: 'cascade' }).notNull(),
+  quantity: integer('quantity').notNull(),
+  costPerChick: real('cost_per_chick').notNull(),
+  date: integer('date', { mode: 'timestamp' }).notNull(),
+});
+
+// 10. App Settings (key-value store)
 export const appSettings = sqliteTable('app_settings', {
   key: text('key').primaryKey(),
   value: text('value').notNull(),
