@@ -89,6 +89,7 @@ export default async function BatchesPage() {
     filterToday: t('filterToday'),
     filterWeek: t('filterWeek'),
     filterMonth: t('filterMonth'),
+    filterCustom: t('filterCustom'),
     breedBroiler: t('breeds.broiler'),
     breedLayer: t('breeds.layer'),
     breedOther: t('breeds.other'),

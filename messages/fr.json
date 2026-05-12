@@ -56,6 +56,7 @@
     "filterToday": "Aujourd'hui",
     "filterWeek": "Cette semaine",
     "filterMonth": "Ce mois",
+    "filterCustom": "Date",
     "status": "Statut",
     "active": "En cours",
     "closed": "Terminé",

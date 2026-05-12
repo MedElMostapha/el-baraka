@@ -51,6 +51,7 @@ interface BatchTranslations {
   filterToday: string;
   filterWeek: string;
   filterMonth: string;
+  filterCustom: string;
 }
 
 function formatBreed(breed: string | null, t: BatchTranslations): string {
@@ -79,7 +80,8 @@ export default function BatchesClient({
   const [isPending, startTransition] = useTransition();
   const [newQuantity, setNewQuantity] = useState(100);
   const [newUnitPrice, setNewUnitPrice] = useState(0);
-  const [restockFilter, setRestockFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
+  const [restockFilter, setRestockFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all');
+  const [customDate, setCustomDate] = useState('');
 
   const filteredRestocks = useMemo(() => {
     const now = new Date();
@@ -94,16 +96,22 @@ export default function BatchesClient({
       if (restockFilter === 'month') {
         return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
       }
+      if (restockFilter === 'custom' && customDate) {
+        const from = new Date(customDate);
+        from.setHours(0, 0, 0, 0);
+        return d >= from;
+      }
       return true;
     });
-  }, [restocks, restockFilter]);
+  }, [restocks, restockFilter, customDate]);
 
   const restockFilters = [
     { id: 'all' as const, label: t.filterAll },
     { id: 'today' as const, label: t.filterToday },
     { id: 'week' as const, label: t.filterWeek },
     { id: 'month' as const, label: t.filterMonth },
-  ];
+    { id: 'custom' as const, label: t.filterCustom },
+  ] as const;
 
   const handleCreate = () => {
     startTransition(async () => {
@@ -196,7 +204,7 @@ export default function BatchesClient({
               </div>
               <h2 className="font-black text-slate-800 tracking-tight text-lg">{t.restockHistory}</h2>
             </div>
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide flex-wrap">
               <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-2xl border border-slate-100">
                 <Filter className="w-4 h-4 text-slate-400 ml-2" />
                 {restockFilters.map((f) => (
@@ -213,6 +221,14 @@ export default function BatchesClient({
                   </button>
                 ))}
               </div>
+              {restockFilter === 'custom' && (
+                <input
+                  type="date"
+                  value={customDate}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  className="h-10 px-4 rounded-2xl border border-slate-200 bg-white text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-orange-500/20"
+                />
+              )}
             </div>
             <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
               {filteredRestocks.length === 0 ? (
