@@ -51,7 +51,6 @@ interface BatchTranslations {
   filterToday: string;
   filterWeek: string;
   filterMonth: string;
-  filterCustom: string;
 }
 
 function formatBreed(breed: string | null, t: BatchTranslations): string {
@@ -80,13 +79,20 @@ export default function BatchesClient({
   const [isPending, startTransition] = useTransition();
   const [newQuantity, setNewQuantity] = useState(100);
   const [newUnitPrice, setNewUnitPrice] = useState(0);
-  const [restockFilter, setRestockFilter] = useState<'all' | 'today' | 'week' | 'month' | 'custom'>('all');
+  const [restockFilter, setRestockFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
   const [customDate, setCustomDate] = useState('');
 
   const filteredRestocks = useMemo(() => {
     const now = new Date();
     return restocks.filter((r) => {
       const d = new Date(r.date);
+
+      if (customDate) {
+        const from = new Date(customDate);
+        from.setHours(0, 0, 0, 0);
+        return d >= from;
+      }
+
       if (restockFilter === 'today') {
         return d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
       }
@@ -95,11 +101,6 @@ export default function BatchesClient({
       }
       if (restockFilter === 'month') {
         return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-      }
-      if (restockFilter === 'custom' && customDate) {
-        const from = new Date(customDate);
-        from.setHours(0, 0, 0, 0);
-        return d >= from;
       }
       return true;
     });
@@ -110,7 +111,6 @@ export default function BatchesClient({
     { id: 'today' as const, label: t.filterToday },
     { id: 'week' as const, label: t.filterWeek },
     { id: 'month' as const, label: t.filterMonth },
-    { id: 'custom' as const, label: t.filterCustom },
   ] as const;
 
   const handleCreate = () => {
@@ -204,31 +204,44 @@ export default function BatchesClient({
               </div>
               <h2 className="font-black text-slate-800 tracking-tight text-lg">{t.restockHistory}</h2>
             </div>
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide flex-wrap">
-              <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-2xl border border-slate-100">
-                <Filter className="w-4 h-4 text-slate-400 ml-2" />
-                {restockFilters.map((f) => (
-                  <button
-                    key={f.id}
-                    onClick={() => setRestockFilter(f.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                      restockFilter === f.id
-                        ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
-                        : 'text-slate-500 hover:bg-slate-100'
-                    }`}
-                  >
-                    {f.label}
-                  </button>
-                ))}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-2xl border border-slate-100">
+                  <Filter className="w-4 h-4 text-slate-400 ml-2" />
+                  {restockFilters.map((f) => (
+                    <button
+                      key={f.id}
+                      onClick={() => { setRestockFilter(f.id); setCustomDate(''); }}
+                      className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                        restockFilter === f.id && !customDate
+                          ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
+                          : 'text-slate-500 hover:bg-slate-100'
+                      }`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-              {restockFilter === 'custom' && (
+              <div className="relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <Calendar className="w-4 h-4 text-orange-500" />
+                </div>
                 <input
                   type="date"
                   value={customDate}
                   onChange={(e) => setCustomDate(e.target.value)}
-                  className="h-10 px-4 rounded-2xl border border-slate-200 bg-white text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-orange-500/20"
+                  className="w-full h-11 pl-11 pr-4 rounded-2xl border border-slate-200 bg-white text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-orange-500/20"
                 />
-              )}
+                {customDate && (
+                  <button
+                    onClick={() => setCustomDate('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-lg font-black leading-none"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
             </div>
             <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
               {filteredRestocks.length === 0 ? (
