@@ -183,7 +183,7 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
                 <Package className="w-5 h-5 text-orange-500" />
               </div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{ti('feed')}</p>
-              <p className="text-2xl font-[1000] text-slate-900 tracking-tighter">{totalFeed}<span className="text-xs ml-1 opacity-40">KG</span></p>
+              <p className="text-2xl font-[1000] text-slate-900 tracking-tighter">{Math.round(totalFeed)}<span className="text-xs ml-1 opacity-40">KG</span></p>
             </div>
           </div>
         </div>
