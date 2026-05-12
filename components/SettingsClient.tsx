@@ -83,8 +83,8 @@ export default function SettingsClient({ kgPerSac: initialKgPerSac }: { kgPerSac
         {/* Kg Per Sac Setting */}
         <section className="space-y-4">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <Scale className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+              <Scale className="w-5 h-5 text-orange-600" />
             </div>
             <div>
               <h2 className="font-black text-slate-800 tracking-tight">{t('kgPerSac')}</h2>
@@ -92,18 +92,25 @@ export default function SettingsClient({ kgPerSac: initialKgPerSac }: { kgPerSac
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
-            <div className="flex items-center gap-3">
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                value={kgPerSac}
-                onChange={(e) => setKgPerSacLocal(parseFloat(e.target.value) || 0)}
-                className="flex-1 h-14 px-5 rounded-2xl border-none bg-slate-100/50 text-xl font-black text-slate-700 outline-none"
-                placeholder="0"
-              />
-              <span className="text-sm font-black text-slate-400 uppercase tracking-wider">kg</span>
+          <div className="bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40">
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">kg / Sac</label>
+                <div className="relative">
+                  <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <Scale className="w-5 h-5 text-orange-500" />
+                  </div>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={kgPerSac}
+                    onChange={(e) => setKgPerSacLocal(parseFloat(e.target.value) || 0)}
+                    className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+                    placeholder="0"
+                  />
+                </div>
+              </div>
               <button
                 onClick={async () => {
                   setSaving(true);
@@ -112,10 +119,9 @@ export default function SettingsClient({ kgPerSac: initialKgPerSac }: { kgPerSac
                   router.refresh();
                 }}
                 disabled={saving}
-                className="h-14 px-6 bg-blue-500 text-white font-black rounded-2xl flex items-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-200"
+                className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-slate-200"
               >
-                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                <span className="text-sm">{t('save')}</span>
+                {saving ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Save className="w-5 h-5" /><span>{t('save')}</span></>}
               </button>
             </div>
           </div>
