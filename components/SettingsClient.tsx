@@ -1,18 +1,21 @@
 "use client";
 
-import React, { useTransition } from 'react';
+import React, { useTransition, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { Globe, Check, Info } from 'lucide-react';
+import { Globe, Check, Info, Scale, Save, Loader2 } from 'lucide-react';
 import { setLocale } from '@/actions/locale';
+import { setKgPerSac } from '@/actions/settings';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { PageHeader } from '@/components/PageHeader';
 
-export default function SettingsClient() {
+export default function SettingsClient({ kgPerSac: initialKgPerSac }: { kgPerSac: number }) {
   const t = useTranslations('Settings');
   const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [kgPerSac, setKgPerSacLocal] = useState(initialKgPerSac);
+  const [saving, setSaving] = useState(false);
 
   const handleLocaleChange = (newLocale: string) => {
     if (newLocale === locale) return;
@@ -74,6 +77,47 @@ export default function SettingsClient() {
                 </button>
               );
             })}
+          </div>
+        </section>
+
+        {/* Kg Per Sac Setting */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+              <Scale className="w-5 h-5 text-blue-600" />
+            </div>
+            <div>
+              <h2 className="font-black text-slate-800 tracking-tight">{t('kgPerSac')}</h2>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{t('kgPerSacDesc')}</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                value={kgPerSac}
+                onChange={(e) => setKgPerSacLocal(parseFloat(e.target.value) || 0)}
+                className="flex-1 h-14 px-5 rounded-2xl border-none bg-slate-100/50 text-xl font-black text-slate-700 outline-none"
+                placeholder="0"
+              />
+              <span className="text-sm font-black text-slate-400 uppercase tracking-wider">kg</span>
+              <button
+                onClick={async () => {
+                  setSaving(true);
+                  await setKgPerSac(kgPerSac);
+                  setSaving(false);
+                  router.refresh();
+                }}
+                disabled={saving}
+                className="h-14 px-6 bg-blue-500 text-white font-black rounded-2xl flex items-center gap-2 active:scale-95 transition-all shadow-lg shadow-blue-200"
+              >
+                {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                <span className="text-sm">{t('save')}</span>
+              </button>
+            </div>
           </div>
         </section>
 

@@ -17,11 +17,11 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function InventoryForm({ onComplete, editData }: { onComplete: () => void, editData?: any }) {
+export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComplete: () => void, editData?: any, kgPerSac?: number }) {
   const t = useTranslations('Inventory');
   const [isPending, startTransition] = useTransition();
 
-  const { register, handleSubmit, reset } = useForm<FormValues>({
+  const { register, handleSubmit, reset, watch } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: editData?.name || '',
@@ -30,6 +30,10 @@ export function InventoryForm({ onComplete, editData }: { onComplete: () => void
       unit: editData?.unit || 'kg'
     }
   });
+
+  const unit = watch('unit');
+  const quantity = watch('quantity');
+  const kgEquivalent = unit === 'sac' && kgPerSac > 0 ? (quantity || 0) * kgPerSac : null;
 
   const onSubmit = (values: FormValues) => {
     startTransition(async () => {
@@ -81,6 +85,13 @@ export function InventoryForm({ onComplete, editData }: { onComplete: () => void
               ]}
             />
           </div>
+          {kgEquivalent !== null && (
+            <div className="p-3 bg-blue-50 rounded-2xl border border-blue-100 text-center">
+              <span className="text-sm font-black text-blue-600">
+                = {kgEquivalent.toFixed(1)} kg
+              </span>
+            </div>
+          )}
         </div>
 
         <button

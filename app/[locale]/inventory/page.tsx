@@ -3,9 +3,11 @@ import { inventory } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import { getTranslations } from 'next-intl/server';
 import InventoryClient from "@/components/InventoryClient";
+import { getKgPerSac } from '@/actions/settings';
 
 export default async function InventoryPage() {
   const t = await getTranslations('Inventory');
+  const kgPerSac = await getKgPerSac();
   
   let stockItems: {
     id: string;
@@ -45,5 +47,5 @@ export default async function InventoryPage() {
     lastUpdated: t('lastUpdated')
   };
 
-  return <InventoryClient initialItems={stockItems} t={translations} />;
+  return <InventoryClient initialItems={stockItems} t={translations} kgPerSac={kgPerSac} />;
 }

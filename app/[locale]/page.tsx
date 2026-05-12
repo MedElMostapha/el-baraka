@@ -7,6 +7,12 @@ import Link from 'next/link';
 import { PageHeader } from '@/components/PageHeader';
 import { DashboardCharts } from "@/components/DashboardCharts";
 import { TrendingUp, TrendingDown, Users, Package, Bird, AlertCircle } from "lucide-react";
+import { getKgPerSac } from '@/actions/settings';
+
+function toKg(quantity: number, unit: string, kgPerSac: number): number {
+  if (unit === 'sac' && kgPerSac > 0) return quantity * kgPerSac;
+  return quantity;
+}
 
 export default async function Home(props: { searchParams: Promise<{ range?: string }> }) {
   const searchParams = await props.searchParams;
@@ -14,6 +20,7 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   const t = await getTranslations('Dashboard');
   const ts = await getTranslations('Sales');
   const ti = await getTranslations('Inventory');
+  const kgPerSac = await getKgPerSac();
 
   // 1. Fetch Active Batches
   const activeBatches = await db
@@ -41,19 +48,24 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   const totalBirds = totalBirdsEver[0]?.sum || 1;
   const mortalityRate = ((totalMortality / totalBirds) * 100).toFixed(1);
 
-  const feedResult = await db.select({ sum: sql<number>`sum(${inventory.quantity})` }).from(inventory).where(eq(inventory.category, 'feed'));
-  const totalFeed = feedResult[0]?.sum || 0;
+  const allInventory = await db.select().from(inventory);
+  const feedItems = allInventory.filter(i => i.category === 'feed');
+  const totalFeed = feedItems.reduce((sum, i) => sum + toKg(i.quantity, i.unit, kgPerSac), 0);
 
-  // 4. Stock Alerts (Group by category, sum quantities, alert if total < 5)
-  const lowStockGrouped = await db
-    .select({
-      category: inventory.category,
-      totalQuantity: sql<number>`sum(${inventory.quantity})`,
-      unit: sql<string>`min(${inventory.unit})`,
-    })
-    .from(inventory)
-    .groupBy(inventory.category)
-    .having(sql`sum(${inventory.quantity}) < 5`);
+  // 4. Stock Alerts (Group by category with kg-normalized quantities)
+  const groupedByCategory = allInventory.reduce<Record<string, { totalKg: number, units: string[] }>>((acc, i) => {
+    if (!acc[i.category]) acc[i.category] = { totalKg: 0, units: [] };
+    acc[i.category].totalKg += toKg(i.quantity, i.unit, kgPerSac);
+    acc[i.category].units.push(i.unit);
+    return acc;
+  }, {});
+  const lowStockGrouped = Object.entries(groupedByCategory)
+    .filter(([, v]) => v.totalKg < 5)
+    .map(([category, v]) => ({
+      category,
+      totalQuantity: v.totalKg,
+      unit: v.units.includes('sac') ? 'kg' : v.units[0],
+    }));
 
   // 5. Chart Data Logic based on Range
   const now = new Date();

@@ -48,6 +48,7 @@
     "arrivalDate": "Date d'arrivée",
     "quantity": "Quantité initiale",
     "cost": "Coût par poussin",
+    "feedStock": "Stock Aliment Initial (KG)",
     "status": "Statut",
     "active": "En cours",
     "closed": "Terminé",
@@ -138,7 +139,10 @@
     "appInfo": "À propos",
     "appName": "El Baraka",
     "appDescription": "Application de gestion de ferme avicole",
-    "version": "Version"
+    "version": "Version",
+    "kgPerSac": "Poids du Sac d'Aliment",
+    "kgPerSacDesc": "Combien de kg par sac ?",
+    "save": "Enregistrer"
   },
   "Expenses": {
     "title": "Gestion des Dépenses",

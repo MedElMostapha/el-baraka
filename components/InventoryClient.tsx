@@ -29,7 +29,7 @@ interface InventoryTranslations {
   [key: string]: string;
 }
 
-export default function InventoryClient({ initialItems, t }: { initialItems: InventoryItem[], t: InventoryTranslations }) {
+export default function InventoryClient({ initialItems, t, kgPerSac = 0 }: { initialItems: InventoryItem[], t: InventoryTranslations, kgPerSac?: number }) {
   const router = useRouter();
 
   const handleComplete = () => {
@@ -42,12 +42,12 @@ export default function InventoryClient({ initialItems, t }: { initialItems: Inv
         <PageHeader title={t.title} subtitle={t.subtitle} />
 
         <section>
-          <InventoryForm onComplete={handleComplete} />
+          <InventoryForm onComplete={handleComplete} kgPerSac={kgPerSac} />
         </section>
 
         <section className="space-y-4">
           {initialItems.map((item) => (
-            <InventoryItemCard key={item.id} item={item} t={t} router={router} />
+            <InventoryItemCard key={item.id} item={item} t={t} router={router} kgPerSac={kgPerSac} />
           ))}
         </section>
       </div>
@@ -55,7 +55,7 @@ export default function InventoryClient({ initialItems, t }: { initialItems: Inv
   );
 }
 
-function InventoryItemCard({ item, t, router }: { item: InventoryItem, t: InventoryTranslations, router: any }) {
+function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryItem, t: InventoryTranslations, router: any, kgPerSac?: number }) {
   const [expanded, setExpanded] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [confirmDelete, setConfirmDelete] = React.useState(false);
@@ -81,6 +81,11 @@ function InventoryItemCard({ item, t, router }: { item: InventoryItem, t: Invent
                 <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
                   <Layers className="w-3.5 h-3.5" />
                   {item.quantity} {item.unit}
+                  {item.unit === 'sac' && kgPerSac > 0 && (
+                    <span className="text-blue-500 ml-1">
+                      ({(item.quantity * kgPerSac).toFixed(1)} kg)
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
