@@ -1,6 +1,6 @@
 import { DailyLogForm } from "@/components/DailyLogForm";
 import { db } from "@/db";
-import { batches, sales, expenses, dailyLogs, inventory } from "@/db/schema";
+import { batches, sales, expenses, dailyLogs, inventory, restocks } from "@/db/schema";
 import { eq, sql, gte, inArray } from "drizzle-orm";
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
@@ -66,11 +66,22 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   }).from(sales);
   const paidResult = await db.select({ sum: sql<number>`sum(${sales.amountPaid})` }).from(sales);
 
+  const restockCostResult = await db.select({
+    sum: sql<number>`sum(${restocks.quantity} * ${restocks.costPerChick})`,
+  }).from(restocks);
+  const batchCostResult = await db.select({
+    sum: sql<number>`sum(${batches.initialQuantity} * ${batches.costPerChick})`,
+  }).from(batches);
+  const restockCost = restockCostResult[0]?.sum || 0;
+  const batchCost = batchCostResult[0]?.sum || 0;
+  const birdCost = restockCost > 0 ? restockCost : batchCost;
+
   const totalRevenue = revenueResult[0]?.sum || 0;
   const totalExpenses = expensesResult[0]?.sum || 0;
   const totalDebt = debtResult[0]?.sum || 0;
   const totalPaid = paidResult[0]?.sum || 0;
   const cashOnHand = totalPaid - totalExpenses;
+  const netProfit = totalRevenue - totalExpenses - birdCost;
 
   // 3. Performance Stats
   const mortalityResult = await db.select({ sum: sql<number>`sum(${dailyLogs.mortality})` }).from(dailyLogs);
@@ -189,6 +200,16 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
             <p className="dashboard-hero__note">
               {t('cashOnHand')}: {cashOnHand.toLocaleString()} {ts('currency')} · {t('receivables')}: {totalDebt.toLocaleString()} {ts('currency')}
             </p>
+            <div className="dashboard-hero__profit">
+              <span className="dashboard-hero__profit-label">{t('netProfit')}</span>
+              <strong
+                className="dashboard-hero__profit-value"
+                style={netProfit < 0 ? { color: '#f7b2ae' } : undefined}
+              >
+                {netProfit.toLocaleString()} {ts('currency')}
+              </strong>
+              <span className="dashboard-hero__profit-formula">{t('netProfitFormula')}</span>
+            </div>
           </div>
           <div className="dashboard-hero__aside">
             <div className="dashboard-hero__stat">

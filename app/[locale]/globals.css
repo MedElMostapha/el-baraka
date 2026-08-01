@@ -1333,6 +1333,36 @@ button:disabled {
   font-weight: 650;
 }
 
+.dashboard-hero__profit {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 18px;
+}
+
+.dashboard-hero__profit-label {
+  color: #9eb9ab;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.dashboard-hero__profit-value {
+  color: #7fd09b;
+  font-size: 1.35rem;
+  font-weight: 850;
+  letter-spacing: -0.04em;
+}
+
+.dashboard-hero__profit-formula {
+  flex-basis: 100%;
+  color: #d1f2dc;
+  font-size: 0.62rem;
+  font-weight: 650;
+}
+
 .dashboard-hero__note {
   max-width: 430px;
   margin: 18px 0 0;

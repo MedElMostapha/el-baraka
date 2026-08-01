@@ -37,6 +37,8 @@
     "mortalityFormula": "Σ morts ÷ Σ mis en place × 100",
     "feedFormula": "Σ stock d'aliment converti en kg",
     "expensesFormula": "Σ dépenses enregistrées",
+    "netProfit": "Bénéfice Net",
+    "netProfitFormula": "Σ ventes − Σ dépenses − Σ coût des poussins",
     "chartFormula": "Ventes brutes = Σ ventes · Dépenses = Σ dépenses"
   },
   "DailyTracking": {
