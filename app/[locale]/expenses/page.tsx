@@ -8,7 +8,7 @@ import { PageHeader } from '@/components/PageHeader';
 
 export default async function ExpensesPage() {
   const t = await getTranslations('Expenses');
-  
+
   const allExpenses = await db
     .select({
       id: expenses.id,
@@ -25,38 +25,40 @@ export default async function ExpensesPage() {
   const activeBatches = await db.select().from(batches).where(eq(batches.status, 'active'));
 
   return (
-    <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
-      <div className="space-y-10">
+    <main className="page-container">
+      <div className="page-stack">
         <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
-        <section>
-          <ExpenseForm batches={activeBatches} />
-        </section>
+        <div className="workspace-grid">
+          <section>
+            <ExpenseForm batches={activeBatches} />
+          </section>
 
-        <ExpensesListClient 
-          expenses={allExpenses} 
-          batches={activeBatches}
-          t={{
-            currency: t('currency'),
-            filterAll: t('filterAll'),
-            filterToday: t('filterToday'),
-            filterWeek: t('filterWeek'),
-            filterMonth: t('filterMonth'),
-            empty: t('empty'),
-            generalExpense: t('generalExpense'),
-            editTitle: t('editTitle'),
-            deleteTitle: t('deleteTitle'),
-            deleteConfirm: t('deleteConfirm'),
-            categories: {
-              feed: t('categories.feed'),
-              medication: t('categories.medication'),
-              transport: t('categories.transport'),
-              utilities: t('categories.utilities'),
-              salaries: t('categories.salaries'),
-              other: t('categories.other')
-            }
-          }} 
-        />
+          <ExpensesListClient
+            expenses={allExpenses}
+            batches={activeBatches}
+            t={{
+              currency: t('currency'),
+              filterAll: t('filterAll'),
+              filterToday: t('filterToday'),
+              filterWeek: t('filterWeek'),
+              filterMonth: t('filterMonth'),
+              empty: t('empty'),
+              generalExpense: t('generalExpense'),
+              editTitle: t('editTitle'),
+              deleteTitle: t('deleteTitle'),
+              deleteConfirm: t('deleteConfirm'),
+              categories: {
+                feed: t('categories.feed'),
+                medication: t('categories.medication'),
+                transport: t('categories.transport'),
+                utilities: t('categories.utilities'),
+                salaries: t('categories.salaries'),
+                other: t('categories.other')
+              }
+            }}
+          />
+        </div>
       </div>
     </main>
   );

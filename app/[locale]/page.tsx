@@ -6,7 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { PageHeader } from '@/components/PageHeader';
 import { DashboardCharts } from "@/components/DashboardCharts";
-import { TrendingUp, TrendingDown, Users, Package, Bird, AlertCircle } from "lucide-react";
+import { TrendingUp, Package, Bird, AlertCircle } from "lucide-react";
 import { getKgPerSac } from '@/actions/settings';
 
 function toKg(quantity: number, unit: string, kgPerSac: number): number {
@@ -27,6 +27,7 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
     .select({ id: batches.id, name: batches.name, initialQuantity: batches.initialQuantity })
     .from(batches)
     .where(eq(batches.status, "active"));
+  const activeBirdCount = activeBatches.reduce((sum, batch) => sum + batch.initialQuantity, 0);
 
   // 2. Financial Metrics
   const revenueResult = await db.select({ sum: sql<number>`sum(${sales.totalPrice})` }).from(sales);
@@ -102,95 +103,106 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
   })).reverse();
 
   return (
-    <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
-      <div className="space-y-10">
+    <main className="page-container">
+      <div className="page-stack">
         <PageHeader title="EL BARAKA" subtitle={t('subtitle')} />
 
-        {/* Stock Alerts - Top of page for visibility */}
+        <div className="dashboard-toolbar">
+          <div className="dashboard-toolbar__copy">
+            <span className="section-kicker">{t('performance')}</span>
+            <strong>{t('recentActivity')}</strong>
+          </div>
+          <div className="range-switcher" aria-label="Chart range">
+            {[
+              { id: '7d', label: t('filter7d') },
+              { id: '30d', label: t('filter30d') },
+              { id: 'all', label: t('filterAll') }
+            ].map((f) => (
+              <Link key={f.id} href={`?range=${f.id}`} className={range === f.id ? 'is-active' : ''}>
+                {f.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {lowStockGrouped.length > 0 && (
-          <div className="bg-red-50 p-6 rounded-[2rem] border border-red-100 space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
-            <div className="flex items-center gap-2 text-red-600">
-              <AlertCircle className="w-5 h-5" />
-              <span className="text-xs font-black uppercase tracking-widest">{t('lowStockAlert')}</span>
-            </div>
-            <div className="space-y-2">
-              {lowStockGrouped.map(item => (
-                <div key={item.category} className="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-red-50">
-                  <span className="font-bold text-slate-700">{ti(item.category)}</span>
-                  <span className="text-red-500 font-black">{item.totalQuantity} {item.unit}</span>
-                </div>
-              ))}
+          <div className="attention-card">
+            <div>
+              <div className="attention-card__heading">
+                <AlertCircle className="h-4 w-4" />
+                <span>{t('lowStockAlert')}</span>
+              </div>
+              <div className="attention-card__items">
+                {lowStockGrouped.map(item => (
+                  <div key={item.category} className="attention-card__item">
+                    {ti(item.category)}
+                    <strong>{item.totalQuantity} {item.unit}</strong>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
-        {/* Filters */}
-        <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl w-fit">
-          {[
-            { id: '7d', label: t('filter7d') },
-            { id: '30d', label: t('filter30d') },
-            { id: 'all', label: t('filterAll') }
-          ].map((f) => (
-            <Link
-              key={f.id}
-              href={`?range=${f.id}`}
-              className={`px-4 py-2 rounded-xl text-[10px] font-black transition-all ${range === f.id ? 'bg-white text-orange-600 shadow-sm' : 'text-slate-400'
-                }`}
-            >
-              {f.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Financial Overview */}
-        <div className="grid grid-cols-1 gap-4">
-          <div className="bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
-            <div className="absolute right-0 top-0 w-32 h-32 bg-white/5 rounded-full -mr-10 -mt-10 blur-3xl group-hover:bg-white/10 transition-colors"></div>
-            <div className="flex items-center gap-3 mb-4 opacity-60">
-              <TrendingUp className="w-4 h-4 text-orange-400" />
-              <span className="text-[10px] font-black uppercase tracking-widest">{t('revenue')}</span>
+        <section className="dashboard-hero">
+          <div className="dashboard-hero__main">
+            <div className="dashboard-hero__tag"><span /> {t('connectivity')} · {t('cloud')}</div>
+            <p className="dashboard-hero__label">{t('revenue')}</p>
+            <div className="dashboard-hero__value">
+              {totalRevenue.toLocaleString()} <span>{ts('currency')}</span>
             </div>
-            <h2 className="text-4xl font-[1000] tracking-tighter mb-1">{totalRevenue.toLocaleString()} <span className="text-xl text-orange-400">{ts('currency')}</span></h2>
-
-            <div className="mt-8 grid grid-cols-2 gap-4 border-t border-white/5 pt-6">
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black opacity-40 uppercase tracking-widest mb-1">{t('expenses')}</span>
-                <span className="text-lg font-black text-slate-300">-{totalExpenses.toLocaleString()}</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[9px] font-black opacity-40 uppercase tracking-widest mb-1 text-red-400">{ts('debt')}</span>
-                <span className="text-lg font-black text-red-400/80">{totalDebt.toLocaleString()}</span>
-              </div>
+            <p className="dashboard-hero__note">
+              {t('cashOnHand')}: {cashOnHand.toLocaleString()} {ts('currency')} · {totalDebt.toLocaleString()} {ts('debt')}
+            </p>
+          </div>
+          <div className="dashboard-hero__aside">
+            <div className="dashboard-hero__stat">
+              <span className="dashboard-hero__stat-label">{t('cashOnHand')}</span>
+              <strong className="dashboard-hero__stat-value">{cashOnHand.toLocaleString()} {ts('currency')}</strong>
+            </div>
+            <div className="dashboard-hero__stat">
+              <span className="dashboard-hero__stat-label">{t('activeBatches')}</span>
+              <strong className="dashboard-hero__stat-value">{activeBatches.length} · {activeBirdCount}</strong>
+            </div>
+            <div className="dashboard-hero__stat">
+              <span className="dashboard-hero__stat-label">{t('expenses')}</span>
+              <strong className="dashboard-hero__stat-value">-{totalExpenses.toLocaleString()} {ts('currency')}</strong>
             </div>
           </div>
+        </section>
 
-          <div className="bg-orange-500 p-8 rounded-[2.5rem] text-white shadow-xl shadow-orange-100 relative overflow-hidden">
-            <div className="absolute right-0 bottom-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mb-8 blur-2xl"></div>
-            <p className="text-[10px] font-black opacity-60 uppercase tracking-widest mb-2">{t('cashOnHand')}</p>
-            <h3 className="text-3xl font-[1000] tracking-tighter">{cashOnHand.toLocaleString()} <span className="text-base font-black opacity-60">{ts('currency')}</span></h3>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-4">
-                <AlertCircle className="w-5 h-5 text-red-500" />
-              </div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('mortalityRate')}</p>
-              <p className="text-2xl font-[1000] text-slate-900 tracking-tighter">{mortalityRate}%</p>
+        <section className="metric-grid" aria-label="Key metrics">
+          <div className="metric-card">
+            <div className="metric-card__icon" style={{ background: 'var(--orange-soft)', color: 'var(--orange)' }}>
+              <Bird className="h-4 w-4" />
             </div>
-            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
-              <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
-                <Package className="w-5 h-5 text-orange-500" />
-              </div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{ti('feed')}</p>
-              <p className="text-2xl font-[1000] text-slate-900 tracking-tighter">{Math.round(totalFeed)}<span className="text-xs ml-1 opacity-40">KG</span></p>
-            </div>
+            <span className="metric-card__label">{t('activeBatches')}</span>
+            <strong className="metric-card__value">{activeBatches.length}</strong>
           </div>
-        </div>
+          <div className="metric-card">
+            <div className="metric-card__icon" style={{ background: 'var(--red-soft)', color: 'var(--red)' }}>
+              <AlertCircle className="h-4 w-4" />
+            </div>
+            <span className="metric-card__label">{t('mortalityRate')}</span>
+            <strong className="metric-card__value">{mortalityRate}%</strong>
+          </div>
+          <div className="metric-card">
+            <div className="metric-card__icon" style={{ background: 'var(--blue-soft)', color: 'var(--blue)' }}>
+              <Package className="h-4 w-4" />
+            </div>
+            <span className="metric-card__label">{ti('feed')}</span>
+            <strong className="metric-card__value">{Math.round(totalFeed)} <small>kg</small></strong>
+          </div>
+          <div className="metric-card">
+            <div className="metric-card__icon" style={{ background: 'var(--pine-soft)', color: 'var(--pine)' }}>
+              <TrendingUp className="h-4 w-4" />
+            </div>
+            <span className="metric-card__label">{t('expenses')}</span>
+            <strong className="metric-card__value">{totalExpenses.toLocaleString()} <small>{ts('currency')}</small></strong>
+          </div>
+        </section>
 
-
-
-        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="dashboard-lower-grid">
           <DashboardCharts
             data={chartData}
             t={{
@@ -199,20 +211,14 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
               expenses: t('expenses')
             }}
           />
-        </section>
-
-        <section className="animate-in fade-in slide-in-from-bottom-8 duration-700">
           <DailyLogForm batches={activeBatches.map(b => ({ id: b.id, name: b.name }))} />
-        </section>
+        </div>
 
         {activeBatches.length === 0 && (
-          <div className="bg-orange-500 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-orange-200 relative overflow-hidden">
-            <div className="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
-            <p className="font-black text-xl mb-2">{t('welcome')}</p>
-            <p className="text-orange-50 font-bold text-sm leading-relaxed opacity-90">
-              {t('welcomeMessage')}
-            </p>
-            <Link href="/batches" className="mt-6 w-full h-12 bg-white text-orange-600 rounded-2xl font-black text-sm uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center">
+          <div className="empty-state">
+            <p className="section-kicker">{t('welcome')}</p>
+            <p className="mt-3 text-sm font-semibold text-slate-500">{t('welcomeMessage')}</p>
+            <Link href="/batches" className="button-accent mt-6">
               {t('addFirstBatch')}
             </Link>
           </div>

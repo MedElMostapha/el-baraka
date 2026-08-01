@@ -131,13 +131,13 @@ export default function BatchesClient({
   };
 
   return (
-    <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
-      <div className="space-y-10">
+    <main className="page-container">
+      <div className="page-stack">
         <div className="flex items-end justify-between">
           <PageHeader title={t.title} subtitle={t.subtitle} />
           <button
             onClick={() => setShowCreate(true)}
-            className="h-12 px-5 bg-slate-900 text-white text-sm font-black rounded-2xl flex items-center gap-2 active:scale-95 transition-all shadow-xl shadow-slate-200"
+            className="button-primary shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">{t.addNew}</span>
@@ -147,24 +147,24 @@ export default function BatchesClient({
         {activeBatch ? (
           <div
             onClick={() => router.push(`/batches/${activeBatch.id}`)}
-            className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 group active:scale-[0.98] transition-all cursor-pointer hover:border-orange-200"
+            className="record-card space-y-4"
           >
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center shadow-inner text-orange-600">
+                 <div className="record-card__icon" style={{ background: 'var(--orange-soft)', color: 'var(--orange)' }}>
                   <Bird className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="font-black text-slate-800 text-lg tracking-tight">{t.defaultName}</h3>
-                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide mt-1">
+                   <h3 className="record-card__title">{t.defaultName}</h3>
+                   <div className="record-card__meta">
                     <Bird className="w-3.5 h-3.5 text-orange-400" />
                     {formatBreed(activeBatch.breed, t)}
                   </div>
                 </div>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-0.5">{t.remaining}</span>
-                <span className="text-sm font-black px-3 py-1 rounded-xl bg-orange-500 text-white shadow-orange-100 shadow-sm">
+                 <span className="field-label mb-1">{t.remaining}</span>
+                 <span className="rounded-lg bg-orange-500 px-3 py-1 text-sm font-black text-white">
                   {activeBatch.remainingQuantity}
                 </span>
               </div>
@@ -183,12 +183,12 @@ export default function BatchesClient({
             </div>
           </div>
         ) : (
-          <div className="text-center py-12 bg-white/50 rounded-[2.5rem] border border-dashed border-slate-300">
+          <div className="empty-state">
             <Bird className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-400 font-bold mb-4">{t.empty}</p>
+            <p className="mb-4 font-bold text-slate-500">{t.empty}</p>
             <button
               onClick={() => setShowCreate(true)}
-              className="h-12 px-6 bg-slate-900 text-white text-sm font-black rounded-2xl flex items-center gap-2 mx-auto active:scale-95 transition-all shadow-xl shadow-slate-200"
+              className="button-primary mx-auto"
             >
               <Plus className="w-4 h-4" />
               <span>{t.addNew}</span>
@@ -198,25 +198,23 @@ export default function BatchesClient({
 
         {restocks.length > 0 && (
           <section className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                <History className="w-5 h-5 text-orange-600" />
-              </div>
-              <h2 className="font-black text-slate-800 tracking-tight text-lg">{t.restockHistory}</h2>
-            </div>
+             <div className="section-heading">
+               <div className="flex items-center gap-3">
+               <div className="metric-card__icon" style={{ background: 'var(--orange-soft)', color: 'var(--orange)' }}>
+                 <History className="w-5 h-5 text-orange-600" />
+               </div>
+               <h2>{t.restockHistory}</h2>
+               </div>
+             </div>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-2xl border border-slate-100">
-                  <Filter className="w-4 h-4 text-slate-400 ml-2" />
+                 <div className="filter-bar">
+                   <Filter className="ml-2 h-4 w-4 text-slate-400" />
                   {restockFilters.map((f) => (
                     <button
                       key={f.id}
                       onClick={() => { setRestockFilter(f.id); setCustomDate(''); }}
-                      className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                        restockFilter === f.id && !customDate
-                          ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
-                          : 'text-slate-500 hover:bg-slate-100'
-                      }`}
+                       className={`${restockFilter === f.id && !customDate ? 'is-active' : ''} whitespace-nowrap`}
                     >
                       {f.label}
                     </button>
@@ -231,7 +229,7 @@ export default function BatchesClient({
                   type="date"
                   value={customDate}
                   onChange={(e) => setCustomDate(e.target.value)}
-                  className="w-full h-11 pl-11 pr-4 rounded-2xl border border-slate-200 bg-white text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-orange-500/20"
+                   className="field-input h-11 pl-11"
                 />
                 {customDate && (
                   <button
@@ -243,7 +241,7 @@ export default function BatchesClient({
                 )}
               </div>
             </div>
-            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden">
+            <div className="panel overflow-hidden">
               {filteredRestocks.length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-slate-400 font-bold text-sm">{t.empty}</p>
@@ -252,18 +250,18 @@ export default function BatchesClient({
                 <div
                   key={r.id}
                   onClick={() => router.push(`/batches/${r.batchId}`)}
-                  className={`flex items-center justify-between p-4 active:scale-[0.98] transition-all cursor-pointer hover:bg-slate-50 ${
+                     className={`flex cursor-pointer items-center justify-between p-4 transition-all hover:bg-slate-50 ${
                     i < restocks.length - 1 ? 'border-b border-slate-50' : ''
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400">
+                     <div className="record-card__icon h-10 w-10 shrink-0">
                       <Plus className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="font-bold text-slate-800 text-sm">{t.defaultName}</p>
+                       <p className="record-card__title text-sm">{t.defaultName}</p>
                       {r.batchBreed && <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{formatBreed(r.batchBreed, t)}</p>}
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">
+                         <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">
                         {new Date(r.date).toLocaleDateString()}
                       </p>
                     </div>
@@ -282,7 +280,7 @@ export default function BatchesClient({
       <Modal isOpen={showCreate} onClose={() => setShowCreate(false)} title={t.addNew}>
         <div className="space-y-6">
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.quantity}</label>
+             <label className="field-label">{t.quantity}</label>
             <div className="relative">
               <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
                 <Hash className="w-5 h-5 text-green-500" />
@@ -292,12 +290,12 @@ export default function BatchesClient({
                 min="1"
                 value={newQuantity}
                 onChange={(e) => setNewQuantity(parseInt(e.target.value) || 0)}
-                className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+                 className="field-input h-12 pl-12"
               />
             </div>
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t.cost}</label>
+             <label className="field-label">{t.cost}</label>
             <div className="relative">
               <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
                 <CircleDollarSign className="w-5 h-5 text-yellow-500" />
@@ -308,14 +306,14 @@ export default function BatchesClient({
                 min="0"
                 value={newUnitPrice}
                 onChange={(e) => setNewUnitPrice(parseFloat(e.target.value) || 0)}
-                className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+                 className="field-input h-12 pl-12"
               />
             </div>
           </div>
           <button
             onClick={handleCreate}
             disabled={isPending || newQuantity < 1}
-            className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl shadow-slate-200 disabled:opacity-50"
+             className="button-primary w-full disabled:opacity-50"
           >
             {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Save className="w-5 h-5" /><span>{t.save}</span></>}
           </button>

@@ -29,7 +29,7 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-  
+
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,18 +57,21 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto pb-10">
-      <div className="bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40">
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-black text-slate-800 tracking-tight">{t('title')}</h2>
-          <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-            <ClipboardListIcon className="w-5 h-5 text-orange-600" />
+    <div className="w-full">
+      <div className="form-card">
+        <div className="section-heading">
+          <div>
+            <span className="section-kicker">Daily operations</span>
+            <h2>{t('title')}</h2>
+          </div>
+          <div className="metric-card__icon" style={{ background: 'var(--orange-soft)', color: 'var(--orange)' }}>
+            <ClipboardListIcon className="h-4 w-4" />
           </div>
         </div>
-        
+
         {message && (
-          <div className={`p-4 mb-6 rounded-2xl text-center font-bold text-sm animate-in fade-in slide-in-from-top-2 ${
-            message.type === 'success' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'
+          <div className={`mb-6 rounded-xl border p-3 text-center text-sm font-bold ${
+            message.type === 'success' ? 'border-emerald-100 bg-emerald-50 text-emerald-700' : 'border-red-100 bg-red-50 text-red-600'
           }`}>
             {message.text}
           </div>
@@ -76,77 +79,77 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           {/* Batch Selection */}
-          <div className="space-y-3">
-            <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{t('selectBatch')}</label>
+          <div className="space-y-2">
+            <label className="field-label">{t('selectBatch')}</label>
             <div className="relative">
-              <select 
+              <select
                 {...register('batchId')}
-                className="w-full h-16 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 appearance-none focus:ring-2 focus:ring-orange-500/20 transition-all outline-none"
+                className="field-select h-12 appearance-none"
               >
                 <option value="">{t('chooseBatch')}</option>
                 {batches.map((batch) => (
                   <option key={batch.id} value={batch.id}>{batch.name}</option>
                 ))}
               </select>
-              <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
-                <ChevronRight className="w-5 h-5 text-slate-400 rotate-90" />
+              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
+                <ChevronRight className="h-4 w-4 rotate-90 text-slate-400" />
               </div>
             </div>
-            {errors.batchId && <p className="text-red-500 text-[10px] font-bold uppercase tracking-tighter ml-1">{errors.batchId.message}</p>}
+            {errors.batchId && <p className="ml-1 text-[10px] font-bold uppercase tracking-tighter text-red-500">{errors.batchId.message}</p>}
           </div>
 
           {/* Quick Stats Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             {/* Mortality */}
-            <InputBox 
-              label={t('mortality')} 
+            <InputBox
+              label={t('mortality')}
               icon={<Skull className="w-5 h-5 text-red-500" />}
               register={register('mortality', { valueAsNumber: true })}
             />
 
             {/* Feed */}
-            <InputBox 
-              label={t('feed')} 
+            <InputBox
+              label={t('feed')}
               icon={<Utensils className="w-5 h-5 text-orange-500" />}
               register={register('feedConsumed', { valueAsNumber: true })}
               suffix="kg"
             />
 
             {/* Water */}
-            <InputBox 
-              label={t('water')} 
+            <InputBox
+              label={t('water')}
               icon={<Droplets className="w-5 h-5 text-blue-500" />}
               register={register('waterConsumed', { valueAsNumber: true })}
               suffix="L"
             />
 
             {/* Medications */}
-            <div className="col-span-2 space-y-3">
-              <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{t('medications')}</label>
+          <div className="col-span-2 space-y-2">
+              <label className="field-label">{t('medications')}</label>
               <div className="relative">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2">
-                  <Pill className="w-5 h-5 text-green-500" />
+                <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
+                  <Pill className="h-4 w-4 text-emerald-600" />
                 </div>
-                <input 
+                <input
                   placeholder={t('medsPlaceholder')}
                   {...register('medications')}
-                  className="w-full h-16 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none" 
+                  className="field-input h-12 pl-11"
                 />
               </div>
             </div>
           </div>
 
           {/* Submit Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isPending}
-            className="w-full h-14 md:h-16 bg-gradient-to-br from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-700 active:scale-95 text-white text-base md:text-lg font-black rounded-3xl shadow-[0_20px_40px_rgba(249,115,22,0.3)] transition-all flex items-center justify-center gap-4 disabled:opacity-70 mt-4"
+            className="button-accent mt-4 w-full disabled:opacity-70"
           >
             {isPending ? (
-              <Loader2 className="w-8 h-8 animate-spin" />
+              <Loader2 className="h-5 w-5 animate-spin" />
             ) : (
               <>
-                <Save className="w-7 h-7" />
+                <Save className="h-5 w-5" />
                 <span>{t('save')}</span>
               </>
             )}
@@ -167,19 +170,19 @@ interface InputBoxProps {
 function InputBox({ label, icon, register, suffix }: InputBoxProps) {
   return (
     <div className="space-y-3">
-      <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
+      <label className="field-label">{label}</label>
       <div className="relative">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
+        <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
           {icon}
         </div>
-        <input 
-          type="number" 
+        <input
+          type="number"
           inputMode="decimal"
           {...register}
-          className="w-full h-16 pl-12 pr-4 rounded-2xl border-none bg-slate-100/50 text-xl font-black text-slate-800 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none text-center" 
+          className="field-input h-12 pl-10 pr-10 text-center text-lg font-black"
         />
         {suffix && (
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black uppercase text-slate-400">
             {suffix}
           </span>
         )}

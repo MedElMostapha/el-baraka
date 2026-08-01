@@ -37,19 +37,24 @@ export default function InventoryClient({ initialItems, t, kgPerSac = 0 }: { ini
   };
 
   return (
-    <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
-      <div className="space-y-10">
+    <main className="page-container">
+      <div className="page-stack">
         <PageHeader title={t.title} subtitle={t.subtitle} />
 
-        <section>
-          <InventoryForm onComplete={handleComplete} kgPerSac={kgPerSac} />
-        </section>
+        <div className="workspace-grid">
+          <section>
+            <InventoryForm onComplete={handleComplete} kgPerSac={kgPerSac} />
+          </section>
 
-        <section className="space-y-4">
-          {initialItems.map((item) => (
-            <InventoryItemCard key={item.id} item={item} t={t} router={router} kgPerSac={kgPerSac} />
-          ))}
-        </section>
+          <section className="space-y-3">
+            {initialItems.length === 0 && (
+              <div className="empty-state">{t.addNew}</div>
+            )}
+            {initialItems.map((item) => (
+              <InventoryItemCard key={item.id} item={item} t={t} router={router} kgPerSac={kgPerSac} />
+            ))}
+          </section>
+        </div>
       </div>
     </main>
   );
@@ -63,22 +68,22 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
 
   return (
     <>
-      <div 
-        className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm transition-all cursor-pointer group hover:shadow-md active:scale-[0.98]" 
+      <div
+        className="record-card cursor-pointer"
         onClick={() => setExpanded(!expanded)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 shadow-inner group-hover:bg-orange-50 group-hover:text-orange-500 transition-colors">
+             <div className="record-card__icon">
               <Package className="w-7 h-7" />
             </div>
             <div>
-              <h3 className="font-black text-slate-800 text-lg tracking-tight">{item.name}</h3>
+               <h3 className="record-card__title">{item.name}</h3>
               <div className="flex items-center gap-3 mt-1">
-                <span className="text-[10px] font-black text-orange-500 bg-orange-50 px-2 py-0.5 rounded-lg uppercase tracking-wider">
+                 <span className="rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-orange-600">
                   {t[item.category] || item.category}
                 </span>
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
+                 <div className="record-card__meta">
                   <Layers className="w-3.5 h-3.5" />
                   {item.quantity} {item.unit}
                   {item.unit === 'sac' && kgPerSac > 0 && (
@@ -96,18 +101,18 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
             {expanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
           </div>
         </div>
-        
+
         {expanded && (
-          <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between animate-in slide-in-from-top-2 duration-300">
+           <div className="record-card__footer">
             <div className="flex flex-col">
-              <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-1">{t.lastUpdated || 'Last Updated'}</span>
-              <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500 uppercase tracking-wide">
+               <span className="field-label mb-1">{t.lastUpdated || 'Last Updated'}</span>
+               <div className="record-card__meta">
                 <Calendar className="w-3.5 h-3.5" />
                 {item.lastUpdated ? new Date(item.lastUpdated).toLocaleDateString() : '--'}
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setEditItem(true);
@@ -116,7 +121,7 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
               >
                 <Pencil className="w-4 h-4" />
               </button>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setConfirmDelete(true);
@@ -131,7 +136,7 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
         )}
       </div>
 
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={confirmDelete}
         onClose={() => setConfirmDelete(false)}
         onConfirm={async () => {
@@ -144,12 +149,12 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
         message={t.deleteConfirm || `Are you sure you want to delete ${item.name}?`}
       />
 
-      <Modal 
+      <Modal
         isOpen={editItem}
         onClose={() => setEditItem(false)}
         title={t.editTitle || "Edit Item"}
       >
-        <InventoryForm 
+        <InventoryForm
           onComplete={() => {
             setEditItem(false);
             router.refresh();

@@ -135,7 +135,9 @@
     "sales": "المبيعات",
     "expenses": "المصاريف",
     "debts": "الديون",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "more": "المزيد",
+    "moreOptions": "خيارات تنقل إضافية"
   },
   "Settings": {
     "title": "الإعدادات",

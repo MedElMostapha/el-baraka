@@ -79,18 +79,14 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
-        <div className="flex items-center gap-2 bg-white/60 p-1.5 rounded-2xl border border-slate-100">
-          <Filter className="w-4 h-4 text-slate-400 ml-2" />
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
+        <div className="filter-bar">
+          <Filter className="ml-2 h-4 w-4 text-slate-400" />
           {filters.map((f) => (
             <button
               key={f.id}
               onClick={() => setFilter(f.id)}
-              className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                filter === f.id
-                  ? 'bg-orange-500 text-white shadow-md shadow-orange-200'
-                  : 'text-slate-500 hover:bg-slate-100'
-              }`}
+              className={`${filter === f.id ? 'is-active' : ''} whitespace-nowrap`}
             >
               {f.label}
             </button>
@@ -100,8 +96,8 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
 
       <div className="space-y-4">
         {filteredSales.length === 0 ? (
-          <div className="text-center py-12 bg-white/50 rounded-[2.5rem] border border-dashed border-slate-300">
-             <p className="text-slate-400 font-bold">{t.empty}</p>
+           <div className="empty-state">
+              <p className="text-sm font-bold text-slate-500">{t.empty}</p>
           </div>
         ) : (
           filteredSales.map((sale) => {
@@ -109,15 +105,15 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
             return (
               <div 
                 key={sale.id} 
-                className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 group hover:shadow-md transition-all"
+                className="record-card space-y-4"
               >
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 shadow-inner group-hover:bg-green-500 group-hover:text-white transition-all duration-300">
-                      <Wallet className="w-7 h-7" />
+                    <div className="record-card__icon">
+                      <Wallet className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="font-black text-slate-800 text-xl tracking-tight">
+                      <h3 className="record-card__amount">
                         {sale.totalPrice.toLocaleString()} <span className="text-xs text-slate-400 ml-1 font-bold uppercase">{t.currency}</span>
                       </h3>
                       <div className="mt-1 flex flex-wrap items-center gap-2">
@@ -133,12 +129,13 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                     </div>
                   </div>
 
-                  <div className="hidden md:flex items-center gap-1 bg-slate-50 p-1 rounded-2xl border border-slate-100/50 md:opacity-0 md:group-hover:opacity-100 transition-all transform md:translate-x-2 md:group-hover:translate-x-0">
+                  <div className="hidden items-center gap-1 rounded-xl bg-slate-50 p-1 md:flex">
                     <button 
                       onClick={() => {
                         setEditSale(sale);
                       }}
-                      className="p-2.5 rounded-xl hover:bg-white hover:shadow-sm text-slate-400 hover:text-slate-600 transition-all"
+                         className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-white hover:text-slate-600 hover:shadow-sm"
+                         aria-label="Edit sale"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -150,7 +147,8 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                           setLoadingId(null);
                         }}
                         disabled={loadingId === sale.id}
-                        className="p-2.5 rounded-xl hover:bg-white hover:shadow-sm text-green-500 transition-all"
+                         className="rounded-lg p-2.5 text-emerald-600 transition-all hover:bg-emerald-50"
+                         aria-label="Mark sale paid"
                       >
                         {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                       </button>
@@ -160,15 +158,16 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                         setConfirmDeleteId(sale.id);
                       }}
                       disabled={loadingId === sale.id}
-                      className="p-2.5 rounded-xl hover:bg-red-50 text-slate-400 hover:text-red-500 transition-all"
+                       className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-red-50 hover:text-red-500"
+                       aria-label="Delete sale"
                     >
                       {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-slate-50 pt-4">
-                  <div className="flex items-center gap-4">
+                <div className="record-card__footer">
+                  <div className="record-card__meta">
                     <div className="flex flex-col gap-1.5">
                       <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wide">
                         <Bird className="w-3.5 h-3.5 text-orange-400" />
@@ -181,12 +180,13 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                     </div>
                   </div>
 
-                  <div className="md:hidden flex items-center gap-1 bg-slate-50 p-1 rounded-2xl border border-slate-100/50">
+                  <div className="md:hidden flex items-center gap-1 rounded-xl bg-slate-50 p-1">
                     <button 
                       onClick={() => {
                         setEditSale(sale);
                       }}
-                      className="p-2.5 rounded-xl bg-white shadow-sm text-slate-400"
+                       className="rounded-lg bg-white p-2.5 text-slate-400 shadow-sm"
+                       aria-label="Edit sale"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
@@ -198,7 +198,8 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                           setLoadingId(null);
                         }}
                         disabled={loadingId === sale.id}
-                        className="p-2.5 rounded-xl bg-white shadow-sm text-green-500"
+                       className="rounded-lg bg-white p-2.5 text-emerald-600 shadow-sm"
+                       aria-label="Mark sale paid"
                       >
                         {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                       </button>
@@ -208,7 +209,8 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                         setConfirmDeleteId(sale.id);
                       }}
                       disabled={loadingId === sale.id}
-                      className="p-2.5 rounded-xl hover:bg-red-50 text-slate-400"
+                       className="rounded-lg p-2.5 text-slate-400 hover:bg-red-50 hover:text-red-500"
+                       aria-label="Delete sale"
                     >
                       {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     </button>

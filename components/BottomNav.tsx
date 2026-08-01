@@ -1,13 +1,24 @@
 "use client";
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Bird, ClipboardList, Wallet, Settings, TrendingDown, Handshake } from 'lucide-react';
+import {
+  Bird,
+  ClipboardList,
+  Handshake,
+  LayoutDashboard,
+  MoreHorizontal,
+  Settings,
+  TrendingDown,
+  Wallet,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export function BottomNav() {
   const pathname = usePathname();
   const t = useTranslations('Navigation');
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const navItems = [
     { icon: LayoutDashboard, label: t('dashboard'), href: '/' },
@@ -19,38 +30,101 @@ export function BottomNav() {
     { icon: Settings, label: t('settings'), href: '/settings' },
   ];
 
+  const primaryItems = navItems.slice(0, 4);
+  const moreItems = navItems.slice(4);
+  const isActive = (href: string) => pathname === href || (href !== '/' && pathname.startsWith(`${href}/`));
+  const isMoreActive = moreItems.some((item) => isActive(item.href));
+
   return (
-    <nav className="fixed bottom-6 left-6 right-6 z-50 max-w-lg mx-auto">
-      <div className="flex justify-around items-center h-16 bg-white/80 backdrop-blur-2xl border border-white/50 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[2rem] px-2">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
-          const Icon = item.icon;
-          
-          return (
-            <Link 
-              key={item.href} 
-              href={item.href}
-              className={`flex flex-col items-center justify-center flex-1 h-full transition-all relative group ${
-                isActive ? 'text-orange-600' : 'text-slate-400'
-              }`}
+    <>
+      <aside className="shell-sidebar" aria-label="Primary navigation">
+        <div className="shell-brand">
+          <div className="shell-brand__mark" aria-hidden="true">EB</div>
+          <div>
+            <div className="shell-brand__name">EL BARAKA</div>
+            <div className="shell-brand__caption">Farm operations</div>
+          </div>
+        </div>
+
+        <nav className="shell-nav">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                className={`shell-nav__link ${active ? 'shell-nav__link--active' : ''}`}
+              >
+                <span className="shell-nav__icon"><Icon size={17} strokeWidth={2.2} /></span>
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="shell-sidebar__footer">
+          <span className="shell-sidebar__footer-dot" aria-hidden="true" />
+          <span>Local workspace</span>
+        </div>
+      </aside>
+
+      <nav className="mobile-nav" aria-label="Mobile navigation">
+        <div className="mobile-nav__bar">
+          {primaryItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                className={`mobile-nav__link ${active ? 'mobile-nav__link--active' : ''}`}
+              >
+                <Icon size={18} strokeWidth={active ? 2.5 : 2} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+
+          <div className="mobile-nav__more-wrap">
+            <button
+              type="button"
+              aria-label={t('moreOptions')}
+              aria-expanded={moreOpen}
+              onClick={() => setMoreOpen((value) => !value)}
+              className={`mobile-nav__link ${isMoreActive ? 'mobile-nav__link--active' : ''}`}
             >
-              <div className={`p-2 rounded-xl transition-all duration-300 ${
-                isActive ? 'bg-orange-500 text-white shadow-lg shadow-orange-200 scale-110 -translate-y-1' : 'group-hover:bg-slate-50 group-hover:text-slate-600'
-              }`}>
-                <Icon className="w-[18px] h-[18px]" />
+              <MoreHorizontal size={19} strokeWidth={2.2} />
+              <span>{t('more')}</span>
+            </button>
+
+            {moreOpen && (
+              <div className="mobile-nav__more-menu">
+                {moreItems.map((item) => {
+                  const Icon = item.icon;
+                  const active = isActive(item.href);
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMoreOpen(false)}
+                      className={`mobile-nav__more-item ${active ? 'mobile-nav__more-item--active' : ''}`}
+                    >
+                      <Icon size={16} strokeWidth={2.2} />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
               </div>
-              {!isActive && (
-                <span className="text-[9px] font-black mt-1.5 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">
-                  {item.label}
-                </span>
-              )}
-              {isActive && (
-                <div className="absolute -bottom-1 w-1 h-1 bg-orange-500 rounded-full animate-pulse"></div>
-              )}
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+            )}
+          </div>
+        </div>
+      </nav>
+    </>
   );
 }

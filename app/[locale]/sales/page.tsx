@@ -8,7 +8,7 @@ import { PageHeader } from '@/components/PageHeader';
 
 export default async function SalesPage() {
   const t = await getTranslations('Sales');
-  
+
   const allSales = await db
     .select({
       id: sales.id,
@@ -30,7 +30,7 @@ export default async function SalesPage() {
 
   const activeBatchesRaw = await db.select().from(batches).where(eq(batches.status, 'active'));
   const activeBatchIds = activeBatchesRaw.map(b => b.id);
-  
+
   const batchStats: Record<string, { mortality: number, sold: number }> = {};
   for (const id of activeBatchIds) {
     batchStats[id] = { mortality: 0, sold: 0 };
@@ -39,7 +39,7 @@ export default async function SalesPage() {
   if (activeBatchIds.length > 0) {
     const batchLogs = await db.select({ batchId: dailyLogs.batchId, mortality: dailyLogs.mortality }).from(dailyLogs).where(inArray(dailyLogs.batchId, activeBatchIds));
     const batchSales = await db.select({ batchId: sales.batchId, quantity: sales.quantity }).from(sales).where(inArray(sales.batchId, activeBatchIds));
-    
+
     batchLogs.forEach(log => {
       if (batchStats[log.batchId]) batchStats[log.batchId].mortality += log.mortality;
     });
@@ -61,33 +61,35 @@ export default async function SalesPage() {
   const allClients = await db.select().from(clients);
 
   return (
-    <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
-      <div className="space-y-10">
+    <main className="page-container">
+      <div className="page-stack">
         <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
-        <section>
-          <SalesForm batches={activeBatches} clients={allClients} />
-        </section>
+        <div className="workspace-grid">
+          <section>
+            <SalesForm batches={activeBatches} clients={allClients} />
+          </section>
 
-        <SalesListClient 
-          sales={allSales} 
-          batches={activeBatches}
-          clients={allClients}
-          t={{
-            currency: t('currency'),
-            cashClient: t('cashClient'),
-            paidFull: t('paidFull'),
-            filterAll: t('filterAll'),
-            filterToday: t('filterToday'),
-            filterWeek: t('filterWeek'),
-            filterMonth: t('filterMonth'),
-            filterUnpaid: t('filterUnpaid'),
-            empty: t('empty'),
-            editTitle: t('editTitle'),
-            deleteTitle: t('deleteTitle'),
-            deleteConfirm: t('deleteConfirm')
-          }} 
-        />
+          <SalesListClient
+            sales={allSales}
+            batches={activeBatches}
+            clients={allClients}
+            t={{
+              currency: t('currency'),
+              cashClient: t('cashClient'),
+              paidFull: t('paidFull'),
+              filterAll: t('filterAll'),
+              filterToday: t('filterToday'),
+              filterWeek: t('filterWeek'),
+              filterMonth: t('filterMonth'),
+              filterUnpaid: t('filterUnpaid'),
+              empty: t('empty'),
+              editTitle: t('editTitle'),
+              deleteTitle: t('deleteTitle'),
+              deleteConfirm: t('deleteConfirm')
+            }}
+          />
+        </div>
       </div>
     </main>
   );

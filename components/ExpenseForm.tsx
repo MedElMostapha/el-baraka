@@ -31,8 +31,8 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
 
   const { register, handleSubmit, reset, watch, setValue } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { 
-      amount: editData?.amount || 0, 
+    defaultValues: {
+      amount: editData?.amount || 0,
       unitPrice: editData?.unitPrice || 0,
       quantity: editData?.quantity || 0,
       category: editData?.category || 'other',
@@ -61,7 +61,7 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
         batchId: values.batchId || undefined,
       };
 
-      const result = editData 
+      const result = editData
         ? await updateExpense(editData.id, data)
         : await addExpense(data);
 
@@ -73,18 +73,18 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
   };
 
   return (
-    <div className={`${editData ? '' : 'bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40'}`}>
-      {!editData && <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8">{t('addNew')}</h2>}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div className={`${editData ? '' : 'form-card'}`}>
+      {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-4">
-          
+
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('category')}</label>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 p-1 bg-slate-100 rounded-2xl">
+            <label className="field-label">{t('category')}</label>
+            <div className="grid grid-cols-2 gap-1 rounded-xl border border-slate-100 bg-slate-50 p-1 md:grid-cols-3">
               {(['feed', 'medication', 'transport', 'utilities', 'salaries', 'other'] as const).map((cat) => (
-                <label key={cat} className="relative">
+                <label key={cat} className="relative cursor-pointer">
                    <input type="radio" {...register('category')} value={cat} className="peer sr-only" />
-                   <div className="h-10 flex items-center justify-center rounded-xl font-bold text-sm peer-checked:bg-white peer-checked:text-red-500 peer-checked:shadow-sm transition-all cursor-pointer">
+                   <div className="flex h-9 items-center justify-center rounded-lg px-1 text-center text-xs font-bold text-slate-500 transition-all peer-checked:bg-white peer-checked:text-orange-600 peer-checked:shadow-sm">
                      {t(`categories.${cat}`)}
                    </div>
                 </label>
@@ -93,34 +93,34 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('batch')}</label>
-            <select 
+            <label className="field-label">{t('batch')}</label>
+            <select
               {...register('batchId')}
-              className="w-full h-14 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+              className="field-select h-12"
             >
               <option value="">{t('generalExpense')}</option>
               {batches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
             </select>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-             <InputGroup 
-               label={t('unitPrice')} 
-               icon={<Banknote className="w-5 h-5 text-emerald-500" />} 
-               register={register('unitPrice', { valueAsNumber: true })} 
-               type="number" 
+           <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+             <InputGroup
+               label={t('unitPrice')}
+               icon={<Banknote className="w-5 h-5 text-emerald-500" />}
+               register={register('unitPrice', { valueAsNumber: true })}
+               type="number"
              />
-             <InputGroup 
-               label={t('quantity')} 
-               icon={<Hash className="w-5 h-5 text-blue-500" />} 
-               register={register('quantity', { valueAsNumber: true })} 
-               type="number" 
+             <InputGroup
+               label={t('quantity')}
+               icon={<Hash className="w-5 h-5 text-blue-500" />}
+               register={register('quantity', { valueAsNumber: true })}
+               type="number"
              />
-             <InputGroup 
-               label={t('amount')} 
-               icon={<DollarSign className="w-5 h-5 text-red-500" />} 
-               register={register('amount', { valueAsNumber: true })} 
-               type="number" 
+             <InputGroup
+               label={t('amount')}
+               icon={<DollarSign className="w-5 h-5 text-red-500" />}
+               register={register('amount', { valueAsNumber: true })}
+               type="number"
              />
           </div>
 
@@ -128,11 +128,11 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
 
         </div>
 
-        <button 
+        <button
           disabled={isPending}
-          className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-3xl flex items-center justify-center gap-4 active:scale-95 transition-all shadow-2xl shadow-slate-200"
+           className="button-primary w-full"
         >
-          {isPending ? <Loader2 className="w-8 h-8 animate-spin" /> : <><Save className="w-7 h-7" /><span>{t('save')}</span></>}
+           {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-4 w-4" /><span>{t('save')}</span></>}
         </button>
       </form>
     </div>
@@ -149,14 +149,14 @@ interface InputGroupProps {
 function InputGroup({ label, icon, register, type = "text" }: InputGroupProps) {
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-      <div className="relative">
-        <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
-        <input 
+      <label className="field-label">{label}</label>
+      <div className="field-with-icon">
+        <div>{icon}</div>
+        <input
           type={type}
           step={type === 'number' ? 'any' : undefined}
           {...register}
-          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none" 
+          className="field-input h-12"
         />
       </div>
     </div>

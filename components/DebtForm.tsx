@@ -52,21 +52,21 @@ export function DebtForm({ onComplete, editData }: DebtFormProps) {
   };
 
   return (
-    <div className={`${editData ? '' : 'bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40'}`}>
-      {!editData && <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8">{t('addNew')}</h2>}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div className={`${editData ? '' : 'form-card'}`}>
+      {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-4">
 
           {/* Type Selection */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('type')}</label>
+            <label className="field-label">{t('type')}</label>
             <div className="grid grid-cols-2 gap-3">
               <label className="relative cursor-pointer">
                 <input type="radio" {...register('type')} value="borrowing" className="peer sr-only" />
-                <div className={`flex items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
-                  selectedType === 'borrowing' 
-                    ? 'border-red-400 bg-red-50 text-red-600 shadow-lg shadow-red-100' 
-                    : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'
+                <div className={`flex items-center justify-center gap-2 rounded-xl border p-3 transition-all duration-300 ${
+                  selectedType === 'borrowing'
+                    ? 'border-red-200 bg-red-50 text-red-600'
+                    : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200'
                 }`}>
                   <ArrowDownLeft className="w-5 h-5" />
                   <span className="font-black text-sm">{t('borrowing')}</span>
@@ -74,10 +74,10 @@ export function DebtForm({ onComplete, editData }: DebtFormProps) {
               </label>
               <label className="relative cursor-pointer">
                 <input type="radio" {...register('type')} value="lending" className="peer sr-only" />
-                <div className={`flex items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all duration-300 ${
-                  selectedType === 'lending' 
-                    ? 'border-emerald-400 bg-emerald-50 text-emerald-600 shadow-lg shadow-emerald-100' 
-                    : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'
+                <div className={`flex items-center justify-center gap-2 rounded-xl border p-3 transition-all duration-300 ${
+                  selectedType === 'lending'
+                    ? 'border-emerald-200 bg-emerald-50 text-emerald-600'
+                    : 'border-slate-100 bg-slate-50 text-slate-400 hover:border-slate-200'
                 }`}>
                   <ArrowUpRight className="w-5 h-5" />
                   <span className="font-black text-sm">{t('lending')}</span>
@@ -88,15 +88,15 @@ export function DebtForm({ onComplete, editData }: DebtFormProps) {
 
           {/* Person Name */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('personName')}</label>
-            <div className="relative">
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
+            <label className="field-label">{t('personName')}</label>
+            <div className="field-with-icon">
+              <div>
                 <User className="w-5 h-5 text-slate-400" />
               </div>
               <input
                 type="text"
                 {...register('personName')}
-                className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+                className="field-input h-12"
                 placeholder={t('personName')}
               />
             </div>
@@ -104,31 +104,31 @@ export function DebtForm({ onComplete, editData }: DebtFormProps) {
 
           {/* Amount */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('amount')}</label>
-            <div className="relative">
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
+            <label className="field-label">{t('amount')}</label>
+            <div className="field-with-icon">
+              <div>
                 <DollarSign className={`w-5 h-5 ${selectedType === 'borrowing' ? 'text-red-500' : 'text-emerald-500'}`} />
               </div>
               <input
                 type="number"
                 step="any"
                 {...register('amount', { valueAsNumber: true })}
-                className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+                className="field-input h-12"
               />
             </div>
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{t('description')}</label>
-            <div className="relative">
-              <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">
+            <label className="field-label">{t('description')}</label>
+            <div className="field-with-icon">
+              <div>
                 <FileText className="w-5 h-5 text-slate-400" />
               </div>
               <input
                 type="text"
                 {...register('description')}
-                className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+                className="field-input h-12"
               />
             </div>
           </div>
@@ -137,9 +137,9 @@ export function DebtForm({ onComplete, editData }: DebtFormProps) {
 
         <button
           disabled={isPending}
-          className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-3xl flex items-center justify-center gap-4 active:scale-95 transition-all shadow-2xl shadow-slate-200"
+          className="button-primary w-full"
         >
-          {isPending ? <Loader2 className="w-8 h-8 animate-spin" /> : <><Save className="w-7 h-7" /><span>{t('save')}</span></>}
+          {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-4 w-4" /><span>{t('save')}</span></>}
         </button>
       </form>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -11,29 +11,44 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
-  
+
   return (
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+    <div
+      className="modal-backdrop"
       onClick={onClose}
+      role="presentation"
     >
-      <div 
-        className="bg-white/95 backdrop-blur-xl rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.15)] w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200 border border-white/40" 
+      <div
+        className="modal-card"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
       >
-        <div className="p-8">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="font-[900] text-slate-900 text-2xl tracking-tight leading-none">{title}</h3>
-            <button 
-              onClick={onClose} 
-              className="p-2 rounded-xl hover:bg-slate-50 text-slate-400 transition-colors"
+        <div className="modal-header">
+            <h3 id="modal-title">{title}</h3>
+            <button
+              type="button"
+              onClick={onClose}
+              className="modal-close"
+              aria-label="Close dialog"
             >
               <X className="w-5 h-5" />
             </button>
-          </div>
-          {children}
         </div>
+        <div className="modal-body">{children}</div>
       </div>
     </div>
   );

@@ -15,36 +15,38 @@ export default async function DebtsPage() {
     .orderBy(desc(debts.date));
 
   return (
-    <main className="flex-1 p-6 md:p-12 max-w-lg mx-auto w-full pb-32">
-      <div className="space-y-10">
+    <main className="page-container">
+      <div className="page-stack">
         <PageHeader title={t('title')} subtitle={t('subtitle')} />
 
-        <section>
-          <DebtForm />
-        </section>
+        <div className="workspace-grid">
+          <section>
+            <DebtForm />
+          </section>
 
-        <DebtsListClient
-          debts={allDebts}
-          t={{
-            currency: t('currency'),
-            filterAll: t('filterAll'),
-            filterBorrowing: t('filterBorrowing'),
-            filterLending: t('filterLending'),
-            filterPending: t('filterPending'),
-            filterPaid: t('filterPaid'),
-            empty: t('empty'),
-            editTitle: t('editTitle'),
-            deleteTitle: t('deleteTitle'),
-            deleteConfirm: t('deleteConfirm'),
-            markPaid: t('markPaid'),
-            statusPending: t('statusPending'),
-            statusPaid: t('statusPaid'),
-            iOwe: t('iOwe'),
-            owesMe: t('owesMe'),
-            totalBorrowed: t('totalBorrowed'),
-            totalLent: t('totalLent'),
-          }}
-        />
+          <DebtsListClient
+            debts={allDebts}
+            t={{
+              currency: t('currency'),
+              filterAll: t('filterAll'),
+              filterBorrowing: t('filterBorrowing'),
+              filterLending: t('filterLending'),
+              filterPending: t('filterPending'),
+              filterPaid: t('filterPaid'),
+              empty: t('empty'),
+              editTitle: t('editTitle'),
+              deleteTitle: t('deleteTitle'),
+              deleteConfirm: t('deleteConfirm'),
+              markPaid: t('markPaid'),
+              statusPending: t('statusPending'),
+              statusPaid: t('statusPaid'),
+              iOwe: t('iOwe'),
+              owesMe: t('owesMe'),
+              totalBorrowed: t('totalBorrowed'),
+              totalLent: t('totalLent'),
+            }}
+          />
+        </div>
       </div>
     </main>
   );

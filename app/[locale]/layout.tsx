@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, IBM_Plex_Sans_Arabic } from "next/font/google";
 import { getLocale, getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import "./globals.css";
@@ -14,6 +14,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const arabicSans = IBM_Plex_Sans_Arabic({
+  variable: "--font-plex-arabic",
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "El Baraka - Gestion Avicole",
   description: "Application mobile de gestion de ferme avicole",
@@ -26,11 +33,9 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f97316",
+  themeColor: "#173b35",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 import { BottomNav } from "@/components/BottomNav";
@@ -48,12 +53,14 @@ export default async function RootLayout({
     <html
       lang={locale}
       dir={direction}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${arabicSans.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#f8fafc] text-slate-900 pb-20">
+      <body className="min-h-screen text-slate-900">
         <NextIntlClientProvider messages={messages}>
-          {children}
-          <BottomNav />
+          <div className="app-shell">
+            <BottomNav />
+            <div className="app-main">{children}</div>
+          </div>
         </NextIntlClientProvider>
       </body>
     </html>

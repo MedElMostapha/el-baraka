@@ -38,18 +38,18 @@ export function PromptModal({ isOpen, onClose, onSubmit, title, label, defaultVa
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-          <input 
+           <label className="field-label">{label}</label>
+          <input
             type={type}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            className="w-full h-14 px-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none" 
+             className="field-input h-12"
             autoFocus
           />
         </div>
-        
+
         <div className="flex gap-3">
-          <button 
+          <button
             type="button"
             onClick={onClose}
             disabled={isPending}
@@ -57,7 +57,7 @@ export function PromptModal({ isOpen, onClose, onSubmit, title, label, defaultVa
           >
             {cancelText}
           </button>
-          <button 
+          <button
             type="submit"
             disabled={isPending || !value.trim()}
             className="flex-1 px-4 py-3 bg-slate-900 hover:bg-black text-white font-bold rounded-2xl transition-colors flex items-center justify-center disabled:opacity-50 shadow-xl"

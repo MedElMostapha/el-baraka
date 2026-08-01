@@ -135,7 +135,9 @@
     "sales": "Ventes",
     "expenses": "Dépenses",
     "debts": "Dettes",
-    "settings": "Réglages"
+    "settings": "Réglages",
+    "more": "Plus",
+    "moreOptions": "Plus d’options de navigation"
   },
   "Settings": {
     "title": "Réglages",

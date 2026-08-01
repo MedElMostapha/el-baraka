@@ -50,9 +50,9 @@ export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComple
   };
 
   return (
-    <div className={`${editData ? '' : 'bg-white/70 backdrop-blur-xl p-8 rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-white/40'}`}>
-      {!editData && <h2 className="text-2xl font-black text-slate-800 tracking-tight mb-8">{t('addNew')}</h2>}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <div className={`${editData ? '' : 'form-card'}`}>
+      {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-4">
           <InputGroup label={t('name')} icon={<Package className="w-5 h-5 text-orange-500" />} register={register('name')} />
 
@@ -86,7 +86,7 @@ export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComple
             />
           </div>
           {kgEquivalent !== null && (
-            <div className="p-3 bg-blue-50 rounded-2xl border border-blue-100 text-center">
+            <div className="rounded-xl border border-blue-100 bg-blue-50 p-3 text-center">
               <span className="text-sm font-black text-blue-600">
                 = {kgEquivalent.toFixed(1)} kg
               </span>
@@ -96,9 +96,9 @@ export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComple
 
         <button
           disabled={isPending}
-          className="w-full h-14 md:h-16 bg-slate-900 text-white text-base md:text-lg font-black rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all"
+          className="button-primary w-full"
         >
-          {isPending ? <Loader2 className="w-6 h-6 animate-spin" /> : <><Save className="w-6 h-6" /><span>{t('save')}</span></>}
+          {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-4 w-4" /><span>{t('save')}</span></>}
         </button>
       </form>
     </div>
@@ -115,13 +115,13 @@ interface InputGroupProps {
 function InputGroup({ label, icon, register, type = "text" }: InputGroupProps) {
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-      <div className="relative">
-        <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
+      <label className="field-label">{label}</label>
+      <div className="field-with-icon">
+        <div>{icon}</div>
         <input
           type={type}
           {...register}
-          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 outline-none"
+          className="field-input h-12"
         />
       </div>
     </div>
@@ -138,12 +138,12 @@ interface SelectGroupProps {
 function SelectGroup({ label, icon, register, options }: SelectGroupProps) {
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">{label}</label>
-      <div className="relative">
-        <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none">{icon}</div>
+      <label className="field-label">{label}</label>
+      <div className="field-with-icon">
+        <div>{icon}</div>
         <select
           {...register}
-          className="w-full h-14 pl-14 pr-6 rounded-2xl border-none bg-slate-100/50 text-lg font-bold text-slate-700 focus:ring-2 focus:ring-orange-500/20 transition-all outline-none appearance-none"
+          className="field-select h-12 appearance-none"
         >
           {options.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
         </select>

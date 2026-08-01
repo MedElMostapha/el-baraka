@@ -150,11 +150,11 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   }));
 
   return (
-    <main className="flex-1 p-6 md:p-12 max-w-4xl mx-auto w-full pb-32" ref={containerRef}>
-      <div className="space-y-8">
+    <main className="page-container" ref={containerRef}>
+      <div className="page-stack">
         <button 
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-bold text-sm uppercase tracking-wider mb-2"
+          className="button-secondary w-fit"
         >
           <ArrowLeft className="w-4 h-4" />
           {t.back}
@@ -219,12 +219,12 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             color="text-blue-600"
             bgColor="bg-blue-50"
           />
-          <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm space-y-3 relative group">
-            <div className={`w-10 h-10 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center shadow-inner`}>
+          <div className="metric-card group relative space-y-3">
+            <div className="metric-card__icon" style={{ background: 'var(--orange-soft)', color: 'var(--orange)' }}>
               <Package className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Stock Restant</p>
+              <p className="metric-card__label mt-0">Stock Restant</p>
               <div className="flex items-baseline gap-1">
                 <span className={`text-lg font-black ${((batch.feedStock || 0) - stats.totalFeed) <= 0 ? 'text-red-500' : 'text-orange-600'}`}>
                   {((batch.feedStock || 0) - stats.totalFeed).toFixed(1)}
@@ -246,8 +246,8 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
         {/* Charts Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Inventory Distribution */}
-          <div className="md:col-span-1 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4">
-            <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+           <div className="panel space-y-4 p-6 md:col-span-1">
+            <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-tight text-slate-800">
               <PieChartIcon className="w-4 h-4 text-orange-500" />
               {t.distribution}
             </h3>
@@ -287,8 +287,8 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
           </div>
 
           {/* Activity Over Time */}
-          <div className="md:col-span-2 bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-4">
-            <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+          <div className="panel space-y-4 p-6 md:col-span-2">
+            <h3 className="flex items-center gap-2 text-sm font-black uppercase tracking-tight text-slate-800">
               <Activity className="w-4 h-4 text-blue-500" />
               {t.activityTrend}
             </h3>
@@ -319,7 +319,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
         </div>
 
         {/* Financial Breakdown */}
-        <div className="bg-slate-900 rounded-[3rem] p-8 text-white shadow-xl shadow-slate-200">
+        <div className="overflow-hidden rounded-[22px] bg-[#173b35] p-8 text-white shadow-xl shadow-slate-200">
           <div className="flex items-center gap-3 mb-8">
             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
               <BarChart3 className="w-6 h-6 text-orange-400" />
@@ -381,7 +381,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
 
           <div className="space-y-3">
              {sales.length === 0 && expenses.length === 0 && logs.length === 0 ? (
-               <div className="bg-slate-50 border border-dashed border-slate-200 rounded-[2rem] p-12 text-center">
+               <div className="empty-state">
                  <p className="text-slate-400 font-bold">{t.noActivity}</p>
                </div>
              ) : (
@@ -390,7 +390,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
                  <div className="space-y-3">
                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest ml-4">{t.salesList}</h3>
                    {sales.slice(0, 5).map(sale => (
-                     <div key={sale.id} className="bg-white p-4 rounded-2xl border border-slate-50 shadow-sm flex justify-between items-center">
+                      <div key={sale.id} className="record-card flex items-center justify-between">
                        <div className="flex items-center gap-3">
                          <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
                            <ShoppingCart className="w-5 h-5" />
@@ -409,7 +409,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
                  <div className="space-y-3">
                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest ml-4">{t.expensesList}</h3>
                    {expenses.slice(0, 5).map(exp => (
-                     <div key={exp.id} className="bg-white p-4 rounded-2xl border border-slate-50 shadow-sm flex justify-between items-center">
+                      <div key={exp.id} className="record-card flex items-center justify-between">
                        <div className="flex items-center gap-3">
                          <div className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
                            <TrendingDown className="w-5 h-5" />
@@ -462,12 +462,12 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
 
 function StatCard({ icon, label, value, subtext, trend, trendLabel, color, bgColor }: any) {
   return (
-    <div className="bg-white p-5 rounded-[2rem] border border-slate-100 shadow-sm space-y-3">
-      <div className={`w-10 h-10 ${bgColor} ${color} rounded-xl flex items-center justify-center shadow-inner`}>
+    <div className="metric-card space-y-3">
+      <div className={`metric-card__icon ${bgColor} ${color}`}>
         {icon}
       </div>
       <div>
-        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{label}</p>
+        <p className="metric-card__label mt-0">{label}</p>
         <div className="flex items-baseline gap-1">
           <span className={`text-lg font-black ${color}`}>{value}</span>
           {subtext && <span className="text-[10px] font-bold text-slate-400 uppercase">{subtext}</span>}
