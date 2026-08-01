@@ -44,6 +44,8 @@ export default async function DebtsPage() {
               owesMe: t('owesMe'),
               totalBorrowed: t('totalBorrowed'),
               totalLent: t('totalLent'),
+              borrowedFormula: t('borrowedFormula'),
+              lentFormula: t('lentFormula'),
             }}
           />
         </div>

@@ -2,19 +2,20 @@
 
 import React, { useTransition, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
-import { Globe, Check, Info, Scale, Save, Loader2 } from 'lucide-react';
+import { Globe, Check, Info, Scale, Save, Loader2, CircleDollarSign } from 'lucide-react';
 import { setLocale } from '@/actions/locale';
-import { setKgPerSac } from '@/actions/settings';
+import { setFeedPricePerSac, setKgPerSac } from '@/actions/settings';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { PageHeader } from '@/components/PageHeader';
 
-export default function SettingsClient({ kgPerSac: initialKgPerSac }: { kgPerSac: number }) {
+export default function SettingsClient({ kgPerSac: initialKgPerSac, feedPricePerSac: initialFeedPricePerSac }: { kgPerSac: number; feedPricePerSac: number }) {
   const t = useTranslations('Settings');
   const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [kgPerSac, setKgPerSacLocal] = useState(initialKgPerSac);
+  const [feedPricePerSac, setFeedPricePerSacLocal] = useState(initialFeedPricePerSac);
   const [saving, setSaving] = useState(false);
 
   const handleLocaleChange = (newLocale: string) => {
@@ -80,48 +81,70 @@ export default function SettingsClient({ kgPerSac: initialKgPerSac }: { kgPerSac
           </div>
         </section>
 
-        {/* Kg Per Sac Setting */}
+        {/* Feed Settings */}
         <section className="space-y-4">
           <div className="section-heading mb-2 justify-start">
             <div className="metric-card__icon" style={{ background: 'var(--orange-soft)', color: 'var(--orange)' }}>
               <Scale className="h-4 w-4" />
             </div>
             <div>
-              <h2>{t('kgPerSac')}</h2>
-              <p>{t('kgPerSacDesc')}</p>
+              <h2>{t('feedSettings')}</h2>
+              <p>{t('feedSettingsDesc')}</p>
             </div>
           </div>
 
-           <div className="form-card">
-             <div className="space-y-5">
-               <div className="space-y-2">
-                 <label className="field-label">kg / Sac</label>
-                 <div className="field-with-icon">
-                   <div>
-                     <Scale className="w-5 h-5 text-orange-500" />
+          <div className="form-card">
+            <div className="space-y-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="field-label">{t('kgPerSacUnit')}</label>
+                  <div className="field-with-icon">
+                    <div>
+                      <Scale className="h-5 w-5 text-orange-500" />
+                    </div>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={kgPerSac}
+                      onChange={(e) => setKgPerSacLocal(parseFloat(e.target.value) || 0)}
+                      className="field-input h-12"
+                      placeholder="0"
+                    />
                   </div>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    value={kgPerSac}
-                    onChange={(e) => setKgPerSacLocal(parseFloat(e.target.value) || 0)}
-                     className="field-input h-12"
-                    placeholder="0"
-                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="field-label">{t('feedPricePerSac')} · {t('feedPricePerSacUnit')}</label>
+                  <div className="field-with-icon">
+                    <div>
+                      <CircleDollarSign className="h-5 w-5 text-orange-500" />
+                    </div>
+                    <input
+                      type="number"
+                      step="1"
+                      min="0"
+                      value={feedPricePerSac}
+                      onChange={(e) => setFeedPricePerSacLocal(parseFloat(e.target.value) || 0)}
+                      className="field-input h-12"
+                      placeholder="0"
+                    />
+                  </div>
                 </div>
               </div>
               <button
                 onClick={async () => {
                   setSaving(true);
-                  await setKgPerSac(kgPerSac);
+                  await Promise.all([
+                    setKgPerSac(kgPerSac),
+                    setFeedPricePerSac(feedPricePerSac),
+                  ]);
                   setSaving(false);
                   router.refresh();
                 }}
                 disabled={saving}
-                 className="button-primary w-full"
+                className="button-primary w-full"
               >
-                 {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-4 w-4" /><span>{t('save')}</span></>}
+                {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-4 w-4" /><span>{t('save')}</span></>}
               </button>
             </div>
           </div>

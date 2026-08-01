@@ -3,9 +3,11 @@ import { batches, dailyLogs, sales, restocks } from "@/db/schema";
 import { desc, eq, inArray, sql } from "drizzle-orm";
 import { getTranslations } from 'next-intl/server';
 import BatchesClient from "@/components/BatchesClient";
+import { getKgPerSac } from '@/actions/settings';
 
 export default async function BatchesPage() {
   const t = await getTranslations('Batches');
+  const kgPerSac = await getKgPerSac();
 
   const allBatches = await db
     .select()
@@ -70,10 +72,16 @@ export default async function BatchesPage() {
   }));
 
   const translations = {
-    title: t('title'),
-    subtitle: t('subtitle'),
-    addNew: t('addNew'),
-    empty: t('empty'),
+     title: t('title'),
+     subtitle: t('subtitle'),
+     addNew: t('addNew'),
+     createLead: t('createLead'),
+     createHint: t('createHint'),
+     activeBatches: t('activeBatches'),
+     totalBatches: t('totalBatches'),
+     remainingFormula: t('remainingFormula'),
+     active: t('active'),
+     empty: t('empty'),
     remaining: t('remaining'),
     editTitle: t('editTitle'),
     deleteTitle: t('deleteTitle'),
@@ -99,6 +107,7 @@ export default async function BatchesPage() {
       initialBatches={serializedBatches}
       activeBatch={activeBatch ? { ...activeBatch, remainingQuantity, arrivalDate: activeBatch.arrivalDate.toISOString() } : null}
       restocks={serializedRestocks}
+      kgPerSac={kgPerSac}
       t={translations}
     />
   );

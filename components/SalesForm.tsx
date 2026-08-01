@@ -206,9 +206,10 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
                    className="field-input h-10 w-32 text-right"
                   placeholder="0"
                 />
-             </div>
-          </div>
-        </div>
+              </div>
+           </div>
+           <p className="formula-caption">{t('totalFormula')}</p>
+         </div>
 
         <button
           disabled={isPending}

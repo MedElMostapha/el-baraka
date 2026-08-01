@@ -8,10 +8,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  BarChart,
-  Bar,
-  Cell
+  Tooltip
 } from 'recharts';
 
 interface ChartData {
@@ -26,6 +23,7 @@ interface DashboardChartsProps {
     performance: string;
     revenue: string;
     expenses: string;
+    formula: string;
   };
 }
 
@@ -39,6 +37,7 @@ export function DashboardCharts({ data, t }: DashboardChartsProps) {
         </div>
         <span className="section-heading__badge">MRU</span>
       </div>
+      <p className="formula-caption">{t.formula}</p>
 
         <div className="h-[270px] w-full">
           <ResponsiveContainer width="100%" height="100%">

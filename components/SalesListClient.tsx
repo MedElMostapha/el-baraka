@@ -37,6 +37,7 @@ interface Translations {
   editTitle: string;
   deleteTitle: string;
   deleteConfirm: string;
+  debtFormula: string;
 }
 
 export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[]; batches: any[]; clients: any[]; t: Translations }) {
@@ -49,27 +50,27 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
   const filteredSales = sales.filter((sale) => {
     const saleDate = new Date(sale.date);
     const now = new Date();
-    
+
     if (filter === 'today') {
-      return saleDate.getDate() === now.getDate() && 
-             saleDate.getMonth() === now.getMonth() && 
+      return saleDate.getDate() === now.getDate() &&
+             saleDate.getMonth() === now.getMonth() &&
              saleDate.getFullYear() === now.getFullYear();
     }
-    
+
     if (filter === 'week') {
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       return saleDate >= sevenDaysAgo;
     }
-    
+
     if (filter === 'month') {
-      return saleDate.getMonth() === now.getMonth() && 
+      return saleDate.getMonth() === now.getMonth() &&
              saleDate.getFullYear() === now.getFullYear();
     }
 
     if (filter === 'unpaid') {
       return sale.totalPrice > sale.amountPaid;
     }
-    
+
     return true; // 'all'
   });
 
@@ -112,10 +113,10 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
           </div>
         ) : (
            visibleSales.map((sale) => {
-            const debt = sale.totalPrice - sale.amountPaid;
+             const debt = Math.max(0, sale.totalPrice - sale.amountPaid);
             return (
-              <div 
-                key={sale.id} 
+              <div
+                key={sale.id}
                 className="record-card space-y-4"
               >
                 <div className="flex justify-between items-start">
@@ -136,12 +137,13 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                         }`}>
                           {debt > 0 ? `-${debt} ${t.currency}` : t.paidFull}
                         </span>
+                        {debt > 0 && <span className="formula-caption">{t.debtFormula}</span>}
                       </div>
                     </div>
                   </div>
 
                   <div className="hidden items-center gap-1 rounded-xl bg-slate-50 p-1 md:flex">
-                    <button 
+                    <button
                       onClick={() => {
                         setEditSale(sale);
                       }}
@@ -151,7 +153,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                       <Pencil className="w-4 h-4" />
                     </button>
                     {debt > 0 && (
-                      <button 
+                      <button
                         onClick={async () => {
                           setLoadingId(sale.id);
                           await markSalePaid(sale.id, sale.totalPrice, null);
@@ -164,7 +166,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                         {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                       </button>
                     )}
-                    <button 
+                    <button
                       onClick={() => {
                         setConfirmDeleteId(sale.id);
                       }}
@@ -192,7 +194,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                   </div>
 
                   <div className="md:hidden flex items-center gap-1 rounded-xl bg-slate-50 p-1">
-                    <button 
+                    <button
                       onClick={() => {
                         setEditSale(sale);
                       }}
@@ -202,7 +204,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                       <Pencil className="w-4 h-4" />
                     </button>
                     {debt > 0 && (
-                      <button 
+                      <button
                         onClick={async () => {
                           setLoadingId(sale.id);
                           await markSalePaid(sale.id, sale.totalPrice, null);
@@ -215,7 +217,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                         {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
                       </button>
                     )}
-                    <button 
+                    <button
                       onClick={() => {
                         setConfirmDeleteId(sale.id);
                       }}
@@ -235,7 +237,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
 
       <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} />
 
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={!!confirmDeleteId}
         onClose={() => setConfirmDeleteId(null)}
         onConfirm={async () => {
@@ -249,12 +251,12 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
         title={t.deleteTitle}
         message={t.deleteConfirm}
       />
-      <Modal 
+      <Modal
         isOpen={!!editSale}
         onClose={() => setEditSale(null)}
         title={t.editTitle}
       >
-        <SalesForm 
+        <SalesForm
           batches={batches}
           clients={clients}
           onComplete={() => {

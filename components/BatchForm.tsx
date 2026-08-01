@@ -5,7 +5,7 @@ import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
-import { Plus, Save, Loader2, Calendar, Hash, CircleDollarSign, Bird } from 'lucide-react';
+import { Plus, Save, Loader2, Calendar, Hash, CircleDollarSign, Bird, Utensils } from 'lucide-react';
 import { createBatch, updateBatch } from '@/actions/batch';
 
 const formSchema = z.object({
@@ -14,11 +14,12 @@ const formSchema = z.object({
   arrivalDate: z.string().min(1, 'Required'),
   initialQuantity: z.number().min(1),
   costPerChick: z.number().min(0),
+  feedStock: z.number().min(0),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function BatchForm({ onComplete, editData }: { onComplete: () => void, editData?: any }) {
+export function BatchForm({ onComplete, editData, showTitle = true, kgPerSac = 0 }: { onComplete: () => void, editData?: any, showTitle?: boolean, kgPerSac?: number }) {
   const t = useTranslations('Batches');
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -31,20 +32,31 @@ export function BatchForm({ onComplete, editData }: { onComplete: () => void, ed
       arrivalDate: editData?.arrivalDate ? new Date(editData.arrivalDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
       initialQuantity: editData?.initialQuantity || 1,
       costPerChick: editData?.costPerChick || 0,
+      feedStock: editData?.feedStock && kgPerSac > 0 ? editData.feedStock / kgPerSac : 0,
     },
   });
 
   const onSubmit = (values: FormValues) => {
     setError(null);
     startTransition(async () => {
+      if (values.feedStock > 0 && kgPerSac <= 0) {
+        setError(t('kgPerSacMissing'));
+        return;
+      }
+
+      const normalizedValues = {
+        ...values,
+        feedStock: values.feedStock * kgPerSac,
+      };
+
       const result = editData 
         ? await updateBatch(editData.id, {
-            ...values,
-            arrivalDate: new Date(values.arrivalDate),
+            ...normalizedValues,
+            arrivalDate: new Date(normalizedValues.arrivalDate),
           })
         : await createBatch({
-            ...values,
-            arrivalDate: new Date(values.arrivalDate),
+            ...normalizedValues,
+            arrivalDate: new Date(normalizedValues.arrivalDate),
           });
 
       if (result.success) {
@@ -57,7 +69,7 @@ export function BatchForm({ onComplete, editData }: { onComplete: () => void, ed
 
   return (
     <div className={`${editData ? '' : 'form-card'}`}>
-      {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
+      {!editData && showTitle && <h2 className="form-card__title">{t('addNew')}</h2>}
       
       {error && (
         <div className="mb-6 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">
@@ -75,6 +87,10 @@ export function BatchForm({ onComplete, editData }: { onComplete: () => void, ed
             <InputGroup label={t('quantity')} icon={<Hash className="w-5 h-5 text-green-500" />} register={register('initialQuantity', { valueAsNumber: true })} type="number" />
             <InputGroup label={t('cost')} icon={<CircleDollarSign className="w-5 h-5 text-yellow-500" />} register={register('costPerChick', { valueAsNumber: true })} type="number" step="0.01" />
           </div>
+          <InputGroup label={t('feedStock')} icon={<Utensils className="w-5 h-5 text-orange-400" />} register={register('feedStock', { valueAsNumber: true })} type="number" step="0.1" />
+          <p className={`field-hint ${kgPerSac > 0 ? '' : 'field-hint--warning'}`}>
+            {kgPerSac > 0 ? t('feedUnitHint', { kg: kgPerSac }) : t('kgPerSacMissing')}
+          </p>
         </div>
 
         <button 

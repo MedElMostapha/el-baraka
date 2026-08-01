@@ -5,9 +5,11 @@ import { getTranslations } from 'next-intl/server';
 import { ExpenseForm } from "@/components/ExpenseForm";
 import { ExpensesListClient } from "@/components/ExpensesListClient";
 import { PageHeader } from '@/components/PageHeader';
+import { getFeedPricePerSac } from '@/actions/settings';
 
 export default async function ExpensesPage() {
   const t = await getTranslations('Expenses');
+  const feedPricePerSac = await getFeedPricePerSac();
 
   const allExpenses = await db
     .select({
@@ -31,12 +33,13 @@ export default async function ExpensesPage() {
 
         <div className="workspace-grid">
           <section>
-            <ExpenseForm batches={activeBatches} />
+            <ExpenseForm batches={activeBatches} feedPricePerSac={feedPricePerSac} />
           </section>
 
           <ExpensesListClient
             expenses={allExpenses}
             batches={activeBatches}
+            feedPricePerSac={feedPricePerSac}
             t={{
               currency: t('currency'),
               filterAll: t('filterAll'),

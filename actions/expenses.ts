@@ -5,6 +5,13 @@ import { expenses } from "@/db/schema";
 import { revalidatePath } from "next/cache";
 import { eq } from "drizzle-orm";
 
+function normalizeExpenseAmount<T extends { amount?: number; unitPrice?: number; quantity?: number }>(data: T): T {
+  if (data.unitPrice !== undefined && data.quantity !== undefined) {
+    return { ...data, amount: data.unitPrice * data.quantity };
+  }
+  return data;
+}
+
 export async function addExpense(data: {
   amount: number;
   unitPrice?: number;
@@ -15,9 +22,10 @@ export async function addExpense(data: {
 }) {
   try {
     const id = crypto.randomUUID();
+    const normalizedData = normalizeExpenseAmount(data);
     await db.insert(expenses).values({
       id,
-      ...data,
+      ...normalizedData,
       date: new Date(),
     });
     revalidatePath("/", "layout");
@@ -39,8 +47,8 @@ export async function deleteExpense(id: string) {
   }
 }
 
-export async function updateExpense(id: string, data: Partial<{ 
-  amount: number; 
+export async function updateExpense(id: string, data: Partial<{
+  amount: number;
   unitPrice?: number;
   quantity?: number;
   category: "feed" | "medication" | "transport" | "utilities" | "salaries" | "other";
@@ -48,7 +56,7 @@ export async function updateExpense(id: string, data: Partial<{
   batchId?: string;
 }>) {
   try {
-    await db.update(expenses).set(data).where(eq(expenses.id, id));
+    await db.update(expenses).set(normalizeExpenseAmount(data)).where(eq(expenses.id, id));
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {

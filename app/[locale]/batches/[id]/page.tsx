@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { batches, dailyLogs, sales, expenses } from "@/db/schema";
+import { batches, dailyLogs, sales, expenses, restocks } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getTranslations } from 'next-intl/server';
 import { notFound } from "next/navigation";
@@ -11,7 +11,7 @@ export default async function BatchDetailServerPage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { locale, id } = await params;
-  
+
   const t = await getTranslations('BatchDetails');
   const tBatches = await getTranslations('Batches');
   const tSales = await getTranslations('Sales');
@@ -42,24 +42,36 @@ export default async function BatchDetailServerPage({
     .where(eq(expenses.batchId, id))
     .orderBy(desc(expenses.date));
 
+  const batchRestocks = await db
+    .select()
+    .from(restocks)
+    .where(eq(restocks.batchId, id))
+    .orderBy(desc(restocks.date));
+
   // Calculations
+  const birdsPlaced = batchRestocks.length > 0
+    ? batchRestocks.reduce((sum, restock) => sum + restock.quantity, 0)
+    : batch.initialQuantity;
   const totalMortality = logs.reduce((sum, log) => sum + log.mortality, 0);
   const totalSold = batchSales.reduce((sum, sale) => sum + sale.quantity, 0);
-  const remainingQuantity = batch.initialQuantity - totalMortality - totalSold;
-  
+  const remainingQuantity = Math.max(0, birdsPlaced - totalMortality - totalSold);
+
   const totalRevenue = batchSales.reduce((sum, sale) => sum + sale.totalPrice, 0);
   const totalBatchExpenses = batchExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-  const initialInvestment = batch.initialQuantity * batch.costPerChick;
+  const initialInvestment = batchRestocks.length > 0
+    ? batchRestocks.reduce((sum, restock) => sum + restock.quantity * restock.costPerChick, 0)
+    : batch.initialQuantity * batch.costPerChick;
   const netProfit = totalRevenue - totalBatchExpenses - initialInvestment;
 
   const totalFeed = logs.reduce((sum, log) => sum + log.feedConsumed, 0);
-  
-  const mortalityRate = (totalMortality / batch.initialQuantity) * 100;
-  
-  // Safe days active calculation
-  const arrivalTimestamp = new Date(batch.arrivalDate).getTime();
-  const currentTimestamp = new Date().getTime();
-  const daysActive = Math.max(0, Math.ceil((currentTimestamp - arrivalTimestamp) / (1000 * 60 * 60 * 24)));
+
+  const mortalityRate = birdsPlaced > 0 ? (totalMortality / birdsPlaced) * 100 : null;
+
+  const arrivalDate = new Date(batch.arrivalDate);
+  arrivalDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const daysActive = Math.max(0, Math.floor((today.getTime() - arrivalDate.getTime()) / (1000 * 60 * 60 * 24)));
 
   const translations = {
     title: t('title'),
@@ -68,11 +80,14 @@ export default async function BatchDetailServerPage({
     financials: t('financials'),
     activity: t('activity'),
     totalSales: t('totalSales'),
+    soldBirds: t('soldBirds'),
+    remainingBirds: t('remainingBirds'),
     totalExpenses: t('totalExpenses'),
-    netProfit: t('netProfit'),
-    investment: t('investment'),
+    netProfit: t('directResult'),
+    investment: t('birdCost'),
     mortality: t('mortality'),
     feedConsumption: t('feedConsumption'),
+    feedStock: t('feedStock'),
     performance: t('performance'),
     daysSinceArrival: t('daysSinceArrival'),
     perUnit: t('perUnit'),
@@ -97,6 +112,19 @@ export default async function BatchDetailServerPage({
     expensesLabel: t('expensesLabel'),
     feedLabel: t('feedLabel'),
     mortalityLabel: t('mortalityLabel'),
+    revenueFormula: t('revenueFormula'),
+    expensesFormula: t('expensesFormula'),
+    birdCostFormula: t('birdCostFormula'),
+    directResultFormula: t('directResultFormula'),
+    remainingFormula: t('remainingFormula'),
+    mortalityRateFormula: t('mortalityRateFormula'),
+    feedConsumptionFormula: t('feedConsumptionFormula'),
+    feedStockFormula: t('feedStockFormula'),
+    daysActiveFormula: t('daysActiveFormula'),
+    distributionFormula: t('distributionFormula'),
+    avgPriceFormula: t('avgPriceFormula'),
+    feedPerBirdFormula: t('feedPerBirdFormula'),
+    transactionCountFormula: t('transactionCountFormula'),
     breedBroiler: tBatches('breeds.broiler'),
     breedLayer: tBatches('breeds.layer'),
     breedOther: tBatches('breeds.other'),
@@ -104,7 +132,7 @@ export default async function BatchDetailServerPage({
   };
 
   return (
-    <BatchDetailClient 
+    <BatchDetailClient
       batch={batch}
       logs={logs}
       sales={batchSales}
@@ -112,6 +140,7 @@ export default async function BatchDetailServerPage({
       stats={{
         totalMortality,
         totalSold,
+        birdsPlaced,
         remainingQuantity,
         totalRevenue,
         totalBatchExpenses,

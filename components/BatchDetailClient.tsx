@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Bird, 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  ShoppingCart, 
-  Activity, 
-  Skull, 
-  Utensils, 
-  Calendar, 
+import {
+  Bird,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  ShoppingCart,
+  Activity,
+  Skull,
+  Utensils,
+  Calendar,
   ArrowLeft,
   PieChart as PieChartIcon,
   BarChart3,
@@ -24,13 +24,13 @@ import { PageHeader } from '@/components/PageHeader';
 import { updateBatch } from '@/actions/batch';
 import { Modal } from '@/components/Modal';
 import { Pagination } from '@/components/Pagination';
-import { 
-  ResponsiveContainer, 
-  AreaChart, 
-  Area, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
   CartesianGrid,
   PieChart,
   Pie,
@@ -52,13 +52,14 @@ interface Batch {
 interface Stats {
   totalMortality: number;
   totalSold: number;
+  birdsPlaced: number;
   remainingQuantity: number;
   totalRevenue: number;
   totalBatchExpenses: number;
   initialInvestment: number;
   netProfit: number;
   totalFeed: number;
-  mortalityRate: number;
+  mortalityRate: number | null;
   daysActive: number;
 }
 
@@ -99,7 +100,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
     e.preventDefault();
     const amount = parseFloat(rechargeAmount);
     if (!amount || amount <= 0) return;
-    
+
     setIsUpdating(true);
     await updateBatch(batch.id, { feedStock: (batch.feedStock || 0) + amount });
     setRechargeAmount('');
@@ -118,7 +119,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
 
   useEffect(() => {
     setMounted(true);
-    
+
     const observeTarget = containerRef.current;
     if (!observeTarget) return;
 
@@ -138,13 +139,13 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   const safeDaysActive = Math.max(0, stats.daysActive);
 
   const pieData = [
-    { name: t.totalSales, value: stats.totalSold },
-    { name: t.remaining, value: stats.remainingQuantity },
+    { name: t.soldBirds, value: stats.totalSold },
+    { name: t.remainingBirds, value: stats.remainingQuantity },
     { name: t.mortality, value: stats.totalMortality },
   ].filter(d => d.value > 0);
 
   if (pieData.length === 0) {
-    pieData.push({ name: t.remaining, value: batch.initialQuantity });
+    pieData.push({ name: t.remainingBirds, value: stats.birdsPlaced });
   }
 
   const activityData = [...logs].reverse().map(log => ({
@@ -169,7 +170,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   return (
     <main className="page-container" ref={containerRef}>
       <div className="page-stack">
-        <button 
+        <button
           onClick={() => router.back()}
           className="button-secondary w-fit"
         >
@@ -178,17 +179,17 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
         </button>
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <PageHeader 
-            title={batch.name === 'lot' ? t.batchName : batch.name} 
-            subtitle={`${formatBreed(batch.breed, t)} • ${new Date(batch.arrivalDate).toLocaleDateString()}`} 
+          <PageHeader
+            title={batch.name === 'lot' ? t.batchName : batch.name}
+            subtitle={`${formatBreed(batch.breed, t)} • ${new Date(batch.arrivalDate).toLocaleDateString()}`}
           />
           <div className="flex items-center gap-3">
-            <button 
+            <button
               onClick={toggleStatus}
               disabled={isUpdating}
               className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-sm transition-all active:scale-95 ${
-                batch.status === 'active' 
-                  ? 'bg-orange-500 text-white hover:bg-orange-600' 
+                batch.status === 'active'
+                  ? 'bg-orange-500 text-white hover:bg-orange-600'
                   : 'bg-emerald-500 text-white hover:bg-emerald-600'
               } disabled:opacity-50`}
             >
@@ -200,57 +201,63 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             </div>
           </div>
         </div>
+        <p className="formula-caption">{t.daysActiveFormula}</p>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <StatCard 
-            icon={<DollarSign className="w-5 h-5" />} 
-            label={t.netProfit} 
+           <StatCard
+            icon={<DollarSign className="w-5 h-5" />}
+            label={t.netProfit}
             value={`${stats.netProfit.toLocaleString()} ${t.currency}`}
             trend={stats.netProfit >= 0 ? 'up' : 'down'}
             trendLabel={stats.netProfit >= 0 ? t.profit : t.loss}
             color={stats.netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'}
-            bgColor={stats.netProfit >= 0 ? 'bg-emerald-50' : 'bg-red-50'}
-          />
-          <StatCard 
-            icon={<Bird className="w-5 h-5" />} 
-            label={t.remaining} 
+             bgColor={stats.netProfit >= 0 ? 'bg-emerald-50' : 'bg-red-50'}
+             formula={t.directResultFormula}
+           />
+          <StatCard
+            icon={<Bird className="w-5 h-5" />}
+            label={t.remaining}
             value={stats.remainingQuantity}
             subtext={`${t.chicks}`}
-            color="text-orange-600"
-            bgColor="bg-orange-50"
-          />
-          <StatCard 
-            icon={<Skull className="w-5 h-5" />} 
-            label={t.mortalityRate} 
-            value={`${stats.mortalityRate.toFixed(1)}%`}
+             color="text-orange-600"
+             bgColor="bg-orange-50"
+             formula={t.remainingFormula}
+           />
+          <StatCard
+            icon={<Skull className="w-5 h-5" />}
+            label={t.mortalityRate}
+             value={stats.mortalityRate === null ? '—' : `${stats.mortalityRate.toFixed(1)}%`}
             subtext={`${stats.totalMortality} ${t.chicks}`}
-            color="text-slate-600"
-            bgColor="bg-slate-50"
-          />
-          <StatCard 
-            icon={<Utensils className="w-5 h-5" />} 
-            label={t.feedConsumption} 
+             color="text-slate-600"
+             bgColor="bg-slate-50"
+             formula={t.mortalityRateFormula}
+           />
+          <StatCard
+            icon={<Utensils className="w-5 h-5" />}
+            label={t.feedConsumption}
             value={stats.totalFeed}
             subtext="kg"
-            color="text-blue-600"
-            bgColor="bg-blue-50"
-          />
+             color="text-blue-600"
+             bgColor="bg-blue-50"
+             formula={t.feedConsumptionFormula}
+           />
           <div className="metric-card group relative space-y-3">
             <div className="metric-card__icon" style={{ background: 'var(--orange-soft)', color: 'var(--orange)' }}>
               <Package className="w-5 h-5" />
             </div>
             <div>
-              <p className="metric-card__label mt-0">Stock Restant</p>
+               <p className="metric-card__label mt-0">{t.feedStock}</p>
               <div className="flex items-baseline gap-1">
                 <span className={`text-lg font-black ${((batch.feedStock || 0) - stats.totalFeed) <= 0 ? 'text-red-500' : 'text-orange-600'}`}>
                   {((batch.feedStock || 0) - stats.totalFeed).toFixed(1)}
                 </span>
                 <span className="text-[10px] font-bold text-slate-400 uppercase">kg</span>
               </div>
+              <p className="formula-caption">{t.feedStockFormula}</p>
             </div>
             {batch.status === 'active' && (
-              <button 
+              <button
                 onClick={() => setShowRechargeModal(true)}
                 className="absolute top-4 right-4 w-8 h-8 bg-slate-50 text-slate-400 hover:bg-orange-500 hover:text-white rounded-full flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
               >
@@ -268,6 +275,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
               <PieChartIcon className="w-4 h-4 text-orange-500" />
               {t.distribution}
             </h3>
+            <p className="formula-caption">{t.distributionFormula}</p>
             <div className="h-[200px] w-full relative">
               {mounted && dimensions.width > 0 && (
                 <ResponsiveContainer width="100%" height="100%">
@@ -309,6 +317,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
               <Activity className="w-4 h-4 text-blue-500" />
               {t.activityTrend}
             </h3>
+            <p className="formula-caption">{t.feedConsumptionFormula} · {t.mortalityRateFormula}</p>
             <div className="h-[250px] w-full relative">
               {mounted && dimensions.width > 0 && (
                 <ResponsiveContainer width="100%" height="100%">
@@ -322,7 +331,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700, fill: '#94a3b8' }} />
-                    <Tooltip 
+                    <Tooltip
                       contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                     />
                     <Legend verticalAlign="top" height={36} iconType="circle" wrapperStyle={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }} />
@@ -348,35 +357,41 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-1">
-              <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">{t.investment}</p>
-              <p className="text-2xl font-black">-{stats.initialInvestment.toLocaleString()} <span className="text-sm font-bold text-slate-500">{t.currency}</span></p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">{t.totalExpenses}</p>
-              <p className="text-2xl font-black">-{stats.totalBatchExpenses.toLocaleString()} <span className="text-sm font-bold text-slate-500">{t.currency}</span></p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-orange-400 text-[10px] font-black uppercase tracking-widest">{t.totalSales}</p>
-              <p className="text-2xl font-black">+{stats.totalRevenue.toLocaleString()} <span className="text-sm font-bold text-orange-900/50">{t.currency}</span></p>
+             <div className="space-y-1">
+               <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">{t.investment}</p>
+               <p className="text-2xl font-black">-{stats.initialInvestment.toLocaleString()} <span className="text-sm font-bold text-slate-500">{t.currency}</span></p>
+               <p className="formula-caption formula-caption--dark">{t.birdCostFormula}</p>
+             </div>
+             <div className="space-y-1">
+               <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest">{t.totalExpenses}</p>
+               <p className="text-2xl font-black">-{stats.totalBatchExpenses.toLocaleString()} <span className="text-sm font-bold text-slate-500">{t.currency}</span></p>
+               <p className="formula-caption formula-caption--dark">{t.expensesFormula}</p>
+             </div>
+             <div className="space-y-1">
+               <p className="text-orange-400 text-[10px] font-black uppercase tracking-widest">{t.totalSales}</p>
+               <p className="text-2xl font-black">+{stats.totalRevenue.toLocaleString()} <span className="text-sm font-bold text-orange-900/50">{t.currency}</span></p>
+               <p className="formula-caption formula-caption--dark">{t.revenueFormula}</p>
             </div>
           </div>
 
           <div className="mt-10 pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6">
             <div>
-              <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">{t.netProfit}</p>
-              <p className={`text-4xl font-black ${stats.netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                {stats.netProfit > 0 ? '+' : ''}{stats.netProfit.toLocaleString()} <span className="text-lg">{t.currency}</span>
-              </p>
+               <p className="text-slate-400 text-[10px] font-black uppercase tracking-widest mb-1">{t.netProfit}</p>
+               <p className={`text-4xl font-black ${stats.netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                 {stats.netProfit > 0 ? '+' : ''}{stats.netProfit.toLocaleString()} <span className="text-lg">{t.currency}</span>
+               </p>
+               <p className="formula-caption formula-caption--dark">{t.directResultFormula}</p>
             </div>
             <div className="flex gap-4">
               <div className="bg-white/5 px-6 py-4 rounded-3xl border border-white/10 text-center">
-                <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">{t.avgPrice}</p>
-                <p className="font-black text-lg">{(stats.totalSold > 0 ? stats.totalRevenue / stats.totalSold : 0).toFixed(1)}</p>
-              </div>
-              <div className="bg-white/5 px-6 py-4 rounded-3xl border border-white/10 text-center">
-                <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">{t.feedPerBird}</p>
-                <p className="font-black text-lg">{(stats.totalFeed / batch.initialQuantity).toFixed(2)} <span className="text-xs text-slate-500">kg</span></p>
+                 <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">{t.avgPrice}</p>
+                 <p className="font-black text-lg">{stats.totalSold > 0 ? (stats.totalRevenue / stats.totalSold).toFixed(1) : '—'}</p>
+                 <p className="formula-caption formula-caption--dark">{t.avgPriceFormula}</p>
+               </div>
+               <div className="bg-white/5 px-6 py-4 rounded-3xl border border-white/10 text-center">
+                 <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">{t.feedPerBird}</p>
+                 <p className="font-black text-lg">{stats.birdsPlaced > 0 ? (stats.totalFeed / stats.birdsPlaced).toFixed(2) : '—'} <span className="text-xs text-slate-500">kg</span></p>
+                 <p className="formula-caption formula-caption--dark">{t.feedPerBirdFormula}</p>
               </div>
             </div>
           </div>
@@ -395,6 +410,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
               </span>
             </div>
           </div>
+          <p className="formula-caption">{t.transactionCountFormula}</p>
 
           <div className="space-y-3">
              {sales.length === 0 && expenses.length === 0 && logs.length === 0 ? (
@@ -448,16 +464,16 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
         </div>
       </div>
 
-      <Modal 
-        isOpen={showRechargeModal} 
-        onClose={() => setShowRechargeModal(false)} 
+      <Modal
+        isOpen={showRechargeModal}
+        onClose={() => setShowRechargeModal(false)}
         title="Recharger le Stock d'Aliment"
       >
         <form onSubmit={handleRecharge} className="space-y-4">
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-500 uppercase">Quantité à ajouter (kg)</label>
-            <input 
-              type="number" 
+            <input
+              type="number"
               step="0.1"
               value={rechargeAmount}
               onChange={(e) => setRechargeAmount(e.target.value)}
@@ -466,8 +482,8 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
               autoFocus
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isUpdating || !rechargeAmount}
             className="w-full h-12 bg-slate-900 text-white rounded-xl font-black uppercase tracking-wider hover:bg-black transition-all active:scale-95 disabled:opacity-50"
           >
@@ -479,7 +495,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   );
 }
 
-function StatCard({ icon, label, value, subtext, trend, trendLabel, color, bgColor }: any) {
+function StatCard({ icon, label, value, subtext, trend, trendLabel, color, bgColor, formula }: any) {
   return (
     <div className="metric-card space-y-3">
       <div className={`metric-card__icon ${bgColor} ${color}`}>
@@ -491,6 +507,7 @@ function StatCard({ icon, label, value, subtext, trend, trendLabel, color, bgCol
           <span className={`text-lg font-black ${color}`}>{value}</span>
           {subtext && <span className="text-[10px] font-bold text-slate-400 uppercase">{subtext}</span>}
         </div>
+        {formula && <p className="formula-caption">{formula}</p>}
       </div>
       {trend && (
         <div className={`flex items-center gap-1 text-[10px] font-bold ${trend === 'up' ? 'text-emerald-500' : 'text-red-500'}`}>

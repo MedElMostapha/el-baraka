@@ -39,6 +39,8 @@ interface Translations {
   owesMe: string;
   totalBorrowed: string;
   totalLent: string;
+  borrowedFormula: string;
+  lentFormula: string;
 }
 
 export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }) {
@@ -94,6 +96,7 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
           <p className="text-2xl font-[1000] text-red-600 tracking-tighter">
             {totalBorrowed.toLocaleString()} <span className="text-xs opacity-60">{t.currency}</span>
           </p>
+          <p className="formula-caption">{t.borrowedFormula}</p>
         </div>
         <div className="metric-card border-emerald-100 bg-emerald-50">
           <div className="flex items-center gap-2 mb-2">
@@ -103,6 +106,7 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
           <p className="text-2xl font-[1000] text-emerald-600 tracking-tighter">
             {totalLent.toLocaleString()} <span className="text-xs opacity-60">{t.currency}</span>
           </p>
+          <p className="formula-caption">{t.lentFormula}</p>
         </div>
       </div>
 
@@ -143,10 +147,10 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-4">
                      <div className={`record-card__icon transition-all duration-300 ${
-                      debt.isPaid 
-                        ? 'bg-slate-100 text-slate-400' 
-                        : isBorrowing 
-                          ? 'bg-red-50 text-red-500 group-hover:bg-red-500 group-hover:text-white' 
+                      debt.isPaid
+                        ? 'bg-slate-100 text-slate-400'
+                        : isBorrowing
+                          ? 'bg-red-50 text-red-500 group-hover:bg-red-500 group-hover:text-white'
                           : 'bg-emerald-50 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white'
                     }`}>
                       {isBorrowing ? <ArrowDownLeft className="w-7 h-7" /> : <ArrowUpRight className="w-7 h-7" />}
@@ -157,10 +161,10 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
                         <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider ${
-                          debt.isPaid 
-                            ? 'text-slate-400 bg-slate-100' 
-                            : isBorrowing 
-                              ? 'text-red-500 bg-red-50' 
+                          debt.isPaid
+                            ? 'text-slate-400 bg-slate-100'
+                            : isBorrowing
+                              ? 'text-red-500 bg-red-50'
                               : 'text-emerald-500 bg-emerald-50'
                         }`}>
                           {isBorrowing ? t.iOwe : t.owesMe}
@@ -180,8 +184,8 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                       onClick={() => handleTogglePaid(debt)}
                       disabled={loadingId === debt.id}
                        className={`rounded-lg p-2.5 transition-all ${
-                        debt.isPaid 
-                          ? 'hover:bg-amber-50 text-amber-500' 
+                        debt.isPaid
+                          ? 'hover:bg-amber-50 text-amber-500'
                           : 'hover:bg-emerald-50 text-emerald-500'
                       }`}
                       title={debt.isPaid ? '' : t.markPaid}
@@ -237,8 +241,8 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                       onClick={() => handleTogglePaid(debt)}
                       disabled={loadingId === debt.id}
                        className={`rounded-lg p-2.5 transition-all ${
-                        debt.isPaid 
-                          ? 'bg-amber-50 text-amber-500' 
+                        debt.isPaid
+                          ? 'bg-amber-50 text-amber-500'
                           : 'bg-emerald-50 text-emerald-500'
                       }`}
                     >

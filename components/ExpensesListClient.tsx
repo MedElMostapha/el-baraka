@@ -33,7 +33,7 @@ interface Translations {
   deleteConfirm: string;
 }
 
-export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense[]; batches: any[]; t: Translations }) {
+export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { expenses: Expense[]; batches: any[]; feedPricePerSac: number; t: Translations }) {
   const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -43,23 +43,23 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
   const filteredExpenses = expenses.filter((expense) => {
     const expenseDate = new Date(expense.date);
     const now = new Date();
-    
+
     if (filter === 'today') {
-      return expenseDate.getDate() === now.getDate() && 
-             expenseDate.getMonth() === now.getMonth() && 
+      return expenseDate.getDate() === now.getDate() &&
+             expenseDate.getMonth() === now.getMonth() &&
              expenseDate.getFullYear() === now.getFullYear();
     }
-    
+
     if (filter === 'week') {
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       return expenseDate >= sevenDaysAgo;
     }
-    
+
     if (filter === 'month') {
-      return expenseDate.getMonth() === now.getMonth() && 
+      return expenseDate.getMonth() === now.getMonth() &&
              expenseDate.getFullYear() === now.getFullYear();
     }
-    
+
     return true; // 'all'
   });
 
@@ -102,8 +102,8 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
         ) : (
            visibleExpenses.map((expense) => {
             return (
-              <div 
-                key={expense.id} 
+              <div
+                key={expense.id}
                  className="record-card space-y-4"
               >
                 <div className="flex justify-between items-start">
@@ -122,9 +122,9 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
                       </div>
                     </div>
                   </div>
-                  
+
                    <div className="hidden items-center gap-1 rounded-xl bg-slate-50 p-1 md:flex">
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setEditExpense(expense);
@@ -134,7 +134,7 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => {
                         setConfirmDeleteId(expense.id);
                       }}
@@ -169,7 +169,7 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
                   </div>
 
                    <div className="md:hidden flex items-center gap-1 rounded-xl bg-slate-50 p-1">
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setEditExpense(expense);
@@ -179,7 +179,7 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => {
                         setConfirmDeleteId(expense.id);
                       }}
@@ -199,7 +199,7 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
 
       <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} />
 
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={!!confirmDeleteId}
         onClose={() => setConfirmDeleteId(null)}
         onConfirm={async () => {
@@ -213,13 +213,14 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
         message={t.deleteConfirm}
       />
 
-      <Modal 
+      <Modal
         isOpen={!!editExpense}
         onClose={() => setEditExpense(null)}
         title={t.editTitle}
       >
-        <ExpenseForm 
+        <ExpenseForm
           batches={batches}
+          feedPricePerSac={feedPricePerSac}
           onComplete={() => {
             setEditExpense(null);
           }}

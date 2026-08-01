@@ -86,7 +86,8 @@ export default async function SalesPage() {
               empty: t('empty'),
               editTitle: t('editTitle'),
               deleteTitle: t('deleteTitle'),
-              deleteConfirm: t('deleteConfirm')
+              deleteConfirm: t('deleteConfirm'),
+              debtFormula: t('debtFormula')
             }}
           />
         </div>

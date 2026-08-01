@@ -28,10 +28,12 @@ export async function recordSale(data: {
   try {
     const saleId = crypto.randomUUID();
     const totalPrice = data.quantity * data.unitPrice;
+    const amountPaid = Math.min(Math.max(data.amountPaid, 0), totalPrice);
 
     await db.insert(sales).values({
       id: saleId,
       ...data,
+      amountPaid,
       date: new Date(),
       totalPrice,
     });
@@ -56,10 +58,10 @@ export async function recordSale(data: {
     if (batch) {
       const totalSoldResult = await db.select({ sum: sql<number>`sum(${sales.quantity})` }).from(sales).where(eq(sales.batchId, data.batchId));
       const totalMortalityResult = await db.select({ sum: sql<number>`sum(${dailyLogs.mortality})` }).from(dailyLogs).where(eq(dailyLogs.batchId, data.batchId));
-      
+
       const totalSold = totalSoldResult[0]?.sum || 0;
       const totalMortality = totalMortalityResult[0]?.sum || 0;
-      
+
       if (totalSold + totalMortality >= batch.initialQuantity) {
         await db.update(batches).set({ status: 'closed' }).where(eq(batches.id, data.batchId));
       }
@@ -85,16 +87,20 @@ export async function deleteSale(id: string) {
   }
 }
 
-export async function markSalePaid(id: string, totalPrice: number, clientId: string | null) {
+export async function markSalePaid(id: string, _totalPrice: number, _clientId: string | null) {
   try {
-    await db.update(sales).set({ amountPaid: totalPrice }).where(eq(sales.id, id));
-    
-    if (clientId) {
+    const sale = await db.query.sales.findFirst({ where: eq(sales.id, id) });
+    if (!sale) return { success: false };
+
+    const outstanding = Math.max(0, sale.totalPrice - sale.amountPaid);
+    await db.update(sales).set({ amountPaid: sale.totalPrice }).where(eq(sales.id, id));
+
+    if (outstanding > 0 && sale.clientId) {
       await db.insert(payments).values({
         id: crypto.randomUUID(),
-        clientId: clientId,
+        clientId: sale.clientId,
         saleId: id,
-        amount: totalPrice,
+        amount: outstanding,
         date: new Date(),
         method: 'cash',
       });
@@ -111,7 +117,8 @@ export async function markSalePaid(id: string, totalPrice: number, clientId: str
 export async function updateSale(id: string, data: any) {
   try {
     const totalPrice = data.quantity * data.unitPrice;
-    await db.update(sales).set({ ...data, totalPrice }).where(eq(sales.id, id));
+    const amountPaid = Math.min(Math.max(Number(data.amountPaid) || 0, 0), totalPrice);
+    await db.update(sales).set({ ...data, amountPaid, totalPrice }).where(eq(sales.id, id));
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {

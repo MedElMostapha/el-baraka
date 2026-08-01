@@ -23,9 +23,10 @@ interface ExpenseFormProps {
   batches: { id: string; name: string }[];
   onComplete?: () => void;
   editData?: any;
+  feedPricePerSac?: number;
 }
 
-export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps) {
+export function ExpenseForm({ batches, onComplete, editData, feedPricePerSac = 0 }: ExpenseFormProps) {
   const t = useTranslations('Expenses');
   const [isPending, startTransition] = useTransition();
 
@@ -43,6 +44,13 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
 
   const watchUnitPrice = watch('unitPrice');
   const watchQuantity = watch('quantity');
+  const watchCategory = watch('category');
+
+  useEffect(() => {
+    if (!editData && watchCategory === 'feed' && feedPricePerSac > 0) {
+      setValue('unitPrice', feedPricePerSac);
+    }
+  }, [editData, feedPricePerSac, setValue, watchCategory]);
 
   // Automatically calculate total amount
   useEffect(() => {
@@ -124,9 +132,10 @@ export function ExpenseForm({ batches, onComplete, editData }: ExpenseFormProps)
              />
           </div>
 
-          <InputGroup label={t('description')} icon={<FileText className="w-5 h-5 text-slate-400" />} register={register('description')} />
+           <InputGroup label={t('description')} icon={<FileText className="w-5 h-5 text-slate-400" />} register={register('description')} />
+           <p className="formula-caption">{t('amountFormula')}</p>
 
-        </div>
+         </div>
 
         <button
           disabled={isPending}
