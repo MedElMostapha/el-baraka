@@ -23,6 +23,7 @@ import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
 import { updateBatch } from '@/actions/batch';
 import { Modal } from '@/components/Modal';
+import { Pagination } from '@/components/Pagination';
 import { 
   ResponsiveContainer, 
   AreaChart, 
@@ -71,6 +72,7 @@ interface BatchDetailClientProps {
 }
 
 const COLORS = ['#f97316', '#64748b', '#ef4444'];
+const ACTIVITY_PAGE_SIZE = 5;
 
 function formatBreed(breed: string | null, t: any): string {
   if (!breed) return '--';
@@ -90,6 +92,8 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   const [isUpdating, setIsUpdating] = useState(false);
   const [showRechargeModal, setShowRechargeModal] = useState(false);
   const [rechargeAmount, setRechargeAmount] = useState('');
+  const [salesPage, setSalesPage] = useState(1);
+  const [expensesPage, setExpensesPage] = useState(1);
 
   const handleRecharge = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,6 +152,19 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
     mortality: log.mortality,
     feed: log.feedConsumed,
   }));
+
+  const salesPageCount = Math.max(1, Math.ceil(sales.length / ACTIVITY_PAGE_SIZE));
+  const currentSalesPage = Math.min(salesPage, salesPageCount);
+  const visibleSales = sales.slice(
+    (currentSalesPage - 1) * ACTIVITY_PAGE_SIZE,
+    currentSalesPage * ACTIVITY_PAGE_SIZE,
+  );
+  const expensesPageCount = Math.max(1, Math.ceil(expenses.length / ACTIVITY_PAGE_SIZE));
+  const currentExpensesPage = Math.min(expensesPage, expensesPageCount);
+  const visibleExpenses = expenses.slice(
+    (currentExpensesPage - 1) * ACTIVITY_PAGE_SIZE,
+    currentExpensesPage * ACTIVITY_PAGE_SIZE,
+  );
 
   return (
     <main className="page-container" ref={containerRef}>
@@ -389,7 +406,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
                  {/* Recent Sales */}
                  <div className="space-y-3">
                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest ml-4">{t.salesList}</h3>
-                   {sales.slice(0, 5).map(sale => (
+                    {visibleSales.map(sale => (
                       <div key={sale.id} className="record-card flex items-center justify-between">
                        <div className="flex items-center gap-3">
                          <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center">
@@ -401,14 +418,15 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
                          </div>
                        </div>
                        <p className="font-black text-slate-800">{sale.totalPrice} <span className="text-[10px] text-slate-400">{t.currency}</span></p>
-                     </div>
-                   ))}
-                 </div>
+                      </div>
+                    ))}
+                    <Pagination page={currentSalesPage} pageCount={salesPageCount} onPageChange={setSalesPage} />
+                  </div>
 
                  {/* Recent Expenses */}
                  <div className="space-y-3">
                    <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest ml-4">{t.expensesList}</h3>
-                   {expenses.slice(0, 5).map(exp => (
+                    {visibleExpenses.map(exp => (
                       <div key={exp.id} className="record-card flex items-center justify-between">
                        <div className="flex items-center gap-3">
                          <div className="w-10 h-10 bg-red-50 text-red-600 rounded-xl flex items-center justify-center">
@@ -420,9 +438,10 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
                          </div>
                        </div>
                        <p className="font-black text-slate-800">{exp.amount} <span className="text-[10px] text-slate-400">{t.currency}</span></p>
-                     </div>
-                   ))}
-                 </div>
+                      </div>
+                    ))}
+                    <Pagination page={currentExpensesPage} pageCount={expensesPageCount} onPageChange={setExpensesPage} />
+                  </div>
                </div>
              )}
           </div>

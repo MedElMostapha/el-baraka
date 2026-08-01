@@ -6,6 +6,9 @@ import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
 import { createBatch } from '@/actions/batch';
 import { Modal } from './Modal';
+import { Pagination } from './Pagination';
+
+const PAGE_SIZE = 8;
 
 interface BatchInfo {
   id: string;
@@ -81,6 +84,7 @@ export default function BatchesClient({
   const [newUnitPrice, setNewUnitPrice] = useState(0);
   const [restockFilter, setRestockFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
   const [customDate, setCustomDate] = useState('');
+  const [restockPage, setRestockPage] = useState(1);
 
   const filteredRestocks = useMemo(() => {
     const now = new Date();
@@ -105,6 +109,13 @@ export default function BatchesClient({
       return true;
     });
   }, [restocks, restockFilter, customDate]);
+
+  const restockPageCount = Math.max(1, Math.ceil(filteredRestocks.length / PAGE_SIZE));
+  const currentRestockPage = Math.min(restockPage, restockPageCount);
+  const visibleRestocks = filteredRestocks.slice(
+    (currentRestockPage - 1) * PAGE_SIZE,
+    currentRestockPage * PAGE_SIZE,
+  );
 
   const restockFilters = [
     { id: 'all' as const, label: t.filterAll },
@@ -213,7 +224,7 @@ export default function BatchesClient({
                   {restockFilters.map((f) => (
                     <button
                       key={f.id}
-                      onClick={() => { setRestockFilter(f.id); setCustomDate(''); }}
+                       onClick={() => { setRestockFilter(f.id); setCustomDate(''); setRestockPage(1); }}
                        className={`${restockFilter === f.id && !customDate ? 'is-active' : ''} whitespace-nowrap`}
                     >
                       {f.label}
@@ -228,12 +239,12 @@ export default function BatchesClient({
                 <input
                   type="date"
                   value={customDate}
-                  onChange={(e) => setCustomDate(e.target.value)}
+                   onChange={(e) => { setCustomDate(e.target.value); setRestockPage(1); }}
                    className="field-input h-11 pl-11"
                 />
                 {customDate && (
                   <button
-                    onClick={() => setCustomDate('')}
+                     onClick={() => { setCustomDate(''); setRestockPage(1); }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-lg font-black leading-none"
                   >
                     ×
@@ -246,12 +257,12 @@ export default function BatchesClient({
                 <div className="text-center py-8">
                   <p className="text-slate-400 font-bold text-sm">{t.empty}</p>
                 </div>
-              ) : filteredRestocks.map((r, i) => (
+               ) : visibleRestocks.map((r, i) => (
                 <div
                   key={r.id}
                   onClick={() => router.push(`/batches/${r.batchId}`)}
                      className={`flex cursor-pointer items-center justify-between p-4 transition-all hover:bg-slate-50 ${
-                    i < restocks.length - 1 ? 'border-b border-slate-50' : ''
+                     i < visibleRestocks.length - 1 ? 'border-b border-slate-50' : ''
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -272,8 +283,9 @@ export default function BatchesClient({
                   </div>
                 </div>
               ))}
-            </div>
-          </section>
+             </div>
+             <Pagination page={currentRestockPage} pageCount={restockPageCount} onPageChange={setRestockPage} />
+           </section>
         )}
       </div>
 

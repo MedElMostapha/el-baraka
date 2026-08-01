@@ -717,6 +717,58 @@ button:disabled {
   box-shadow: 0 5px 12px rgba(23, 59, 53, 0.14);
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #e8efe9;
+  margin-top: 6px;
+  padding: 14px 2px 0;
+}
+
+.pagination__button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  color: var(--pine);
+  padding: 0 11px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease, opacity 160ms ease;
+}
+
+.pagination__button:hover:not(:disabled) {
+  border-color: rgba(232, 111, 45, 0.35);
+  background: var(--orange-soft);
+  color: var(--orange);
+}
+
+.pagination__button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.pagination__status {
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.pagination__status strong {
+  color: var(--pine);
+  font-weight: 850;
+}
+
+[dir="rtl"] .pagination__button--previous svg,
+[dir="rtl"] .pagination__button--next svg {
+  transform: rotate(180deg);
+}
+
 .record-card {
   padding: 18px;
   transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;

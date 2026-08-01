@@ -6,6 +6,9 @@ import { deleteExpense, updateExpense } from "@/actions/expenses";
 import { ConfirmModal } from './ConfirmModal';
 import { ExpenseForm } from './ExpenseForm';
 import { Modal } from './Modal';
+import { Pagination } from './Pagination';
+
+const PAGE_SIZE = 8;
 
 interface Expense {
   id: string;
@@ -35,6 +38,7 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
+  const [page, setPage] = useState(1);
 
   const filteredExpenses = expenses.filter((expense) => {
     const expenseDate = new Date(expense.date);
@@ -66,6 +70,10 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
     { id: 'month', label: t.filterMonth },
   ] as const;
 
+  const pageCount = Math.max(1, Math.ceil(filteredExpenses.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const visibleExpenses = filteredExpenses.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
@@ -74,7 +82,10 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
           {filters.map((f) => (
             <button
               key={f.id}
-              onClick={() => setFilter(f.id)}
+              onClick={() => {
+                setFilter(f.id);
+                setPage(1);
+              }}
               className={`${filter === f.id ? 'is-active' : ''} whitespace-nowrap`}
             >
               {f.label}
@@ -89,7 +100,7 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
               <p className="text-sm font-bold text-slate-500">{t.empty}</p>
           </div>
         ) : (
-          filteredExpenses.map((expense) => {
+           visibleExpenses.map((expense) => {
             return (
               <div 
                 key={expense.id} 
@@ -185,6 +196,8 @@ export function ExpensesListClient({ expenses, batches, t }: { expenses: Expense
           })
         )}
       </div>
+
+      <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} />
 
       <ConfirmModal 
         isOpen={!!confirmDeleteId}

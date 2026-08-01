@@ -6,6 +6,9 @@ import { deleteSale, markSalePaid, updateSale } from '@/actions/sales';
 import { ConfirmModal } from './ConfirmModal';
 import { SalesForm } from './SalesForm';
 import { Modal } from './Modal';
+import { Pagination } from './Pagination';
+
+const PAGE_SIZE = 8;
 
 interface Sale {
   id: string;
@@ -41,6 +44,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editSale, setEditSale] = useState<Sale | null>(null);
+  const [page, setPage] = useState(1);
 
   const filteredSales = sales.filter((sale) => {
     const saleDate = new Date(sale.date);
@@ -77,6 +81,10 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
     { id: 'unpaid', label: t.filterUnpaid },
   ] as const;
 
+  const pageCount = Math.max(1, Math.ceil(filteredSales.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const visibleSales = filteredSales.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
@@ -85,7 +93,10 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
           {filters.map((f) => (
             <button
               key={f.id}
-              onClick={() => setFilter(f.id)}
+              onClick={() => {
+                setFilter(f.id);
+                setPage(1);
+              }}
               className={`${filter === f.id ? 'is-active' : ''} whitespace-nowrap`}
             >
               {f.label}
@@ -100,7 +111,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
               <p className="text-sm font-bold text-slate-500">{t.empty}</p>
           </div>
         ) : (
-          filteredSales.map((sale) => {
+           visibleSales.map((sale) => {
             const debt = sale.totalPrice - sale.amountPaid;
             return (
               <div 
@@ -221,6 +232,8 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
           })
         )}
       </div>
+
+      <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} />
 
       <ConfirmModal 
         isOpen={!!confirmDeleteId}

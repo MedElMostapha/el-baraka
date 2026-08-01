@@ -6,6 +6,9 @@ import { deleteDebt, markDebtPaid, markDebtUnpaid } from "@/actions/debts";
 import { ConfirmModal } from './ConfirmModal';
 import { DebtForm } from './DebtForm';
 import { Modal } from './Modal';
+import { Pagination } from './Pagination';
+
+const PAGE_SIZE = 8;
 
 interface Debt {
   id: string;
@@ -43,6 +46,7 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editDebt, setEditDebt] = useState<Debt | null>(null);
+  const [page, setPage] = useState(1);
 
   const filteredDebts = debts.filter((debt) => {
     if (filter === 'borrowing') return debt.type === 'borrowing';
@@ -63,6 +67,10 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
     { id: 'lending', label: t.filterLending },
     { id: 'paid', label: t.filterPaid },
   ] as const;
+
+  const pageCount = Math.max(1, Math.ceil(filteredDebts.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const visibleDebts = filteredDebts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const handleTogglePaid = async (debt: Debt) => {
     setLoadingId(debt.id);
@@ -105,7 +113,10 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
           {filters.map((f) => (
             <button
               key={f.id}
-              onClick={() => setFilter(f.id)}
+              onClick={() => {
+                setFilter(f.id);
+                setPage(1);
+              }}
               className={`${filter === f.id ? 'is-active' : ''} whitespace-nowrap`}
             >
               {f.label}
@@ -121,7 +132,7 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
             <p className="text-sm font-bold text-slate-500">{t.empty}</p>
           </div>
         ) : (
-          filteredDebts.map((debt) => {
+          visibleDebts.map((debt) => {
             const isBorrowing = debt.type === 'borrowing';
 
             return (
@@ -258,6 +269,8 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
           })
         )}
       </div>
+
+      <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} />
 
       <ConfirmModal
         isOpen={!!confirmDeleteId}

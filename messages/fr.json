@@ -4,7 +4,10 @@
     "cancel": "Annuler",
     "delete": "Supprimer",
     "save": "Enregistrer",
-    "edit": "Modifier"
+    "edit": "Modifier",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page"
   },
   "Dashboard": {
     "subtitle": "Gestion Avicole",

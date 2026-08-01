@@ -7,7 +7,10 @@ import { useRouter } from 'next/navigation';
 import { deleteInventoryItem, updateInventoryItem } from '@/actions/inventory';
 import { ConfirmModal } from './ConfirmModal';
 import { Modal } from './Modal';
+import { Pagination } from './Pagination';
 import { PageHeader } from '@/components/PageHeader';
+
+const PAGE_SIZE = 8;
 
 interface InventoryItem {
   id: string;
@@ -31,6 +34,10 @@ interface InventoryTranslations {
 
 export default function InventoryClient({ initialItems, t, kgPerSac = 0 }: { initialItems: InventoryItem[], t: InventoryTranslations, kgPerSac?: number }) {
   const router = useRouter();
+  const [page, setPage] = React.useState(1);
+  const pageCount = Math.max(1, Math.ceil(initialItems.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const visibleItems = initialItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const handleComplete = () => {
     router.refresh();
@@ -50,9 +57,10 @@ export default function InventoryClient({ initialItems, t, kgPerSac = 0 }: { ini
             {initialItems.length === 0 && (
               <div className="empty-state">{t.addNew}</div>
             )}
-            {initialItems.map((item) => (
+            {visibleItems.map((item) => (
               <InventoryItemCard key={item.id} item={item} t={t} router={router} kgPerSac={kgPerSac} />
             ))}
+            <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} />
           </section>
         </div>
       </div>
