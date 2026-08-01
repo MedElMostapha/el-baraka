@@ -17,13 +17,15 @@ import {
   CheckCircle2,
   XCircle,
   Package,
-  Plus
+  Plus,
+  Pencil
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
 import { updateBatch } from '@/actions/batch';
 import { Modal } from '@/components/Modal';
 import { Pagination } from '@/components/Pagination';
+import { BatchForm } from '@/components/BatchForm';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -69,6 +71,7 @@ interface BatchDetailClientProps {
   sales: any[];
   expenses: any[];
   stats: Stats;
+  kgPerSac: number;
   t: any;
 }
 
@@ -85,7 +88,7 @@ function formatBreed(breed: string | null, t: any): string {
   return map[breed] || breed;
 }
 
-export default function BatchDetailClient({ batch, logs, sales, expenses, stats, t }: BatchDetailClientProps) {
+export default function BatchDetailClient({ batch, logs, sales, expenses, stats, kgPerSac, t }: BatchDetailClientProps) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -93,6 +96,7 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   const [isUpdating, setIsUpdating] = useState(false);
   const [showRechargeModal, setShowRechargeModal] = useState(false);
   const [rechargeAmount, setRechargeAmount] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false);
   const [salesPage, setSalesPage] = useState(1);
   const [expensesPage, setExpensesPage] = useState(1);
 
@@ -184,6 +188,14 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             subtitle={`${formatBreed(batch.breed, t)} • ${new Date(batch.arrivalDate).toLocaleDateString()}`}
           />
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowEditModal(true)}
+              className="button-secondary"
+            >
+              <Pencil className="h-4 w-4" />
+              {t.editTitle}
+            </button>
             <button
               onClick={toggleStatus}
               disabled={isUpdating}
@@ -463,6 +475,22 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
           </div>
         </div>
       </div>
+
+      <Modal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        title={t.editTitle}
+      >
+        <BatchForm
+          editData={batch}
+          showTitle={false}
+          kgPerSac={kgPerSac}
+          onComplete={() => {
+            setShowEditModal(false);
+            router.refresh();
+          }}
+        />
+      </Modal>
 
       <Modal
         isOpen={showRechargeModal}

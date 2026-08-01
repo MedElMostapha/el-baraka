@@ -81,6 +81,7 @@
     "active": "En cours",
     "closed": "Terminé",
     "save": "Créer le lot",
+    "update": "Enregistrer les modifications",
     "empty": "Aucun lot enregistré",
     "createError": "Erreur lors de la création du lot",
     "remaining": "Restant",

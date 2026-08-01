@@ -23,7 +23,7 @@ export function BatchForm({ onComplete, editData, showTitle = true, kgPerSac = 0
   const t = useTranslations('Batches');
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  
+
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,7 +49,7 @@ export function BatchForm({ onComplete, editData, showTitle = true, kgPerSac = 0
         feedStock: values.feedStock * kgPerSac,
       };
 
-      const result = editData 
+      const result = editData
         ? await updateBatch(editData.id, {
             ...normalizedValues,
             arrivalDate: new Date(normalizedValues.arrivalDate),
@@ -70,7 +70,7 @@ export function BatchForm({ onComplete, editData, showTitle = true, kgPerSac = 0
   return (
     <div className={`${editData ? '' : 'form-card'}`}>
       {!editData && showTitle && <h2 className="form-card__title">{t('addNew')}</h2>}
-      
+
       {error && (
         <div className="mb-6 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">
           {error}
@@ -82,7 +82,7 @@ export function BatchForm({ onComplete, editData, showTitle = true, kgPerSac = 0
           <InputGroup label={t('name')} icon={<Plus className="w-5 h-5 text-orange-500" />} register={register('name')} />
           <SelectGroup label={t('breed')} icon={<Bird className="w-5 h-5 text-blue-500" />} register={register('breed')} options={[{label: t('breeds.broiler'), value: 'broiler'}, {label: t('breeds.layer'), value: 'layer'}, {label: t('breeds.other'), value: 'other'}]} />
           <InputGroup label={t('arrivalDate')} icon={<Calendar className="w-5 h-5 text-purple-500" />} register={register('arrivalDate')} type="date" />
-          
+
           <div className="grid grid-cols-2 gap-3">
             <InputGroup label={t('quantity')} icon={<Hash className="w-5 h-5 text-green-500" />} register={register('initialQuantity', { valueAsNumber: true })} type="number" />
             <InputGroup label={t('cost')} icon={<CircleDollarSign className="w-5 h-5 text-yellow-500" />} register={register('costPerChick', { valueAsNumber: true })} type="number" step="0.01" />
@@ -93,12 +93,12 @@ export function BatchForm({ onComplete, editData, showTitle = true, kgPerSac = 0
           </p>
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={isPending}
           className="button-primary mt-4 w-full disabled:opacity-70"
         >
-          {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-4 w-4" /><span>{t('save')}</span></>}
+          {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-4 w-4" /><span>{editData ? t('update') : t('save')}</span></>}
         </button>
       </form>
     </div>
@@ -119,7 +119,7 @@ function InputGroup({ label, icon, register, type = "text", step }: InputGroupPr
       <label className="field-label">{label}</label>
       <div className="field-with-icon">
         <div>{icon}</div>
-        <input 
+        <input
           type={type}
           step={step}
           {...register}
@@ -143,7 +143,7 @@ function SelectGroup({ label, icon, register, options }: SelectGroupProps) {
       <label className="field-label">{label}</label>
       <div className="field-with-icon">
         <div>{icon}</div>
-        <select 
+        <select
           {...register}
           className="field-select h-12 appearance-none"
         >

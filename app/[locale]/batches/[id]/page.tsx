@@ -4,6 +4,7 @@ import { eq, desc } from "drizzle-orm";
 import { getTranslations } from 'next-intl/server';
 import { notFound } from "next/navigation";
 import BatchDetailClient from "@/components/BatchDetailClient";
+import { getKgPerSac } from '@/actions/settings';
 
 export default async function BatchDetailServerPage({
   params,
@@ -15,6 +16,7 @@ export default async function BatchDetailServerPage({
   const t = await getTranslations('BatchDetails');
   const tBatches = await getTranslations('Batches');
   const tSales = await getTranslations('Sales');
+  const kgPerSac = await getKgPerSac();
 
   const batch = await db.query.batches.findFirst({
     where: eq(batches.id, id),
@@ -129,6 +131,7 @@ export default async function BatchDetailServerPage({
     breedLayer: tBatches('breeds.layer'),
     breedOther: tBatches('breeds.other'),
     batchName: tBatches('defaultName'),
+    editTitle: tBatches('editTitle'),
   };
 
   return (
@@ -150,6 +153,7 @@ export default async function BatchDetailServerPage({
         mortalityRate,
         daysActive
       }}
+      kgPerSac={kgPerSac}
       t={translations}
     />
   );
