@@ -4,7 +4,7 @@ import React from 'react';
 import { InventoryForm } from './InventoryForm';
 import { Package, Layers, Trash2, Pencil, Loader2, Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from 'next/navigation';
-import { deleteInventoryItem, updateInventoryItem } from '@/actions/inventory';
+import { deleteInventoryItem } from '@/actions/inventory';
 import { ConfirmModal } from './ConfirmModal';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
@@ -29,6 +29,7 @@ interface InventoryTranslations {
   medicine: string;
   packaging: string;
   other: string;
+  bags: string;
   [key: string]: string;
 }
 
@@ -68,11 +69,13 @@ export default function InventoryClient({ initialItems, t, kgPerSac = 0 }: { ini
   );
 }
 
-function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryItem, t: InventoryTranslations, router: any, kgPerSac?: number }) {
+function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryItem, t: InventoryTranslations, router: ReturnType<typeof useRouter>, kgPerSac?: number }) {
   const [expanded, setExpanded] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [confirmDelete, setConfirmDelete] = React.useState(false);
   const [editItem, setEditItem] = React.useState(false);
+  const feedKg = item.category === 'feed' ? toFeedKg(item.quantity, item.unit, kgPerSac) : null;
+  const feedBags = feedKg !== null && kgPerSac > 0 ? feedKg / kgPerSac : null;
 
   return (
     <>
@@ -92,14 +95,16 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
                   {t[item.category] || item.category}
                 </span>
                  <div className="record-card__meta">
-                  <Layers className="w-3.5 h-3.5" />
-                  {item.quantity} {item.unit}
-                  {item.unit === 'sac' && kgPerSac > 0 && (
-                    <span className="text-blue-500 ml-1">
-                      ({(item.quantity * kgPerSac).toFixed(1)} kg)
-                    </span>
-                  )}
-                </div>
+                   <Layers className="w-3.5 h-3.5" />
+                    {feedBags !== null && feedKg !== null ? (
+                     <>
+                       <span className="font-black text-orange-600">{formatQuantity(feedBags)} {t.bags}</span>
+                       <span className="text-blue-500">({formatQuantity(feedKg)} kg)</span>
+                     </>
+                   ) : (
+                     `${formatQuantity(item.quantity)} ${item.unit}`
+                   )}
+                 </div>
               </div>
             </div>
           </div>
@@ -172,4 +177,16 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
       </Modal>
     </>
   );
+}
+
+function toFeedKg(quantity: number, unit: string, kgPerSac: number) {
+  if (kgPerSac <= 0) return null;
+  if (unit === 'sac' || unit === 'bag') return quantity * kgPerSac;
+  if (unit === 'g') return quantity / 1000;
+  if (unit === 'kg') return quantity;
+  return null;
+}
+
+function formatQuantity(quantity: number) {
+  return quantity.toLocaleString(undefined, { maximumFractionDigits: 1 });
 }

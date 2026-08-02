@@ -1,0 +1,1 @@
+ALTER TABLE `expenses` ADD `sale_id` text REFERENCES sales(id);

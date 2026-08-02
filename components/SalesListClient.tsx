@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Wallet, Bird, Calendar, Filter, Trash2, CheckCircle, Loader2, Pencil } from "lucide-react";
-import { deleteSale, markSalePaid, updateSale } from '@/actions/sales';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocale } from 'next-intl';
+import { Wallet, Bird, Calendar, ChevronDown, ChevronLeft, ChevronRight, Filter, Trash2, CheckCircle, Loader2, Pencil } from "lucide-react";
+import { deleteSale, markSalePaid } from '@/actions/sales';
 import { ConfirmModal } from './ConfirmModal';
 import { SalesForm } from './SalesForm';
 import { Modal } from './Modal';
@@ -19,9 +20,21 @@ interface Sale {
   unitPrice: number;
   totalPrice: number;
   amountPaid: number;
+  feedConsumedBags: number;
   type: 'wholesale' | 'retail';
   batchName: string | null;
   clientName: string | null;
+}
+
+interface BatchOption {
+  id: string;
+  name: string;
+  remainingQuantity: number;
+}
+
+interface ClientOption {
+  id: string;
+  name: string;
 }
 
 interface Translations {
@@ -33,6 +46,11 @@ interface Translations {
   filterWeek: string;
   filterMonth: string;
   filterUnpaid: string;
+  filterDate: string;
+  pickDate: string;
+  clearDate: string;
+  previousMonth: string;
+  nextMonth: string;
   empty: string;
   editTitle: string;
   deleteTitle: string;
@@ -40,8 +58,10 @@ interface Translations {
   debtFormula: string;
 }
 
-export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[]; batches: any[]; clients: any[]; t: Translations }) {
+export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[]; batches: BatchOption[]; clients: ClientOption[]; t: Translations }) {
+  const locale = useLocale();
   const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'month' | 'unpaid'>('all');
+  const [selectedDate, setSelectedDate] = useState('');
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editSale, setEditSale] = useState<Sale | null>(null);
@@ -50,6 +70,10 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
   const filteredSales = sales.filter((sale) => {
     const saleDate = new Date(sale.date);
     const now = new Date();
+
+    if (selectedDate) {
+      return toInputDate(saleDate) === selectedDate;
+    }
 
     if (filter === 'today') {
       return saleDate.getDate() === now.getDate() &&
@@ -88,7 +112,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
+      <div className="sales-filters">
         <div className="filter-bar">
           <Filter className="ml-2 h-4 w-4 text-slate-400" />
           {filters.map((f) => (
@@ -96,14 +120,28 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
               key={f.id}
               onClick={() => {
                 setFilter(f.id);
+                setSelectedDate('');
                 setPage(1);
               }}
-              className={`${filter === f.id ? 'is-active' : ''} whitespace-nowrap`}
+              className={`${filter === f.id && !selectedDate ? 'is-active' : ''} whitespace-nowrap`}
             >
               {f.label}
             </button>
           ))}
         </div>
+        <DatePicker
+          locale={locale}
+          value={selectedDate}
+          label={t.filterDate}
+          placeholder={t.pickDate}
+          clearLabel={t.clearDate}
+          previousMonthLabel={t.previousMonth}
+          nextMonthLabel={t.nextMonth}
+          onChange={(date) => {
+            setSelectedDate(date);
+            setPage(1);
+          }}
+        />
       </div>
 
       <div className="space-y-4">
@@ -267,4 +305,147 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
       </Modal>
     </section>
   );
+}
+
+interface DatePickerProps {
+  locale: string;
+  value: string;
+  label: string;
+  placeholder: string;
+  clearLabel: string;
+  previousMonthLabel: string;
+  nextMonthLabel: string;
+  onChange: (value: string) => void;
+}
+
+function DatePicker({
+  locale,
+  value,
+  label,
+  placeholder,
+  clearLabel,
+  previousMonthLabel,
+  nextMonthLabel,
+  onChange,
+}: DatePickerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [viewMonth, setViewMonth] = useState(() => {
+    const selectedDate = parseInputDate(value);
+    return selectedDate || new Date();
+  });
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const selectedDate = parseInputDate(value);
+  const year = viewMonth.getFullYear();
+  const month = viewMonth.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
+  const todayValue = toInputDate(new Date());
+  const monthLabel = viewMonth.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
+  const weekdays = Array.from({ length: 7 }, (_, index) => (
+    new Date(2021, 7, index + 1).toLocaleDateString(locale, { weekday: 'short' })
+  ));
+  const days = Array.from({ length: firstDayOfMonth + daysInMonth }, (_, index) => (
+    index < firstDayOfMonth ? null : index - firstDayOfMonth + 1
+  ));
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!pickerRef.current?.contains(event.target as Node)) setIsOpen(false);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => document.removeEventListener('pointerdown', handlePointerDown);
+  }, [isOpen]);
+
+  const moveMonth = (offset: number) => {
+    setViewMonth(new Date(year, month + offset, 1));
+  };
+
+  return (
+    <div ref={pickerRef} className="date-picker">
+      <button
+        type="button"
+        className={`date-picker__trigger ${value ? 'date-picker__trigger--selected' : ''}`}
+        aria-label={label}
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
+        onClick={() => {
+          if (selectedDate) setViewMonth(selectedDate);
+          setIsOpen((open) => !open);
+        }}
+      >
+        <Calendar className="h-4 w-4" aria-hidden="true" />
+        <span>{value ? selectedDate?.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' }) : placeholder}</span>
+        <ChevronDown className={`date-picker__chevron h-4 w-4 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+      </button>
+
+      {isOpen && (
+        <div className="date-picker__popover" role="dialog" aria-label={label}>
+          <div className="date-picker__header">
+            <strong>{monthLabel}</strong>
+            <div className="date-picker__month-actions">
+              <button type="button" onClick={() => moveMonth(-1)} aria-label={previousMonthLabel}>
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button type="button" onClick={() => moveMonth(1)} aria-label={nextMonthLabel}>
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <div className="date-picker__weekdays">
+            {weekdays.map((weekday, index) => <span key={`${weekday}-${index}`}>{weekday}</span>)}
+          </div>
+          <div className="date-picker__days">
+            {days.map((day, index) => {
+              if (!day) return <span key={`empty-${index}`} aria-hidden="true" />;
+              const dayValue = toInputDate(new Date(year, month, day));
+              const isSelected = dayValue === value;
+              const isToday = dayValue === todayValue;
+              return (
+                <button
+                  key={dayValue}
+                  type="button"
+                  className={`date-picker__day ${isSelected ? 'date-picker__day--selected' : ''} ${isToday ? 'date-picker__day--today' : ''}`}
+                  aria-pressed={isSelected}
+                  onClick={() => {
+                    onChange(dayValue);
+                    setIsOpen(false);
+                  }}
+                >
+                  {day}
+                </button>
+              );
+            })}
+          </div>
+          {value && (
+            <button
+              type="button"
+              className="date-picker__clear"
+              onClick={() => {
+                onChange('');
+                setIsOpen(false);
+              }}
+            >
+              {clearLabel}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function toInputDate(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function parseInputDate(value: string) {
+  if (!value) return null;
+  const [year, month, day] = value.split('-').map(Number);
+  return new Date(year, month - 1, day);
 }

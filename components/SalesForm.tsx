@@ -5,7 +5,7 @@ import { useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
-import { Wallet, Plus, Save, Loader2, User, Hash, Banknote } from 'lucide-react';
+import { Wallet, Plus, Loader2, User, Hash, Banknote, Utensils } from 'lucide-react';
 import { recordSale, updateSale, createClient } from '@/actions/sales';
 
 const formSchema = z.object({
@@ -14,6 +14,7 @@ const formSchema = z.object({
   newClientName: z.string().optional(),
   quantity: z.number().min(1),
   unitPrice: z.number().min(0),
+  feedConsumedBags: z.number().min(0),
   amountPaid: z.number().min(0),
   type: z.enum(['wholesale', 'retail']),
 });
@@ -24,6 +25,18 @@ interface FormValues {
   newClientName?: string;
   quantity: number;
   unitPrice: number;
+  feedConsumedBags: number;
+  amountPaid: number;
+  type: 'wholesale' | 'retail';
+}
+
+interface SaleEditData {
+  id: string;
+  batchId: string;
+  clientId: string | null;
+  quantity: number;
+  unitPrice: number;
+  feedConsumedBags: number;
   amountPaid: number;
   type: 'wholesale' | 'retail';
 }
@@ -32,7 +45,7 @@ interface SalesFormProps {
   batches: { id: string; name: string; remainingQuantity: number }[];
   clients: { id: string; name: string }[];
   onComplete?: () => void;
-  editData?: any;
+  editData?: SaleEditData | null;
 }
 
 export function SalesForm({ batches, clients: initialClients, onComplete, editData }: SalesFormProps) {
@@ -41,14 +54,16 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   const [isPending, startTransition] = useTransition();
   const [showNewClient, setShowNewClient] = useState(false);
   const [isDebt, setIsDebt] = useState(editData ? editData.amountPaid === 0 : false);
+  const [error, setError] = useState<string | null>(null);
 
   const { register, handleSubmit, watch, reset, setValue } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      batchId: editData?.batchId || '',
+      batchId: editData?.batchId || batches[0]?.id || '',
       clientId: editData?.clientId || '',
       quantity: editData?.quantity || 1,
       unitPrice: editData?.unitPrice || 0,
+      feedConsumedBags: editData?.feedConsumedBags || 0,
       amountPaid: editData?.amountPaid || 0,
       type: editData?.type || 'wholesale'
     }
@@ -80,6 +95,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   }, [total, setValue, editData, isDebt]);
 
   const onSubmit = (values: FormValues) => {
+    setError(null);
     startTransition(async () => {
       let clientId = values.clientId;
 
@@ -94,6 +110,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
             clientId: clientId || undefined,
             quantity: values.quantity,
             unitPrice: values.unitPrice,
+            feedConsumedBags: values.feedConsumedBags,
             amountPaid: values.amountPaid,
             type: values.type,
           })
@@ -102,6 +119,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
             clientId: clientId || undefined,
             quantity: values.quantity,
             unitPrice: values.unitPrice,
+            feedConsumedBags: values.feedConsumedBags,
             amountPaid: values.amountPaid,
             type: values.type,
           });
@@ -110,6 +128,15 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
         if (!editData) reset();
         setShowNewClient(false);
         if (onComplete) onComplete();
+      } else {
+        const errorMessage = result.error === 'feedStockInsufficient'
+          ? t('feedStockInsufficient')
+          : result.error === 'feedStockMissing'
+            ? t('feedStockMissing')
+            : result.error === 'kgPerSacMissing'
+              ? t('kgPerSacMissing')
+              : t('error');
+        setError(errorMessage);
       }
     });
   };
@@ -117,6 +144,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   return (
     <div className={`${editData ? '' : 'form-card'}`}>
       {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
+      {error && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{error}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-3">
 
@@ -180,6 +208,15 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
             <InputGroup label={t('unitPrice')} icon={<Banknote className="w-4 h-4 text-green-500" />} register={register('unitPrice', { valueAsNumber: true })} type="number" />
           </div>
 
+          <InputGroup
+            label={t('feedConsumedBags')}
+            icon={<Utensils className="w-4 h-4 text-orange-500" />}
+            register={register('feedConsumedBags', { valueAsNumber: true })}
+            type="number"
+            step="0.1"
+          />
+          <p className="formula-caption">{t('feedConsumptionHint')}</p>
+
            <div className="flex items-center justify-between px-1 pt-1">
               <label className="field-label">{t('debt')}</label>
               <button
@@ -227,9 +264,10 @@ interface InputGroupProps {
   icon: React.ReactNode;
   register: UseFormRegisterReturn;
   type?: string;
+  step?: string;
 }
 
-function InputGroup({ label, icon, register, type = "text" }: InputGroupProps) {
+function InputGroup({ label, icon, register, type = "text", step }: InputGroupProps) {
   return (
     <div className="space-y-1.5">
       <label className="field-label">{label}</label>
@@ -237,6 +275,7 @@ function InputGroup({ label, icon, register, type = "text" }: InputGroupProps) {
         <div>{icon}</div>
         <input
           type={type}
+          step={step}
           {...register}
            className="field-input h-12"
         />

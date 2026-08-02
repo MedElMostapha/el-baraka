@@ -65,7 +65,9 @@ export default async function BatchDetailServerPage({
     : batch.initialQuantity * batch.costPerChick;
   const netProfit = totalRevenue - totalBatchExpenses - initialInvestment;
 
-  const totalFeed = logs.reduce((sum, log) => sum + log.feedConsumed, 0);
+  const totalFeedFromLogs = logs.reduce((sum, log) => sum + log.feedConsumed, 0);
+  const totalFeedFromSales = batchSales.reduce((sum, sale) => sum + sale.feedConsumedBags * kgPerSac, 0);
+  const totalFeed = totalFeedFromLogs + totalFeedFromSales;
 
   const mortalityRate = birdsPlaced > 0 ? (totalMortality / birdsPlaced) * 100 : null;
 
@@ -89,6 +91,7 @@ export default async function BatchDetailServerPage({
     investment: t('birdCost'),
     mortality: t('mortality'),
     feedConsumption: t('feedConsumption'),
+    bags: t('bags'),
     feedStock: t('feedStock'),
     performance: t('performance'),
     daysSinceArrival: t('daysSinceArrival'),

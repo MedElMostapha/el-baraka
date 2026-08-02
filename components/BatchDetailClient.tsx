@@ -245,11 +245,11 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
              bgColor="bg-slate-50"
              formula={t.mortalityRateFormula}
            />
-          <StatCard
-            icon={<Utensils className="w-5 h-5" />}
-            label={t.feedConsumption}
-            value={stats.totalFeed}
-            subtext="kg"
+           <StatCard
+             icon={<Utensils className="w-5 h-5" />}
+             label={t.feedConsumption}
+             value={`${stats.totalFeed.toFixed(1)} kg`}
+             subtext={kgPerSac > 0 ? `${(stats.totalFeed / kgPerSac).toFixed(1)} ${t.bags}` : undefined}
              color="text-blue-600"
              bgColor="bg-blue-50"
              formula={t.feedConsumptionFormula}

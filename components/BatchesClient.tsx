@@ -78,12 +78,14 @@ export default function BatchesClient({
   activeBatch,
   restocks,
   kgPerSac,
+  defaultCostPerChick,
   t,
 }: {
   initialBatches: BatchInfo[];
   activeBatch: BatchInfo | null;
   restocks: RestockEntry[];
   kgPerSac: number;
+  defaultCostPerChick: number;
   t: BatchTranslations;
 }) {
   const router = useRouter();
@@ -142,7 +144,7 @@ export default function BatchesClient({
               <h2>{t.createLead}</h2>
               <p>{t.createHint}</p>
             </div>
-            <BatchForm showTitle={false} kgPerSac={kgPerSac} onComplete={() => router.refresh()} />
+            <BatchForm showTitle={false} kgPerSac={kgPerSac} defaultCostPerChick={defaultCostPerChick} onComplete={() => router.refresh()} />
           </section>
 
           <div className="batches-main-column">
@@ -152,7 +154,6 @@ export default function BatchesClient({
                   <span className="section-kicker">{t.activeBatches}</span>
                   <h2>{t.title}</h2>
                 </div>
-                <span className="section-heading__badge">{initialBatches.length} {t.totalBatches}</span>
               </div>
 
               {activeBatch ? (
@@ -253,6 +254,9 @@ export default function BatchesClient({
                       </button>
                     )}
                   </div>
+                </div>
+                <div className="flex justify-end">
+                  <span className="section-heading__badge">{initialBatches.length} {t.totalBatches}</span>
                 </div>
                 <div className="panel overflow-hidden">
                   {filteredRestocks.length === 0 ? (

@@ -11,7 +11,7 @@ function toBaseUnit(quantity: number, unit: string, kgPerSac: number): number {
 }
 
 export async function createBatch(data: {
-  name: string;
+  name?: string;
   breed?: string;
   arrivalDate: Date;
   initialQuantity: number;

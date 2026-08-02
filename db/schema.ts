@@ -52,6 +52,7 @@ export const sales = sqliteTable('sales', {
   unitPrice: real('unit_price').notNull(),
   totalPrice: real('total_price').notNull(),
   amountPaid: real('amount_paid').default(0).notNull(),
+  feedConsumedBags: real('feed_consumed_bags').default(0).notNull(),
   type: text('type', { enum: ['wholesale', 'retail'] }).notNull(),
 });
 
@@ -75,6 +76,7 @@ export const expenses = sqliteTable('expenses', {
   category: text('category', { enum: ['feed', 'medication', 'transport', 'utilities', 'salaries', 'other'] }).notNull(),
   description: text('description'),
   batchId: text('batch_id').references(() => batches.id, { onDelete: 'cascade' }), // Optional link to a specific batch
+  saleId: text('sale_id').references(() => sales.id, { onDelete: 'cascade' }),
 });
 
 // 8. Debt Management (Personal borrowing/lending)

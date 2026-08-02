@@ -38,6 +38,7 @@ export default async function InventoryPage() {
     subtitle: t('subtitle'),
     addNew: t('addNew'),
     feed: t('feed'),
+    bags: t('bags'),
     medicine: t('medicine'),
     packaging: t('packaging'),
     other: t('other'),

@@ -16,7 +16,7 @@ async function getKgPerSac(): Promise<number> {
 }
 
 function toBaseUnit(quantity: number, unit: string, kgPerSac: number): number {
-  if (unit === 'sac' && kgPerSac > 0) return quantity * kgPerSac;
+  if ((unit === 'sac' || unit === 'bag') && kgPerSac > 0) return quantity * kgPerSac;
   return quantity;
 }
 
@@ -38,7 +38,7 @@ export async function addInventoryItem(data: {
       const addedKg = toBaseUnit(data.quantity, data.unit, kgPerSac);
       const totalKg = existingKg + addedKg;
 
-      if (item.unit === 'sac' && kgPerSac > 0) {
+      if ((item.unit === 'sac' || item.unit === 'bag') && kgPerSac > 0) {
         await db.update(inventory)
           .set({ quantity: totalKg / kgPerSac, lastUpdated: new Date() })
           .where(eq(inventory.id, item.id));

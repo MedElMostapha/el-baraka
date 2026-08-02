@@ -1,13 +1,14 @@
 import { db } from "@/db";
 import { batches, dailyLogs, sales, restocks } from "@/db/schema";
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { getTranslations } from 'next-intl/server';
 import BatchesClient from "@/components/BatchesClient";
-import { getKgPerSac } from '@/actions/settings';
+import { getCostPerChick, getKgPerSac } from '@/actions/settings';
 
 export default async function BatchesPage() {
   const t = await getTranslations('Batches');
   const kgPerSac = await getKgPerSac();
+  const costPerChick = await getCostPerChick();
 
   const allBatches = await db
     .select()
@@ -44,6 +45,7 @@ export default async function BatchesPage() {
     })
     .from(restocks)
     .leftJoin(batches, eq(restocks.batchId, batches.id))
+    .where(eq(batches.status, 'closed'))
     .orderBy(desc(restocks.date));
 
   const activeBatch = allBatches.find(b => b.status === 'active');
@@ -108,6 +110,7 @@ export default async function BatchesPage() {
       activeBatch={activeBatch ? { ...activeBatch, remainingQuantity, arrivalDate: activeBatch.arrivalDate.toISOString() } : null}
       restocks={serializedRestocks}
       kgPerSac={kgPerSac}
+      defaultCostPerChick={costPerChick}
       t={translations}
     />
   );

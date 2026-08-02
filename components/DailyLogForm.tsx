@@ -12,7 +12,7 @@ import { createDailyLog } from '@/actions/daily-log';
 const formSchema = z.object({
   batchId: z.string().min(1, 'Required'),
   mortality: z.number().min(0),
-  feedConsumed: z.number().min(0),
+  feedConsumedBags: z.number().min(0),
   waterConsumed: z.number().min(0),
   medications: z.string().optional(),
   notes: z.string().optional(),
@@ -35,7 +35,7 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
     defaultValues: {
       batchId: batches.length > 0 ? batches[0].id : '',
       mortality: 0,
-      feedConsumed: 0,
+      feedConsumedBags: 0,
       waterConsumed: 0,
       medications: '',
       notes: '',
@@ -51,7 +51,14 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
         reset();
         router.refresh();
       } else {
-        setMessage({ type: 'error', text: t('error') });
+        const errorMessage = result.error === 'feedStockInsufficient'
+          ? t('insufficientStock')
+          : result.error === 'feedStockMissing'
+            ? t('feedStockMissing')
+            : result.error === 'kgPerSacMissing'
+              ? t('kgPerSacMissing')
+              : t('error');
+        setMessage({ type: 'error', text: errorMessage });
       }
     });
   };
@@ -109,10 +116,11 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
 
             {/* Feed */}
             <InputBox
-              label={t('feed')}
+              label={t('feedBags')}
               icon={<Utensils className="w-5 h-5 text-orange-500" />}
-              register={register('feedConsumed', { valueAsNumber: true })}
-              suffix="kg"
+              register={register('feedConsumedBags', { valueAsNumber: true })}
+              suffix={t('bagsUnit')}
+              step="0.1"
             />
 
             {/* Water */}
@@ -165,9 +173,10 @@ interface InputBoxProps {
   icon: React.ReactNode;
   register: UseFormRegisterReturn;
   suffix?: string;
+  step?: string;
 }
 
-function InputBox({ label, icon, register, suffix }: InputBoxProps) {
+function InputBox({ label, icon, register, suffix, step }: InputBoxProps) {
   return (
     <div className="space-y-3">
       <label className="field-label">{label}</label>
@@ -178,6 +187,8 @@ function InputBox({ label, icon, register, suffix }: InputBoxProps) {
         <input
           type="number"
           inputMode="decimal"
+          min="0"
+          step={step}
           {...register}
           className="field-input h-12 pl-10 pr-10 text-center text-lg font-black"
         />
