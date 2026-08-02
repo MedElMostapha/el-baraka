@@ -1,0 +1,79 @@
+- generic [active] [ref=f4e1]:
+  - generic [ref=f4e2]:
+    - navigation "Mobile navigation" [ref=f4e3]:
+      - generic [ref=f4e4]:
+        - link "لوحة التحكم" [ref=f4e5] [cursor=pointer]:
+          - /url: /
+        - link "الدفعات" [ref=f4e12] [cursor=pointer]:
+          - /url: /batches
+        - link "المخزون" [ref=f4e18] [cursor=pointer]:
+          - /url: /inventory
+        - link "المبيعات" [ref=f4e23] [cursor=pointer]:
+          - /url: /sales
+        - button "خيارات تنقل إضافية" [ref=f4e29] [cursor=pointer]:
+          - generic [ref=f4e34]: المزيد
+    - main [ref=f4e36]:
+      - generic [ref=f4e37]:
+        - generic [ref=f4e38]:
+          - generic [ref=f4e39]:
+            - generic [ref=f4e40]: دورة الحياة
+            - heading "إدارة الدفعات" [level=1] [ref=f4e41]
+          - generic [ref=f4e42]:
+            - img "El Baraka" [ref=f4e43]
+            - generic "Connected" [ref=f4e44]
+        - generic [ref=f4e45]:
+          - generic [ref=f4e46]:
+            - generic [ref=f4e47]:
+              - generic [ref=f4e48]: دفعة جديدة
+              - heading "ابدأ دفعة جديدة" [level=2] [ref=f4e49]
+              - paragraph [ref=f4e50]: أدخل بيانات البداية لمتابعة كل مرحلة من دورة التربية.
+            - generic [ref=f4e52]:
+              - generic [ref=f4e53]:
+                - generic [ref=f4e54]:
+                  - generic [ref=f4e55]: اسم الدفعة
+                  - textbox [ref=f4e57]
+                - generic [ref=f4e58]:
+                  - generic [ref=f4e59]: السلالة
+                  - button "السلالة" [ref=f4e61] [cursor=pointer]:
+                    - generic [ref=f4e62]: لحم / Broiler
+                - generic [ref=f4e63]:
+                  - generic [ref=f4e64]: تاريخ الوصول
+                  - button "تاريخ الوصول" [ref=f4e66] [cursor=pointer]:
+                    - generic [ref=f4e69]: 2 أغسطس 2026
+                - generic [ref=f4e72]:
+                  - generic [ref=f4e73]:
+                    - generic [ref=f4e74]: الكمية الأولية
+                    - spinbutton [ref=f4e76]
+                  - generic [ref=f4e77]:
+                    - generic [ref=f4e78]: تكلفة الكتكوت
+                    - spinbutton [ref=f4e80]
+                - generic [ref=f4e81]:
+                  - generic [ref=f4e82]: مخزون العلف الأولي (أكياس)
+                  - spinbutton [ref=f4e84]
+                - paragraph [ref=f4e85]: الكيس الواحد = 50 كغ
+              - button "إنشاء الدفعة" [ref=f4e86] [cursor=pointer]
+          - generic [ref=f4e92]:
+            - generic [ref=f4e93]:
+              - generic [ref=f4e95]:
+                - generic [ref=f4e96]: الدفعة الحالية
+                - heading "إدارة الدفعات" [level=2] [ref=f4e97]
+              - generic [ref=f4e98]:
+                - paragraph [ref=f4e103]: لا توجد دفعات مسجلة
+                - paragraph [ref=f4e104]: أدخل بيانات البداية لمتابعة كل مرحلة من دورة التربية.
+            - generic [ref=f4e105]:
+              - generic [ref=f4e113]:
+                - generic [ref=f4e114]: دورة الحياة
+                - heading "سجل التموين" [level=2] [ref=f4e115]
+              - button "الفلاتر" [ref=f4e118] [cursor=pointer]:
+                - strong [ref=f4e122]: الكل
+              - generic [ref=f4e125]: 1 دفعات
+              - button "دفعة لحم / Broiler 02/08/2026 100 كتكوت 38 MRU/طير" [ref=f4e128] [cursor=pointer]:
+                - generic [ref=f4e132]:
+                  - generic [ref=f4e133]: دفعة
+                  - text: لحم / Broiler
+                  - generic [ref=f4e134]: 02/08/2026
+                - generic [ref=f4e135]:
+                  - generic [ref=f4e136]: 100 كتكوت
+                  - generic [ref=f4e137]: 38 MRU/طير
+  - button "Open Next.js Dev Tools" [ref=f4e143] [cursor=pointer]
+  - alert [ref=f4e147]

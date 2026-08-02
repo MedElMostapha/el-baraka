@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useTransition, useEffect } from 'react';
-import { useForm, UseFormRegisterReturn } from 'react-hook-form';
+import { Controller, useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
-import { Wallet, Save, Loader2, FileText, Banknote, Hash, DollarSign } from 'lucide-react';
+import { Wallet, Save, Loader2, FileText, Banknote, Hash, DollarSign, Bird } from 'lucide-react';
 import { addExpense, updateExpense } from '@/actions/expenses';
+import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
   amount: z.number().min(0.01),
@@ -30,7 +31,7 @@ export function ExpenseForm({ batches, onComplete, editData, feedPricePerSac = 0
   const t = useTranslations('Expenses');
   const [isPending, startTransition] = useTransition();
 
-  const { register, handleSubmit, reset, watch, setValue } = useForm<FormValues>({
+  const { register, handleSubmit, reset, watch, setValue, control } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: editData?.amount || 0,
@@ -102,13 +103,22 @@ export function ExpenseForm({ batches, onComplete, editData, feedPricePerSac = 0
 
           <div className="space-y-2">
             <label className="field-label">{t('batch')}</label>
-            <select
-              {...register('batchId')}
-              className="field-select h-12"
-            >
-              <option value="">{t('generalExpense')}</option>
-              {batches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-            </select>
+            <Controller
+              control={control}
+              name="batchId"
+              render={({ field }) => (
+                <CustomSelect
+                  label={t('batch')}
+                  icon={<Bird className="w-5 h-5 text-orange-500" />}
+                  options={batches.map(b => ({ label: b.name, value: b.id }))}
+                  placeholder={t('generalExpense')}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                />
+              )}
+            />
           </div>
 
            <div className="grid grid-cols-1 gap-3 md:grid-cols-3">

@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useTransition } from 'react';
-import { useForm, UseFormRegisterReturn } from 'react-hook-form';
+import { Controller, useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Package, Plus, Save, Loader2, Tag } from 'lucide-react';
 import { addInventoryItem, updateInventoryItem } from '@/actions/inventory';
+import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
   name: z.string().optional(),
@@ -21,7 +22,7 @@ export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComple
   const t = useTranslations('Inventory');
   const [isPending, startTransition] = useTransition();
 
-  const { register, handleSubmit, reset, watch } = useForm<FormValues>({
+  const { register, handleSubmit, reset, watch, control } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: editData?.name || '',
@@ -56,34 +57,58 @@ export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComple
         <div className="space-y-4">
           <InputGroup label={t('name')} icon={<Package className="w-5 h-5 text-orange-500" />} register={register('name')} />
 
-          <SelectGroup
-            label={t('category')}
-            icon={<Tag className="w-5 h-5 text-orange-500" />}
-            register={register('category')}
-            options={[
-              { label: t('feed'), value: 'feed' },
-              { label: t('medicine'), value: 'medicine' },
-              { label: t('packaging'), value: 'packaging' },
-              { label: t('other'), value: 'other' }
-            ]}
-          />
+          <div className="space-y-2">
+            <label className="field-label">{t('category')}</label>
+            <Controller
+              control={control}
+              name="category"
+              render={({ field }) => (
+                <CustomSelect
+                  label={t('category')}
+                  icon={<Tag className="w-5 h-5 text-orange-500" />}
+                  options={[
+                    { label: t('feed'), value: 'feed' },
+                    { label: t('medicine'), value: 'medicine' },
+                    { label: t('packaging'), value: 'packaging' },
+                    { label: t('other'), value: 'other' }
+                  ]}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                />
+              )}
+            />
+          </div>
 
           <div className="grid grid-cols-2 gap-4">
             <InputGroup label={t('quantity')} icon={<Package className="w-5 h-5 text-green-500" />} register={register('quantity', { valueAsNumber: true })} type="number" />
-            <SelectGroup
-              label={t('unit')}
-              icon={<Plus className="w-5 h-5 text-blue-500" />}
-              register={register('unit')}
-              options={[
-                { label: 'kg', value: 'kg' },
-                { label: 'g', value: 'g' },
-                { label: 'L', value: 'L' },
-                { label: 'ml', value: 'ml' },
-                { label: 'Sac', value: 'sac' },
-                { label: 'Unité', value: 'unit' },
-                { label: 'Boîte', value: 'box' }
-              ]}
-            />
+            <div className="space-y-2">
+              <label className="field-label">{t('unit')}</label>
+              <Controller
+                control={control}
+                name="unit"
+                render={({ field }) => (
+                  <CustomSelect
+                    label={t('unit')}
+                    icon={<Plus className="w-5 h-5 text-blue-500" />}
+                    options={[
+                      { label: 'kg', value: 'kg' },
+                      { label: 'g', value: 'g' },
+                      { label: 'L', value: 'L' },
+                      { label: 'ml', value: 'ml' },
+                      { label: 'Sac', value: 'sac' },
+                      { label: 'Unité', value: 'unit' },
+                      { label: 'Boîte', value: 'box' }
+                    ]}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    ref={field.ref}
+                  />
+                )}
+              />
+            </div>
           </div>
           {kgEquivalent !== null && (
             <div className="rounded-xl border border-blue-100 bg-blue-50 p-3 text-center">
@@ -123,30 +148,6 @@ function InputGroup({ label, icon, register, type = "text" }: InputGroupProps) {
           {...register}
           className="field-input h-12"
         />
-      </div>
-    </div>
-  );
-}
-
-interface SelectGroupProps {
-  label: string;
-  icon: React.ReactNode;
-  register: UseFormRegisterReturn;
-  options: { label: string; value: string }[];
-}
-
-function SelectGroup({ label, icon, register, options }: SelectGroupProps) {
-  return (
-    <div className="space-y-2">
-      <label className="field-label">{label}</label>
-      <div className="field-with-icon">
-        <div>{icon}</div>
-        <select
-          {...register}
-          className="field-select h-12 appearance-none"
-        >
-          {options.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-        </select>
       </div>
     </div>
   );

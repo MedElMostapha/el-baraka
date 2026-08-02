@@ -8,7 +8,11 @@
     "previous": "السابق",
     "next": "التالي",
     "page": "الصفحة",
-    "filters": "الفلاتر"
+    "filters": "الفلاتر",
+    "pickDate": "اختر تاريخا",
+    "clearDate": "مسح التاريخ",
+    "previousMonth": "الشهر السابق",
+    "nextMonth": "الشهر التالي"
   },
   "Dashboard": {
     "subtitle": "إدارة الدواجن",
@@ -85,7 +89,6 @@
     "filterWeek": "هذا الأسبوع",
     "filterMonth": "هذا الشهر",
     "filterCustom": "تاريخ",
-    "clearDate": "مسح التاريخ",
     "status": "الحالة",
     "active": "نشطة",
     "closed": "مغلقة",
@@ -152,10 +155,6 @@
     "filterMonth": "هذا الشهر",
     "filterUnpaid": "غير مدفوعة",
     "filterDate": "تاريخ محدد",
-    "pickDate": "اختر تاريخا",
-    "clearDate": "مسح التاريخ",
-    "previousMonth": "الشهر السابق",
-    "nextMonth": "الشهر التالي",
     "empty": "لا توجد مبيعات",
     "editTitle": "تعديل البيع",
     "deleteTitle": "حذف البيع",

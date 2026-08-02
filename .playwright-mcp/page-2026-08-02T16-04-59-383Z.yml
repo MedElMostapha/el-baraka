@@ -1,0 +1,89 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e2]:
+    - navigation "Mobile navigation" [ref=f3e3]:
+      - generic [ref=f3e4]:
+        - link "Tableau de bord" [ref=f3e5] [cursor=pointer]:
+          - /url: /
+        - link "Lots" [ref=f3e12] [cursor=pointer]:
+          - /url: /batches
+        - link "Stocks" [ref=f3e18] [cursor=pointer]:
+          - /url: /inventory
+        - link "Ventes" [ref=f3e23] [cursor=pointer]:
+          - /url: /sales
+        - button "Plus d’options de navigation" [ref=f3e29] [cursor=pointer]:
+          - generic [ref=f3e34]: Plus
+    - main [ref=f3e36]:
+      - generic [ref=f3e37]:
+        - generic [ref=f3e38]:
+          - generic [ref=f3e39]:
+            - generic [ref=f3e40]: Revenus & Dettes
+            - heading "Gestion des Ventes" [level=1] [ref=f3e41]
+          - generic [ref=f3e42]:
+            - img "El Baraka" [ref=f3e43]
+            - generic "Connected" [ref=f3e44]
+        - generic [ref=f3e45]:
+          - generic [ref=f3e47]:
+            - heading "Nouvelle Vente" [level=2] [ref=f3e48]
+            - generic [ref=f3e49]:
+              - generic [ref=f3e50]:
+                - generic [ref=f3e51]:
+                  - generic [ref=f3e52]:
+                    - generic [ref=f3e53]: Type de vente
+                    - generic [ref=f3e54]:
+                      - generic [ref=f3e55] [cursor=pointer]:
+                        - radio "En gros" [checked] [ref=f3e56]
+                        - generic [ref=f3e57]: En gros
+                      - generic [ref=f3e58] [cursor=pointer]:
+                        - radio "Détail" [ref=f3e59]
+                        - generic [ref=f3e60]: Détail
+                  - generic [ref=f3e61]:
+                    - generic [ref=f3e62]: Lot
+                    - button "Lot" [ref=f3e64] [cursor=pointer]:
+                      - generic [ref=f3e65]: Sélectionner Lot
+                - generic [ref=f3e66]:
+                  - generic [ref=f3e67]: Client
+                  - generic [ref=f3e68]:
+                    - button "Client" [ref=f3e70] [cursor=pointer]:
+                      - generic [ref=f3e71]: Passant / Cash
+                    - button [ref=f3e72] [cursor=pointer]
+                - generic [ref=f3e74]:
+                  - generic [ref=f3e75]:
+                    - generic [ref=f3e76]: Quantité soldée
+                    - spinbutton [ref=f3e78]: "1"
+                  - generic [ref=f3e79]:
+                    - generic [ref=f3e80]: Prix unitaire
+                    - spinbutton [ref=f3e82]: "0"
+                - generic [ref=f3e83]:
+                  - generic [ref=f3e84]: Sacs consommés par le lot
+                  - spinbutton [ref=f3e86]: "0"
+                - paragraph [ref=f3e87]: Ces sacs seront retirés du stock après vérification de la disponibilité.
+                - generic [ref=f3e88]:
+                  - generic [ref=f3e89]: Dette restante
+                  - button [ref=f3e90] [cursor=pointer]
+                - generic [ref=f3e92]:
+                  - generic [ref=f3e93]:
+                    - generic [ref=f3e94]: Total
+                    - generic [ref=f3e95]: 0 MRU
+                  - generic [ref=f3e96]:
+                    - generic [ref=f3e97]: Montant payé
+                    - spinbutton "0" [ref=f3e98]
+                - paragraph [ref=f3e99]: Total = quantité × prix unitaire
+              - button "Enregistrer la vente" [ref=f3e100] [cursor=pointer]
+          - generic [ref=f3e105]:
+            - button "Filtres" [ref=f3e108] [cursor=pointer]:
+              - strong [ref=f3e112]: Tout le temps
+            - generic [ref=f3e116]:
+              - generic [ref=f3e123]:
+                - heading "12 000 MRU" [level=3] [ref=f3e124]
+                - generic [ref=f3e125]:
+                  - generic [ref=f3e126]: lmou56ar
+                  - generic [ref=f3e127]: PAYÉ
+              - generic [ref=f3e128]:
+                - generic [ref=f3e130]:
+                  - generic [ref=f3e131]: lot
+                  - generic [ref=f3e136]: 02/08/2026
+                - generic [ref=f3e139]:
+                  - button "Edit sale" [ref=f3e140] [cursor=pointer]
+                  - button "Delete sale" [ref=f3e144] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=f3e153] [cursor=pointer]
+  - alert [ref=f3e157]

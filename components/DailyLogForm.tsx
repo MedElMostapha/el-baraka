@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useTransition } from 'react';
-import { useForm, UseFormRegisterReturn } from 'react-hook-form';
+import { Controller, useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
-import { Skull, Utensils, Droplets, Pill, Save, Loader2, ChevronRight } from 'lucide-react';
+import { Skull, Utensils, Droplets, Pill, Save, Loader2, Bird } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { createDailyLog } from '@/actions/daily-log';
+import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
   batchId: z.string().min(1, 'Required'),
@@ -30,7 +31,7 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormValues>({
+  const { register, handleSubmit, formState: { errors }, reset, control } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       batchId: batches.length > 0 ? batches[0].id : '',
@@ -88,20 +89,22 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
           {/* Batch Selection */}
           <div className="space-y-2">
             <label className="field-label">{t('selectBatch')}</label>
-            <div className="relative">
-              <select
-                {...register('batchId')}
-                className="field-select h-12 appearance-none"
-              >
-                <option value="">{t('chooseBatch')}</option>
-                {batches.map((batch) => (
-                  <option key={batch.id} value={batch.id}>{batch.name}</option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2">
-                <ChevronRight className="h-4 w-4 rotate-90 text-slate-400" />
-              </div>
-            </div>
+            <Controller
+              control={control}
+              name="batchId"
+              render={({ field }) => (
+                <CustomSelect
+                  label={t('selectBatch')}
+                  icon={<Bird className="w-5 h-5 text-orange-500" />}
+                  options={batches.map((batch) => ({ label: batch.name, value: batch.id }))}
+                  placeholder={t('chooseBatch')}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                />
+              )}
+            />
             {errors.batchId && <p className="ml-1 text-[10px] font-bold uppercase tracking-tighter text-red-500">{errors.batchId.message}</p>}
           </div>
 

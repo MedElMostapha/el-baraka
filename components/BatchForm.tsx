@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useTransition } from 'react';
-import { Controller, Control, useForm, UseFormRegisterReturn } from 'react-hook-form';
+import React, { useState, useTransition } from 'react';
+import { Controller, useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
-import { Check, ChevronDown, Plus, Save, Loader2, Calendar, Hash, CircleDollarSign, Bird, Utensils } from 'lucide-react';
+import { Plus, Save, Loader2, Hash, CircleDollarSign, Bird, Utensils } from 'lucide-react';
 import { createBatch, updateBatch } from '@/actions/batch';
+import { DatePicker } from './DatePicker';
+import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
   name: z.string().optional(),
@@ -91,14 +93,40 @@ export function BatchForm({ onComplete, editData, showTitle = true, kgPerSac = 0
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-4">
           <InputGroup label={t('name')} icon={<Plus className="w-5 h-5 text-orange-500" />} register={register('name')} />
-          <SelectGroup
-            label={t('breed')}
-            icon={<Bird className="w-5 h-5 text-blue-500" />}
-            control={control}
-            name="breed"
-            options={[{label: t('breeds.broiler'), value: 'broiler'}, {label: t('breeds.layer'), value: 'layer'}, {label: t('breeds.other'), value: 'other'}]}
-          />
-          <InputGroup label={t('arrivalDate')} icon={<Calendar className="w-5 h-5 text-purple-500" />} register={register('arrivalDate')} type="date" />
+          <div className="space-y-2">
+            <label className="field-label">{t('breed')}</label>
+            <Controller
+              control={control}
+              name="breed"
+              render={({ field }) => (
+                <CustomSelect
+                  label={t('breed')}
+                  icon={<Bird className="w-5 h-5 text-blue-500" />}
+                  options={[{label: t('breeds.broiler'), value: 'broiler'}, {label: t('breeds.layer'), value: 'layer'}, {label: t('breeds.other'), value: 'other'}]}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                />
+              )}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="field-label">{t('arrivalDate')}</label>
+            <Controller
+              control={control}
+              name="arrivalDate"
+              render={({ field }) => (
+                <DatePicker
+                  label={t('arrivalDate')}
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  ref={field.ref}
+                />
+              )}
+            />
+          </div>
 
           <div className="grid grid-cols-2 gap-3">
             <InputGroup label={t('quantity')} icon={<Hash className="w-5 h-5 text-green-500" />} register={register('initialQuantity', { valueAsNumber: true })} type="number" />
@@ -143,108 +171,6 @@ function InputGroup({ label, icon, register, type = "text", step }: InputGroupPr
           className="field-input h-12"
         />
       </div>
-    </div>
-  );
-}
-
-interface SelectGroupProps {
-  label: string;
-  icon: React.ReactNode;
-  control: Control<FormValues>;
-  name: 'breed';
-  options: { label: string; value: string }[];
-}
-
-function SelectGroup({ label, icon, control, name, options }: SelectGroupProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const selectRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!selectRef.current?.contains(event.target as Node)) setIsOpen(false);
-    };
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [isOpen]);
-
-  return (
-    <div className="space-y-2">
-      <label className="field-label" htmlFor={`${name}-select`}>{label}</label>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => {
-          const selectedOption = options.find((option) => option.value === field.value) || options[0];
-          const selectedIndex = Math.max(0, options.findIndex((option) => option.value === field.value));
-
-          const moveSelection = (direction: 1 | -1) => {
-            const nextIndex = Math.min(options.length - 1, Math.max(0, selectedIndex + direction));
-            field.onChange(options[nextIndex].value);
-          };
-
-          return (
-            <div ref={selectRef} className="custom-select">
-              <span className="custom-select__icon">{icon}</span>
-              <button
-                id={`${name}-select`}
-                type="button"
-                className="field-select custom-select__trigger h-12"
-                aria-label={label}
-                aria-controls={`${name}-options`}
-                aria-expanded={isOpen}
-                aria-haspopup="listbox"
-                ref={field.ref}
-                onClick={() => setIsOpen((open) => !open)}
-                onBlur={field.onBlur}
-                onKeyDown={(event) => {
-                  if (event.key === 'Escape') {
-                    setIsOpen(false);
-                  } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                    event.preventDefault();
-                    if (!isOpen) {
-                      setIsOpen(true);
-                    } else {
-                      moveSelection(event.key === 'ArrowDown' ? 1 : -1);
-                    }
-                  } else if (event.key === 'Enter' || event.key === ' ') {
-                    event.preventDefault();
-                    setIsOpen((open) => !open);
-                  }
-                }}
-              >
-                <span>{selectedOption.label}</span>
-                <ChevronDown className={`custom-select__chevron h-4 w-4 ${isOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
-              </button>
-              {isOpen && (
-                <div id={`${name}-options`} className="custom-select__menu" role="listbox" aria-label={label}>
-                  {options.map((option) => {
-                    const isSelected = option.value === field.value;
-                    return (
-                      <button
-                        key={option.value}
-                        type="button"
-                        role="option"
-                        aria-selected={isSelected}
-                        className="custom-select__option"
-                        onClick={() => {
-                          field.onChange(option.value);
-                          setIsOpen(false);
-                        }}
-                      >
-                        <span>{option.label}</span>
-                        {isSelected && <Check className="h-4 w-4" aria-hidden="true" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        }}
-      />
     </div>
   );
 }

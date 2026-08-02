@@ -8,7 +8,11 @@
     "previous": "Précédent",
     "next": "Suivant",
     "page": "Page",
-    "filters": "Filtres"
+    "filters": "Filtres",
+    "pickDate": "Choisir une date",
+    "clearDate": "Effacer la date",
+    "previousMonth": "Mois précédent",
+    "nextMonth": "Mois suivant"
   },
   "Dashboard": {
     "subtitle": "Gestion Avicole",
@@ -85,7 +89,6 @@
     "filterWeek": "Cette semaine",
     "filterMonth": "Ce mois",
     "filterCustom": "Date",
-    "clearDate": "Effacer la date",
     "status": "Statut",
     "active": "En cours",
     "closed": "Terminé",
@@ -152,10 +155,6 @@
     "filterMonth": "Ce mois",
     "filterUnpaid": "Impayés",
     "filterDate": "Date précise",
-    "pickDate": "Choisir une date",
-    "clearDate": "Effacer la date",
-    "previousMonth": "Mois précédent",
-    "nextMonth": "Mois suivant",
     "empty": "Aucune vente trouvée",
     "editTitle": "Modifier la Vente",
     "deleteTitle": "Supprimer la Vente",

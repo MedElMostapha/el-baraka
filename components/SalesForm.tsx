@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useTransition, useEffect } from 'react';
-import { useForm, UseFormRegisterReturn } from 'react-hook-form';
+import { Controller, useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
-import { Wallet, Plus, Loader2, User, Hash, Banknote, Utensils } from 'lucide-react';
+import { Wallet, Plus, Loader2, User, Hash, Banknote, Utensils, Bird } from 'lucide-react';
 import { recordSale, updateSale, createClient } from '@/actions/sales';
+import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
   batchId: z.string().min(1),
@@ -56,7 +57,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   const [isDebt, setIsDebt] = useState(editData ? editData.amountPaid === 0 : false);
   const [error, setError] = useState<string | null>(null);
 
-  const { register, handleSubmit, watch, reset, setValue } = useForm<FormValues>({
+  const { register, handleSubmit, watch, reset, setValue, control } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       batchId: editData?.batchId || batches[0]?.id || '',
@@ -165,13 +166,22 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
 
             <div className="space-y-1.5">
                <label className="field-label">{t('batch')}</label>
-               <select
-                  {...register('batchId')}
-                  className="field-select h-[42px] px-3 text-sm"
-                >
-                  <option value="">{t('selectBatch')}</option>
-                  {batches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
-                </select>
+               <Controller
+                 control={control}
+                 name="batchId"
+                 render={({ field }) => (
+                   <CustomSelect
+                     label={t('batch')}
+                     icon={<Bird className="w-5 h-5 text-orange-500" />}
+                     options={batches.map(b => ({ label: b.name, value: b.id }))}
+                     placeholder={t('selectBatch')}
+                     value={field.value}
+                     onChange={field.onChange}
+                     onBlur={field.onBlur}
+                     ref={field.ref}
+                   />
+                 )}
+               />
             </div>
           </div>
 
@@ -179,13 +189,23 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
             <label className="field-label">{t('client')}</label>
             <div className="flex gap-2">
               {!showNewClient ? (
-                <select
-                  {...register('clientId')}
-                  className="field-select h-12 flex-1"
-                >
-                  <option value="">{t('cashClient')}</option>
-                  {initialClients.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                <Controller
+                  control={control}
+                  name="clientId"
+                  render={({ field }) => (
+                    <CustomSelect
+                      className="flex-1"
+                      label={t('client')}
+                      icon={<User className="w-5 h-5 text-orange-500" />}
+                      options={initialClients.map(c => ({ label: c.name, value: c.id }))}
+                      placeholder={t('cashClient')}
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      ref={field.ref}
+                    />
+                  )}
+                />
               ) : (
                 <input
                   placeholder={tc('name')}

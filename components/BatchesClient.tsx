@@ -9,6 +9,7 @@ import { Pagination } from './Pagination';
 import { ConfirmModal } from './ConfirmModal';
 import { deleteBatch } from '@/actions/batch';
 import { FilterMenu } from './FilterMenu';
+import { DatePicker } from './DatePicker';
 
 const PAGE_SIZE = 8;
 
@@ -63,7 +64,6 @@ interface BatchTranslations {
   filterWeek: string;
   filterMonth: string;
   filterCustom: string;
-  clearDate: string;
 }
 
 function formatBreed(breed: string | null, t: BatchTranslations): string {
@@ -74,42 +74,6 @@ function formatBreed(breed: string | null, t: BatchTranslations): string {
     other: t.breedOther,
   };
   return map[breed] || breed;
-}
-
-function RestockDateFilter({
-  id,
-  label,
-  value,
-  onChange,
-  onClear,
-  clearLabel,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  onClear: () => void;
-  clearLabel: string;
-}) {
-  return (
-    <div className="filter-menu__date-control">
-      <label htmlFor={id}>{label}</label>
-      <div className="filter-menu__date-input">
-        <Calendar className="h-4 w-4" aria-hidden="true" />
-        <input
-          id={id}
-          type="date"
-          value={value}
-          onChange={(event) => onChange(event.target.value)}
-        />
-        {value && (
-          <button type="button" onClick={onClear} aria-label={clearLabel}>
-            ×
-          </button>
-        )}
-      </div>
-    </div>
-  );
 }
 
 export default function BatchesClient({
@@ -259,7 +223,6 @@ export default function BatchesClient({
                 </div>
                 <FilterMenu
                   activeLabel={customDate || undefined}
-                  desktopClassName="filter-menu-shell__desktop--stacked"
                   options={restockFilters.map((f) => ({
                     ...f,
                     active: restockFilter === f.id && !customDate,
@@ -270,23 +233,17 @@ export default function BatchesClient({
                     },
                   }))}
                   desktopExtra={
-                    <RestockDateFilter
-                      id="restock-date-desktop"
-                      label={t.filterCustom}
+                    <DatePicker
                       value={customDate}
+                      label={t.filterCustom}
                       onChange={(value) => { setCustomDate(value); setRestockPage(1); }}
-                      onClear={() => { setCustomDate(''); setRestockPage(1); }}
-                      clearLabel={t.clearDate}
                     />
                   }
                   mobileExtra={
-                    <RestockDateFilter
-                      id="restock-date-mobile"
-                      label={t.filterCustom}
+                    <DatePicker
                       value={customDate}
+                      label={t.filterCustom}
                       onChange={(value) => { setCustomDate(value); setRestockPage(1); }}
-                      onClear={() => { setCustomDate(''); setRestockPage(1); }}
-                      clearLabel={t.clearDate}
                     />
                   }
                 />

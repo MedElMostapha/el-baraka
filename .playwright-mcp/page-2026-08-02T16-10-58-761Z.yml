@@ -1,0 +1,153 @@
+- generic [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - complementary "Primary navigation" [ref=f2e3]:
+      - generic [ref=f2e4]:
+        - generic [ref=f2e5]: EB
+        - generic [ref=f2e6]:
+          - generic [ref=f2e7]: EL BARAKA
+          - generic [ref=f2e8]: Farm operations
+      - navigation [ref=f2e9]:
+        - link "Tableau de bord" [ref=f2e10] [cursor=pointer]:
+          - /url: /
+        - link "Lots" [ref=f2e18] [cursor=pointer]:
+          - /url: /batches
+        - link "Stocks" [ref=f2e25] [cursor=pointer]:
+          - /url: /inventory
+        - link "Ventes" [ref=f2e31] [cursor=pointer]:
+          - /url: /sales
+        - link "Dépenses" [ref=f2e37] [cursor=pointer]:
+          - /url: /expenses
+        - link "Dettes" [ref=f2e43] [cursor=pointer]:
+          - /url: /debts
+        - link "Réglages" [ref=f2e51] [cursor=pointer]:
+          - /url: /settings
+      - generic [ref=f2e57]: Local workspace
+    - main [ref=f2e61]:
+      - generic [ref=f2e62]:
+        - generic [ref=f2e63]:
+          - generic [ref=f2e64]:
+            - generic [ref=f2e65]: Revenus & Dettes
+            - heading "Gestion des Ventes" [level=1] [ref=f2e66]
+          - generic [ref=f2e67]:
+            - img "El Baraka" [ref=f2e68]
+            - generic "Connected" [ref=f2e69]
+        - generic [ref=f2e70]:
+          - generic [ref=f2e72]:
+            - heading "Nouvelle Vente" [level=2] [ref=f2e73]
+            - generic [ref=f2e74]:
+              - generic [ref=f2e75]:
+                - generic [ref=f2e76]:
+                  - generic [ref=f2e77]:
+                    - generic [ref=f2e78]: Type de vente
+                    - generic [ref=f2e79]:
+                      - generic [ref=f2e80] [cursor=pointer]:
+                        - radio "En gros" [checked] [ref=f2e81]
+                        - generic [ref=f2e82]: En gros
+                      - generic [ref=f2e83] [cursor=pointer]:
+                        - radio "Détail" [ref=f2e84]
+                        - generic [ref=f2e85]: Détail
+                  - generic [ref=f2e86]:
+                    - generic [ref=f2e87]: Lot
+                    - button "Lot" [ref=f2e89] [cursor=pointer]:
+                      - generic [ref=f2e90]: Sélectionner Lot
+                - generic [ref=f2e91]:
+                  - generic [ref=f2e92]: Client
+                  - generic [ref=f2e93]:
+                    - button "Client" [ref=f2e95] [cursor=pointer]:
+                      - generic [ref=f2e96]: Passant / Cash
+                    - button [ref=f2e97] [cursor=pointer]
+                - generic [ref=f2e99]:
+                  - generic [ref=f2e100]:
+                    - generic [ref=f2e101]: Quantité soldée
+                    - spinbutton [ref=f2e103]: "1"
+                  - generic [ref=f2e104]:
+                    - generic [ref=f2e105]: Prix unitaire
+                    - spinbutton [ref=f2e107]: "0"
+                - generic [ref=f2e108]:
+                  - generic [ref=f2e109]: Sacs consommés par le lot
+                  - spinbutton [ref=f2e111]: "0"
+                - paragraph [ref=f2e112]: Ces sacs seront retirés du stock après vérification de la disponibilité.
+                - generic [ref=f2e113]:
+                  - generic [ref=f2e114]: Dette restante
+                  - button [ref=f2e115] [cursor=pointer]
+                - generic [ref=f2e117]:
+                  - generic [ref=f2e118]:
+                    - generic [ref=f2e119]: Total
+                    - generic [ref=f2e120]: 0 MRU
+                  - generic [ref=f2e121]:
+                    - generic [ref=f2e122]: Montant payé
+                    - spinbutton "0" [ref=f2e123]
+                - paragraph [ref=f2e124]: Total = quantité × prix unitaire
+              - button "Enregistrer la vente" [ref=f2e125] [cursor=pointer]
+          - generic [ref=f2e130]:
+            - generic [ref=f2e132]:
+              - generic [ref=f2e133]:
+                - button "Tout le temps" [ref=f2e136] [cursor=pointer]
+                - button "Aujourd'hui" [ref=f2e137] [cursor=pointer]
+                - button "Cette semaine" [ref=f2e138] [cursor=pointer]
+                - button "Ce mois" [ref=f2e139] [cursor=pointer]
+                - button "Impayés" [ref=f2e140] [cursor=pointer]
+              - generic [ref=f2e141]:
+                - button "Date précise" [expanded] [active] [ref=f2e142] [cursor=pointer]:
+                  - generic [ref=f2e145]: Choisir une date
+                - dialog "Date précise" [ref=f2e191]:
+                  - generic [ref=f2e192]:
+                    - strong [ref=f2e193]: août 2026
+                    - generic [ref=f2e194]:
+                      - button "Mois précédent" [ref=f2e195] [cursor=pointer]
+                      - button "Mois suivant" [ref=f2e198] [cursor=pointer]
+                  - generic [ref=f2e201]:
+                    - generic [ref=f2e202]: dim.
+                    - generic [ref=f2e203]: lun.
+                    - generic [ref=f2e204]: mar.
+                    - generic [ref=f2e205]: mer.
+                    - generic [ref=f2e206]: jeu.
+                    - generic [ref=f2e207]: ven.
+                    - generic [ref=f2e208]: sam.
+                  - generic [ref=f2e209]:
+                    - button "1" [ref=f2e216] [cursor=pointer]
+                    - button "2" [ref=f2e217] [cursor=pointer]
+                    - button "3" [ref=f2e218] [cursor=pointer]
+                    - button "4" [ref=f2e219] [cursor=pointer]
+                    - button "5" [ref=f2e220] [cursor=pointer]
+                    - button "6" [ref=f2e221] [cursor=pointer]
+                    - button "7" [ref=f2e222] [cursor=pointer]
+                    - button "8" [ref=f2e223] [cursor=pointer]
+                    - button "9" [ref=f2e224] [cursor=pointer]
+                    - button "10" [ref=f2e225] [cursor=pointer]
+                    - button "11" [ref=f2e226] [cursor=pointer]
+                    - button "12" [ref=f2e227] [cursor=pointer]
+                    - button "13" [ref=f2e228] [cursor=pointer]
+                    - button "14" [ref=f2e229] [cursor=pointer]
+                    - button "15" [ref=f2e230] [cursor=pointer]
+                    - button "16" [ref=f2e231] [cursor=pointer]
+                    - button "17" [ref=f2e232] [cursor=pointer]
+                    - button "18" [ref=f2e233] [cursor=pointer]
+                    - button "19" [ref=f2e234] [cursor=pointer]
+                    - button "20" [ref=f2e235] [cursor=pointer]
+                    - button "21" [ref=f2e236] [cursor=pointer]
+                    - button "22" [ref=f2e237] [cursor=pointer]
+                    - button "23" [ref=f2e238] [cursor=pointer]
+                    - button "24" [ref=f2e239] [cursor=pointer]
+                    - button "25" [ref=f2e240] [cursor=pointer]
+                    - button "26" [ref=f2e241] [cursor=pointer]
+                    - button "27" [ref=f2e242] [cursor=pointer]
+                    - button "28" [ref=f2e243] [cursor=pointer]
+                    - button "29" [ref=f2e244] [cursor=pointer]
+                    - button "30" [ref=f2e245] [cursor=pointer]
+                    - button "31" [ref=f2e246] [cursor=pointer]
+            - generic [ref=f2e149]:
+              - generic [ref=f2e150]:
+                - generic [ref=f2e156]:
+                  - heading "12 000 MRU" [level=3] [ref=f2e157]
+                  - generic [ref=f2e158]:
+                    - generic [ref=f2e159]: lmou56ar
+                    - generic [ref=f2e160]: PAYÉ
+                - generic [ref=f2e161]:
+                  - button "Edit sale" [ref=f2e162] [cursor=pointer]
+                  - button "Delete sale" [ref=f2e166] [cursor=pointer]
+              - generic [ref=f2e172]:
+                - generic [ref=f2e173]: lot
+                - generic [ref=f2e178]: 02/08/2026
+  - button "Open Next.js Dev Tools" [ref=f2e186] [cursor=pointer]
+  - alert [ref=f2e190]

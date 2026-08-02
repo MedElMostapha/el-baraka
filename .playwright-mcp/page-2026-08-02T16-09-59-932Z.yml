@@ -1,0 +1,142 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "Primary navigation" [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]: EB
+        - generic [ref=e6]:
+          - generic [ref=e7]: EL BARAKA
+          - generic [ref=e8]: Farm operations
+      - navigation [ref=e9]:
+        - link "Tableau de bord" [ref=e10] [cursor=pointer]:
+          - /url: /
+        - link "Lots" [ref=e18] [cursor=pointer]:
+          - /url: /batches
+        - link "Stocks" [ref=e25] [cursor=pointer]:
+          - /url: /inventory
+        - link "Ventes" [ref=e31] [cursor=pointer]:
+          - /url: /sales
+        - link "Dépenses" [ref=e37] [cursor=pointer]:
+          - /url: /expenses
+        - link "Dettes" [ref=e43] [cursor=pointer]:
+          - /url: /debts
+        - link "Réglages" [ref=e51] [cursor=pointer]:
+          - /url: /settings
+      - generic [ref=e57]: Local workspace
+    - main [ref=e61]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: Cycle de vie
+            - heading "Gestion des Lots" [level=1] [ref=e66]
+          - generic [ref=e67]:
+            - img "El Baraka" [ref=e68]
+            - generic "Connected" [ref=e69]
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - generic [ref=e73]: Nouveau Lot
+              - heading "Démarrer un nouveau lot" [level=2] [ref=e74]
+              - paragraph [ref=e75]: Renseignez les données de départ pour suivre chaque étape du cycle d'élevage.
+            - generic [ref=e77]:
+              - generic [ref=e78]:
+                - generic [ref=e79]:
+                  - generic [ref=e80]: Nom du Lot
+                  - textbox [ref=e82]
+                - generic [ref=e83]:
+                  - generic [ref=e84]: Race / Souche
+                  - button "Race / Souche" [ref=e86] [cursor=pointer]:
+                    - generic [ref=e87]: Chair / Broiler
+                - generic [ref=e88]:
+                  - generic [ref=e89]: Date d'arrivée
+                  - button "Date d'arrivée" [ref=e91] [cursor=pointer]:
+                    - generic [ref=e94]: 2 août 2026
+                - generic [ref=e97]:
+                  - generic [ref=e98]:
+                    - generic [ref=e99]: Quantité initiale
+                    - spinbutton [ref=e101]: "1"
+                  - generic [ref=e102]:
+                    - generic [ref=e103]: Coût par poussin
+                    - spinbutton [ref=e105]: "38"
+                - generic [ref=e106]:
+                  - generic [ref=e107]: Stock Aliment Initial (Sacs)
+                  - spinbutton [ref=e109]: "0"
+                - paragraph [ref=e110]: 1 sac = 50 kg
+              - button "Créer le lot" [ref=e111] [cursor=pointer]
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - generic [ref=e120]:
+                - generic [ref=e121]: Lot en cours
+                - heading "Gestion des Lots" [level=2] [ref=e122]
+              - generic [ref=e123]:
+                - paragraph [ref=e128]: Aucun lot enregistré
+                - paragraph [ref=e129]: Renseignez les données de départ pour suivre chaque étape du cycle d'élevage.
+            - generic [ref=e130]:
+              - generic [ref=e138]:
+                - generic [ref=e139]: Cycle de vie
+                - heading "Historique des approvisionnements" [level=2] [ref=e140]
+              - generic [ref=e142]:
+                - generic [ref=e143]:
+                  - button "Tout" [ref=e146] [cursor=pointer]
+                  - button "Aujourd'hui" [ref=e147] [cursor=pointer]
+                  - button "Cette semaine" [ref=e148] [cursor=pointer]
+                  - button "Ce mois" [ref=e149] [cursor=pointer]
+                - generic [ref=e150]:
+                  - button "Date" [expanded] [active] [ref=e151] [cursor=pointer]:
+                    - generic [ref=e154]: Choisir une date
+                  - dialog "Date" [ref=e180]:
+                    - generic [ref=e181]:
+                      - strong [ref=e182]: août 2026
+                      - generic [ref=e183]:
+                        - button "Mois précédent" [ref=e184] [cursor=pointer]
+                        - button "Mois suivant" [ref=e187] [cursor=pointer]
+                    - generic [ref=e190]:
+                      - generic [ref=e191]: dim.
+                      - generic [ref=e192]: lun.
+                      - generic [ref=e193]: mar.
+                      - generic [ref=e194]: mer.
+                      - generic [ref=e195]: jeu.
+                      - generic [ref=e196]: ven.
+                      - generic [ref=e197]: sam.
+                    - generic [ref=e198]:
+                      - button "1" [ref=e205] [cursor=pointer]
+                      - button "2" [ref=e206] [cursor=pointer]
+                      - button "3" [ref=e207] [cursor=pointer]
+                      - button "4" [ref=e208] [cursor=pointer]
+                      - button "5" [ref=e209] [cursor=pointer]
+                      - button "6" [ref=e210] [cursor=pointer]
+                      - button "7" [ref=e211] [cursor=pointer]
+                      - button "8" [ref=e212] [cursor=pointer]
+                      - button "9" [ref=e213] [cursor=pointer]
+                      - button "10" [ref=e214] [cursor=pointer]
+                      - button "11" [ref=e215] [cursor=pointer]
+                      - button "12" [ref=e216] [cursor=pointer]
+                      - button "13" [ref=e217] [cursor=pointer]
+                      - button "14" [ref=e218] [cursor=pointer]
+                      - button "15" [ref=e219] [cursor=pointer]
+                      - button "16" [ref=e220] [cursor=pointer]
+                      - button "17" [ref=e221] [cursor=pointer]
+                      - button "18" [ref=e222] [cursor=pointer]
+                      - button "19" [ref=e223] [cursor=pointer]
+                      - button "20" [ref=e224] [cursor=pointer]
+                      - button "21" [ref=e225] [cursor=pointer]
+                      - button "22" [ref=e226] [cursor=pointer]
+                      - button "23" [ref=e227] [cursor=pointer]
+                      - button "24" [ref=e228] [cursor=pointer]
+                      - button "25" [ref=e229] [cursor=pointer]
+                      - button "26" [ref=e230] [cursor=pointer]
+                      - button "27" [ref=e231] [cursor=pointer]
+                      - button "28" [ref=e232] [cursor=pointer]
+                      - button "29" [ref=e233] [cursor=pointer]
+                      - button "30" [ref=e234] [cursor=pointer]
+                      - button "31" [ref=e235] [cursor=pointer]
+              - generic [ref=e157]: 1 lots
+              - button "Lot Chair / Broiler 02/08/2026 100 poussins 38 MRU/sujet" [ref=e160] [cursor=pointer]:
+                - generic [ref=e164]:
+                  - generic [ref=e165]: Lot
+                  - text: Chair / Broiler
+                  - generic [ref=e166]: 02/08/2026
+                - generic [ref=e167]:
+                  - generic [ref=e168]: 100 poussins
+                  - generic [ref=e169]: 38 MRU/sujet
+  - button "Open Next.js Dev Tools" [ref=e175] [cursor=pointer]
+  - alert [ref=e179]
