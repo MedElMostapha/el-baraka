@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Wallet, Bird, Calendar, Filter, FileText, Trash2, Loader2, Pencil } from "lucide-react";
+import { Wallet, Bird, Calendar, FileText, Trash2, Loader2, Pencil } from "lucide-react";
 import { deleteExpense, updateExpense } from "@/actions/expenses";
 import { ConfirmModal } from './ConfirmModal';
 import { ExpenseForm } from './ExpenseForm';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
+import { FilterMenu } from './FilterMenu';
 
 const PAGE_SIZE = 8;
 
@@ -76,23 +77,16 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
 
   return (
     <section className="space-y-4">
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        <div className="filter-bar">
-          <Filter className="ml-2 h-4 w-4 text-slate-400" />
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => {
-                setFilter(f.id);
-                setPage(1);
-              }}
-              className={`${filter === f.id ? 'is-active' : ''} whitespace-nowrap`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <FilterMenu
+        options={filters.map((f) => ({
+          ...f,
+          active: filter === f.id,
+          onSelect: () => {
+            setFilter(f.id);
+            setPage(1);
+          },
+        }))}
+      />
 
       <div className="space-y-4">
         {filteredExpenses.length === 0 ? (

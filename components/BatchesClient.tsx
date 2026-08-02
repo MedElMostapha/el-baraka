@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { Bird, Calendar, Hash, Plus, CircleDollarSign, History, Filter, Trash2 } from "lucide-react";
+import { Bird, Calendar, Hash, Plus, CircleDollarSign, History, Trash2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { PageHeader } from '@/components/PageHeader';
 import { BatchForm } from './BatchForm';
 import { Pagination } from './Pagination';
 import { ConfirmModal } from './ConfirmModal';
 import { deleteBatch } from '@/actions/batch';
+import { FilterMenu } from './FilterMenu';
 
 const PAGE_SIZE = 8;
 
@@ -61,6 +62,8 @@ interface BatchTranslations {
   filterToday: string;
   filterWeek: string;
   filterMonth: string;
+  filterCustom: string;
+  clearDate: string;
 }
 
 function formatBreed(breed: string | null, t: BatchTranslations): string {
@@ -71,6 +74,42 @@ function formatBreed(breed: string | null, t: BatchTranslations): string {
     other: t.breedOther,
   };
   return map[breed] || breed;
+}
+
+function RestockDateFilter({
+  id,
+  label,
+  value,
+  onChange,
+  onClear,
+  clearLabel,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  onClear: () => void;
+  clearLabel: string;
+}) {
+  return (
+    <div className="filter-menu__date-control">
+      <label htmlFor={id}>{label}</label>
+      <div className="filter-menu__date-input">
+        <Calendar className="h-4 w-4" aria-hidden="true" />
+        <input
+          id={id}
+          type="date"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+        {value && (
+          <button type="button" onClick={onClear} aria-label={clearLabel}>
+            ×
+          </button>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function BatchesClient({
@@ -218,43 +257,39 @@ export default function BatchesClient({
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                    <div className="filter-bar">
-                      <Filter className="ml-2 h-4 w-4 text-slate-400" />
-                      {restockFilters.map((f) => (
-                        <button
-                          key={f.id}
-                          onClick={() => { setRestockFilter(f.id); setCustomDate(''); setRestockPage(1); }}
-                          className={`${restockFilter === f.id && !customDate ? 'is-active' : ''} whitespace-nowrap`}
-                        >
-                          {f.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="relative">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                      <Calendar className="h-4 w-4 text-orange-500" />
-                    </div>
-                    <input
-                      type="date"
+                <FilterMenu
+                  activeLabel={customDate || undefined}
+                  desktopClassName="filter-menu-shell__desktop--stacked"
+                  options={restockFilters.map((f) => ({
+                    ...f,
+                    active: restockFilter === f.id && !customDate,
+                    onSelect: () => {
+                      setRestockFilter(f.id);
+                      setCustomDate('');
+                      setRestockPage(1);
+                    },
+                  }))}
+                  desktopExtra={
+                    <RestockDateFilter
+                      id="restock-date-desktop"
+                      label={t.filterCustom}
                       value={customDate}
-                      onChange={(e) => { setCustomDate(e.target.value); setRestockPage(1); }}
-                      className="field-input h-11 pl-11"
+                      onChange={(value) => { setCustomDate(value); setRestockPage(1); }}
+                      onClear={() => { setCustomDate(''); setRestockPage(1); }}
+                      clearLabel={t.clearDate}
                     />
-                    {customDate && (
-                      <button
-                        type="button"
-                        onClick={() => { setCustomDate(''); setRestockPage(1); }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-lg font-black leading-none text-slate-400 hover:text-slate-600"
-                        aria-label="Clear date"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                </div>
+                  }
+                  mobileExtra={
+                    <RestockDateFilter
+                      id="restock-date-mobile"
+                      label={t.filterCustom}
+                      value={customDate}
+                      onChange={(value) => { setCustomDate(value); setRestockPage(1); }}
+                      onClear={() => { setCustomDate(''); setRestockPage(1); }}
+                      clearLabel={t.clearDate}
+                    />
+                  }
+                />
                 <div className="flex justify-end">
                   <span className="section-heading__badge">{initialBatches.length} {t.totalBatches}</span>
                 </div>

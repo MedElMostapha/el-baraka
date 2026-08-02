@@ -2,12 +2,13 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocale } from 'next-intl';
-import { Wallet, Bird, Calendar, ChevronDown, ChevronLeft, ChevronRight, Filter, Trash2, CheckCircle, Loader2, Pencil } from "lucide-react";
+import { Wallet, Bird, Calendar, ChevronDown, ChevronLeft, ChevronRight, Trash2, CheckCircle, Loader2, Pencil } from "lucide-react";
 import { deleteSale, markSalePaid } from '@/actions/sales';
 import { ConfirmModal } from './ConfirmModal';
 import { SalesForm } from './SalesForm';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
+import { FilterMenu } from './FilterMenu';
 
 const PAGE_SIZE = 8;
 
@@ -109,40 +110,53 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
   const pageCount = Math.max(1, Math.ceil(filteredSales.length / PAGE_SIZE));
   const currentPage = Math.min(page, pageCount);
   const visibleSales = filteredSales.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const selectedDateLabel = selectedDate
+    ? parseInputDate(selectedDate)?.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })
+    : undefined;
+
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+    setPage(1);
+  };
 
   return (
     <section className="space-y-4">
-      <div className="sales-filters">
-        <div className="filter-bar">
-          <Filter className="ml-2 h-4 w-4 text-slate-400" />
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => {
-                setFilter(f.id);
-                setSelectedDate('');
-                setPage(1);
-              }}
-              className={`${filter === f.id && !selectedDate ? 'is-active' : ''} whitespace-nowrap`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-        <DatePicker
-          locale={locale}
-          value={selectedDate}
-          label={t.filterDate}
-          placeholder={t.pickDate}
-          clearLabel={t.clearDate}
-          previousMonthLabel={t.previousMonth}
-          nextMonthLabel={t.nextMonth}
-          onChange={(date) => {
-            setSelectedDate(date);
+      <FilterMenu
+        activeLabel={selectedDateLabel}
+        options={filters.map((f) => ({
+          ...f,
+          active: filter === f.id && !selectedDate,
+          onSelect: () => {
+            setFilter(f.id);
+            setSelectedDate('');
             setPage(1);
-          }}
-        />
-      </div>
+          },
+        }))}
+        desktopExtra={
+          <DatePicker
+            locale={locale}
+            value={selectedDate}
+            label={t.filterDate}
+            placeholder={t.pickDate}
+            clearLabel={t.clearDate}
+            previousMonthLabel={t.previousMonth}
+            nextMonthLabel={t.nextMonth}
+            onChange={handleDateChange}
+          />
+        }
+        mobileExtra={
+          <DatePicker
+            locale={locale}
+            value={selectedDate}
+            label={t.filterDate}
+            placeholder={t.pickDate}
+            clearLabel={t.clearDate}
+            previousMonthLabel={t.previousMonth}
+            nextMonthLabel={t.nextMonth}
+            onChange={handleDateChange}
+          />
+        }
+      />
 
       <div className="space-y-4">
         {filteredSales.length === 0 ? (

@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { ArrowDownLeft, ArrowUpRight, Calendar, Filter, FileText, Trash2, Loader2, Pencil, CheckCircle2, Undo2, User } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Calendar, FileText, Trash2, Loader2, Pencil, CheckCircle2, Undo2, User } from "lucide-react";
 import { deleteDebt, markDebtPaid, markDebtUnpaid } from "@/actions/debts";
 import { ConfirmModal } from './ConfirmModal';
 import { DebtForm } from './DebtForm';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
+import { FilterMenu } from './FilterMenu';
 
 const PAGE_SIZE = 8;
 
@@ -110,24 +111,16 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        <div className="filter-bar">
-          <Filter className="ml-2 h-4 w-4 text-slate-400" />
-          {filters.map((f) => (
-            <button
-              key={f.id}
-              onClick={() => {
-                setFilter(f.id);
-                setPage(1);
-              }}
-              className={`${filter === f.id ? 'is-active' : ''} whitespace-nowrap`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <FilterMenu
+        options={filters.map((f) => ({
+          ...f,
+          active: filter === f.id,
+          onSelect: () => {
+            setFilter(f.id);
+            setPage(1);
+          },
+        }))}
+      />
 
       {/* Debt List */}
       <div className="space-y-4">

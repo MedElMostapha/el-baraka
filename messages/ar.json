@@ -7,7 +7,8 @@
     "edit": "تعديل",
     "previous": "السابق",
     "next": "التالي",
-    "page": "الصفحة"
+    "page": "الصفحة",
+    "filters": "الفلاتر"
   },
   "Dashboard": {
     "subtitle": "إدارة الدواجن",
@@ -84,6 +85,7 @@
     "filterWeek": "هذا الأسبوع",
     "filterMonth": "هذا الشهر",
     "filterCustom": "تاريخ",
+    "clearDate": "مسح التاريخ",
     "status": "الحالة",
     "active": "نشطة",
     "closed": "مغلقة",

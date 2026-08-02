@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { PageHeader } from '@/components/PageHeader';
 import { DashboardCharts } from "@/components/DashboardCharts";
+import { FilterMenu } from "@/components/FilterMenu";
 import { TrendingUp, Package, Bird, AlertCircle } from "lucide-react";
 import { getKgPerSac } from '@/actions/settings';
 
@@ -157,17 +158,14 @@ export default async function Home(props: { searchParams: Promise<{ range?: stri
             <span className="section-kicker">{t('performance')}</span>
             <strong>{t('recentActivity')}</strong>
           </div>
-          <div className="range-switcher" aria-label="Chart range">
-            {[
-              { id: '7d', label: t('filter7d') },
-              { id: '30d', label: t('filter30d') },
-              { id: 'all', label: t('filterAll') }
-            ].map((f) => (
-              <Link key={f.id} href={`?range=${f.id}`} className={range === f.id ? 'is-active' : ''}>
-                {f.label}
-              </Link>
-            ))}
-          </div>
+          <FilterMenu
+            desktopVariant="range-switcher"
+            options={[
+              { id: '7d', label: t('filter7d'), active: range === '7d', href: '?range=7d' },
+              { id: '30d', label: t('filter30d'), active: range === '30d', href: '?range=30d' },
+              { id: 'all', label: t('filterAll'), active: range === 'all', href: '?range=all' },
+            ]}
+          />
         </div>
 
         {lowStockGrouped.length > 0 && (

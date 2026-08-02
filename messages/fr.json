@@ -7,7 +7,8 @@
     "edit": "Modifier",
     "previous": "Précédent",
     "next": "Suivant",
-    "page": "Page"
+    "page": "Page",
+    "filters": "Filtres"
   },
   "Dashboard": {
     "subtitle": "Gestion Avicole",
@@ -84,6 +85,7 @@
     "filterWeek": "Cette semaine",
     "filterMonth": "Ce mois",
     "filterCustom": "Date",
+    "clearDate": "Effacer la date",
     "status": "Statut",
     "active": "En cours",
     "closed": "Terminé",
