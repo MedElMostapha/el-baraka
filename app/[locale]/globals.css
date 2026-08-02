@@ -381,7 +381,7 @@ button:disabled {
 
 .mobile-nav__more-menu {
   position: absolute;
-  right: 0;
+  inset-inline-end: 0;
   bottom: calc(100% + 12px);
   display: grid;
   width: 190px;
