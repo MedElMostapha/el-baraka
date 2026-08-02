@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
-export function BottomNav() {
+export function BottomNav({ logoImage = '' }: { logoImage?: string }) {
   const pathname = usePathname();
   const t = useTranslations('Navigation');
   const [moreOpen, setMoreOpen] = useState(false);
@@ -39,7 +39,14 @@ export function BottomNav() {
     <>
       <aside className="shell-sidebar" aria-label="Primary navigation">
         <div className="shell-brand">
-          <div className="shell-brand__mark" aria-hidden="true">EB</div>
+          <div className="shell-brand__mark" aria-hidden="true">
+            {logoImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoImage} alt="" className="shell-brand__mark-img" />
+            ) : (
+              'EB'
+            )}
+          </div>
           <div>
             <div className="shell-brand__name">EL BARAKA</div>
             <div className="shell-brand__caption">Farm operations</div>

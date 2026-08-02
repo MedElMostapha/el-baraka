@@ -39,6 +39,8 @@ export const viewport: Viewport = {
 };
 
 import { BottomNav } from "@/components/BottomNav";
+import { BrandProvider } from "@/components/BrandLogo";
+import { getLogoImage } from "@/actions/settings";
 
 export default async function RootLayout({
   children,
@@ -48,6 +50,7 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
   const direction = locale === 'ar' ? 'rtl' : 'ltr';
+  const logoImage = await getLogoImage();
 
   return (
     <html
@@ -57,10 +60,12 @@ export default async function RootLayout({
     >
       <body className="min-h-screen text-slate-900">
         <NextIntlClientProvider messages={messages}>
-          <div className="app-shell">
-            <BottomNav />
-            <div className="app-main">{children}</div>
-          </div>
+          <BrandProvider logoImage={logoImage}>
+            <div className="app-shell">
+              <BottomNav logoImage={logoImage} />
+              <div className="app-main">{children}</div>
+            </div>
+          </BrandProvider>
         </NextIntlClientProvider>
       </body>
     </html>

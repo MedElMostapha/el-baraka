@@ -21,6 +21,7 @@ export default async function SalesPage() {
       amountPaid: sales.amountPaid,
       feedConsumedBags: sales.feedConsumedBags,
       type: sales.type,
+      invoiceNumber: sales.invoiceNumber,
       batchName: batches.name,
       clientName: clients.name,
     })

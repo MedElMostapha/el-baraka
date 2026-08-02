@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, real, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 // 1. Batches / Flock Management
 export const batches = sqliteTable('batches', {
@@ -54,7 +54,10 @@ export const sales = sqliteTable('sales', {
   amountPaid: real('amount_paid').default(0).notNull(),
   feedConsumedBags: real('feed_consumed_bags').default(0).notNull(),
   type: text('type', { enum: ['wholesale', 'retail'] }).notNull(),
-});
+  invoiceNumber: text('invoice_number'),
+}, (table) => [
+  uniqueIndex('sales_invoice_number_unique').on(table.invoiceNumber),
+]);
 
 // 6. Debt & Credit Management (Payments)
 export const payments = sqliteTable('payments', {

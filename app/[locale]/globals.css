@@ -231,6 +231,15 @@ button:disabled {
   box-shadow: 0 10px 20px rgba(23, 59, 53, 0.16);
 }
 
+.shell-brand__mark-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 5px;
+}
+
 .shell-brand__name {
   color: var(--pine);
   font-size: 0.95rem;
@@ -2190,6 +2199,12 @@ button:disabled {
   border-color: var(--orange);
 }
 
+.settings-field__input--text {
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
 .settings-field p {
   min-height: 31px;
   margin: 10px 0 0;
@@ -2197,6 +2212,92 @@ button:disabled {
   font-size: 0.64rem;
   font-weight: 650;
   line-height: 1.45;
+}
+
+.settings-field--logo {
+  margin-top: 22px;
+}
+
+.settings-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.settings-logo__preview {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  flex: 0 0 72px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid #e5ece6;
+  border-radius: 18px;
+  background: linear-gradient(160deg, #f4f8f5, #eef3ee);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.settings-logo__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.settings-logo__placeholder {
+  color: #b9c7bd;
+}
+
+.settings-logo__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-logo__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.settings-logo__choose {
+  min-height: 38px;
+  padding: 0 15px;
+}
+
+.settings-logo__remove {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #c25c4e;
+  padding: 0 10px;
+  font-size: 0.78rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.settings-logo__remove:hover {
+  background: #fdf0ef;
+}
+
+.settings-field--logo .settings-logo__error {
+  color: var(--red);
+}
+
+.settings-about-card__logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .settings-savebar {

@@ -100,11 +100,12 @@ export async function recordSale(data: {
   feedConsumedBags: number;
   amountPaid: number;
   type: 'wholesale' | 'retail';
-}) {
+}): Promise<{ success: true; saleId: string; invoiceNumber: string } | { success: false; error: string }> {
   try {
     const saleId = crypto.randomUUID();
     const totalPrice = data.quantity * data.unitPrice;
     const amountPaid = Math.min(Math.max(data.amountPaid, 0), totalPrice);
+    const invoiceNumber = `INV-${new Date().getFullYear()}-${saleId.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 
     await db.transaction(async (tx) => {
       await adjustFeedStock(tx, data.feedConsumedBags, 'consume');
@@ -120,6 +121,7 @@ export async function recordSale(data: {
         feedConsumedBags: data.feedConsumedBags,
         type: data.type,
         date: new Date(),
+        invoiceNumber,
       });
       await syncFeedExpense(tx, saleId, data.batchId, data.feedConsumedBags);
 
@@ -148,7 +150,7 @@ export async function recordSale(data: {
     });
 
     revalidatePath("/", "layout");
-    return { success: true };
+    return { success: true, saleId, invoiceNumber };
   } catch (error) {
     console.error("Failed to record sale:", error);
     return { success: false, error: error instanceof Error ? error.message : 'Failed to record sale' };
@@ -207,7 +209,7 @@ export async function updateSale(id: string, data: {
   feedConsumedBags: number;
   amountPaid: number;
   type: 'wholesale' | 'retail';
-}) {
+}): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const totalPrice = data.quantity * data.unitPrice;
     const amountPaid = Math.min(Math.max(Number(data.amountPaid) || 0, 0), totalPrice);

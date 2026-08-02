@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useLocale } from 'next-intl';
-import { Wallet, Bird, Calendar, Trash2, CheckCircle, Loader2, Pencil } from "lucide-react";
+import { useLocale, useTranslations } from 'next-intl';
+import { Wallet, Bird, Calendar, Trash2, CheckCircle, Loader2, Pencil, Download } from "lucide-react";
 import { deleteSale, markSalePaid } from '@/actions/sales';
 import { ConfirmModal } from './ConfirmModal';
 import { SalesForm } from './SalesForm';
@@ -58,6 +58,7 @@ interface Translations {
 
 export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[]; batches: BatchOption[]; clients: ClientOption[]; t: Translations }) {
   const locale = useLocale();
+  const ti = useTranslations('Invoice');
   const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'month' | 'unpaid'>('all');
   const [selectedDate, setSelectedDate] = useState('');
   const [loadingId, setLoadingId] = useState<string | null>(null);
@@ -182,6 +183,14 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                   </div>
 
                   <div className="hidden items-center gap-1 rounded-xl bg-slate-50 p-1 md:flex">
+                    <a
+                      href={`/sales/${sale.id}/invoice`}
+                      download
+                      aria-label={ti('download')}
+                       className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-blue-50 hover:text-blue-600"
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
                     <button
                       onClick={() => {
                         setEditSale(sale);
@@ -233,6 +242,14 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                   </div>
 
                   <div className="md:hidden flex items-center gap-1 rounded-xl bg-slate-50 p-1">
+                    <a
+                      href={`/sales/${sale.id}/invoice`}
+                      download
+                      aria-label={ti('download')}
+                       className="rounded-lg bg-white p-2.5 text-slate-400 shadow-sm hover:bg-blue-50 hover:text-blue-600"
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
                     <button
                       onClick={() => {
                         setEditSale(sale);

@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { LogoAvatar } from '@/components/BrandLogo';
 
 interface PageHeaderProps {
   title: string;
@@ -13,13 +13,7 @@ export function PageHeader({ title, subtitle }: PageHeaderProps) {
         <h1 className="page-header__title">{title}</h1>
       </div>
       <div className="page-header__mark">
-        <Image
-          src="/icons/icon-192x192.png"
-          alt="El Baraka"
-          width={52}
-          height={52}
-          className="page-header__avatar"
-        />
+        <LogoAvatar size={52} className="page-header__avatar" />
         <div className="status-dot" aria-label="Connected"></div>
       </div>
     </header>

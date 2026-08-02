@@ -51,11 +51,27 @@ interface SalesFormProps {
 
 export function SalesForm({ batches, clients: initialClients, onComplete, editData }: SalesFormProps) {
   const t = useTranslations('Sales');
+  const ti = useTranslations('Invoice');
   const tc = useTranslations('Clients');
   const [isPending, startTransition] = useTransition();
   const [showNewClient, setShowNewClient] = useState(false);
   const [isDebt, setIsDebt] = useState(editData ? editData.amountPaid === 0 : false);
   const [error, setError] = useState<string | null>(null);
+  const [downloadError, setDownloadError] = useState(false);
+
+  const triggerInvoiceDownload = (saleId: string) => {
+    try {
+      const link = document.createElement('a');
+      link.href = `/sales/${saleId}/invoice`;
+      link.setAttribute('download', '');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setDownloadError(false);
+    } catch {
+      setDownloadError(true);
+    }
+  };
 
   const { register, handleSubmit, watch, reset, setValue, control } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -105,27 +121,33 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
         if (clientResult.success) clientId = clientResult.id;
       }
 
-      const result = editData
-        ? await updateSale(editData.id, {
-            batchId: values.batchId,
-            clientId: clientId || undefined,
-            quantity: values.quantity,
-            unitPrice: values.unitPrice,
-            feedConsumedBags: values.feedConsumedBags,
-            amountPaid: values.amountPaid,
-            type: values.type,
-          })
-        : await recordSale({
-            batchId: values.batchId,
-            clientId: clientId || undefined,
-            quantity: values.quantity,
-            unitPrice: values.unitPrice,
-            feedConsumedBags: values.feedConsumedBags,
-            amountPaid: values.amountPaid,
-            type: values.type,
-          });
+      let result: Awaited<ReturnType<typeof updateSale>> | Awaited<ReturnType<typeof recordSale>>;
+      if (editData) {
+        result = await updateSale(editData.id, {
+          batchId: values.batchId,
+          clientId: clientId || undefined,
+          quantity: values.quantity,
+          unitPrice: values.unitPrice,
+          feedConsumedBags: values.feedConsumedBags,
+          amountPaid: values.amountPaid,
+          type: values.type,
+        });
+      } else {
+        result = await recordSale({
+          batchId: values.batchId,
+          clientId: clientId || undefined,
+          quantity: values.quantity,
+          unitPrice: values.unitPrice,
+          feedConsumedBags: values.feedConsumedBags,
+          amountPaid: values.amountPaid,
+          type: values.type,
+        });
+      }
 
       if (result.success) {
+        if (!editData && 'saleId' in result && result.saleId) {
+          triggerInvoiceDownload(result.saleId);
+        }
         if (!editData) reset();
         setShowNewClient(false);
         if (onComplete) onComplete();
@@ -146,6 +168,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
     <div className={`${editData ? '' : 'form-card'}`}>
       {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
       {error && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{error}</div>}
+      {downloadError && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{ti('downloadError')}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-3">
 
