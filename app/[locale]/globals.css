@@ -2407,6 +2407,81 @@ button:disabled {
   min-width: 150px;
 }
 
+.settings-offline-zone {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px dashed #e2c9b8;
+  border-radius: 16px;
+  background: #fff9f5;
+  margin-top: 20px;
+  padding: 18px;
+}
+
+.settings-offline-zone__icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  place-items: center;
+  border-radius: 13px;
+  background: #fbe6d8;
+  color: #c96a34;
+}
+
+.settings-offline-zone__copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.settings-offline-zone__copy strong {
+  color: var(--pine);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.settings-offline-zone__copy p {
+  margin: 4px 0 0;
+  color: var(--ink-soft);
+  font-size: 0.68rem;
+  font-weight: 650;
+}
+
+.settings-offline-zone__copy p.settings-offline-zone__error {
+  color: var(--red);
+}
+
+.settings-offline-zone__copy p.settings-offline-zone__success {
+  color: #2f9e63;
+}
+
+.settings-offline-zone__button {
+  flex: 0 0 auto;
+}
+
+.button-danger {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0 17px;
+  background: #c95d51;
+  color: white;
+  box-shadow: 0 8px 18px rgba(199, 91, 85, 0.18);
+  font-size: 0.82rem;
+  font-weight: 800;
+  line-height: 1;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.button-danger:hover {
+  background: #b34d43;
+  box-shadow: 0 10px 22px rgba(199, 91, 85, 0.22);
+}
+
 .settings-about-card {
   display: flex;
   align-items: center;
@@ -3046,6 +3121,15 @@ button:disabled {
     align-items: flex-start;
     flex-direction: column;
     padding: 18px;
+  }
+
+  .settings-offline-zone {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .settings-offline-zone__button {
+    width: 100%;
   }
 
   .settings-about-card__version {

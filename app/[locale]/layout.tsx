@@ -40,6 +40,9 @@ export const viewport: Viewport = {
 
 import { BottomNav } from "@/components/BottomNav";
 import { BrandProvider } from "@/components/BrandLogo";
+import { OfflineProvider } from "@/components/OfflineProvider";
+import { OfflineStatus } from "@/components/OfflineStatus";
+import { OfflineBanner } from "@/components/OfflineBanner";
 import { getLogoImage } from "@/actions/settings";
 
 export default async function RootLayout({
@@ -61,10 +64,18 @@ export default async function RootLayout({
       <body className="min-h-screen text-slate-900">
         <NextIntlClientProvider messages={messages}>
           <BrandProvider logoImage={logoImage}>
-            <div className="app-shell">
-              <BottomNav logoImage={logoImage} />
-              <div className="app-main">{children}</div>
-            </div>
+            <OfflineProvider>
+              <div className="app-shell">
+                <BottomNav logoImage={logoImage} />
+                <div className="app-main">
+                  <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 pt-3 sm:px-6 lg:px-10">
+                    <OfflineStatus />
+                    <OfflineBanner />
+                  </div>
+                  {children}
+                </div>
+              </div>
+            </OfflineProvider>
           </BrandProvider>
         </NextIntlClientProvider>
       </body>

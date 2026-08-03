@@ -8,6 +8,7 @@ import {
   Building2,
   Check,
   CircleDollarSign,
+  CloudOff,
   FileSignature,
   FileText,
   Globe,
@@ -23,6 +24,8 @@ import {
   Trash2,
   Upload,
 } from 'lucide-react';
+import { ConfirmModal } from '@/components/ConfirmModal';
+import { useOfflineStatus } from '@/lib/offline/useOfflineStatus';
 import { setLocale } from '@/actions/locale';
 import { setCostPerChick, setFeedPricePerSac, setInvoiceBusinessAddress, setInvoiceBusinessName, setInvoiceBusinessPhone, setInvoiceFooter, setInvoiceTaxNumber, setKgPerSac, setLogoImage } from '@/actions/settings';
 import { useRouter } from 'next/navigation';
@@ -161,6 +164,28 @@ export default function SettingsClient({
         ? 'dirty'
         : 'saved';
 
+  const to = useTranslations('Offline');
+  const { pendingCount, clearLocalData } = useOfflineStatus();
+  const [isClearConfirmOpen, setClearConfirmOpen] = useState(false);
+  const [isClearing, setClearing] = useState(false);
+  const [clearError, setClearError] = useState(false);
+  const [cleared, setCleared] = useState(false);
+
+  const handleClearLocalData = async () => {
+    setClearing(true);
+    setClearError(false);
+    setCleared(false);
+    try {
+      await clearLocalData();
+      setCleared(true);
+    } catch {
+      setClearError(true);
+    } finally {
+      setClearing(false);
+      setClearConfirmOpen(false);
+    }
+  };
+
   return (
     <main className="page-container settings-page">
       <div className="page-stack">
@@ -200,6 +225,11 @@ export default function SettingsClient({
               <a className="settings-index__link" href="#invoice">
                 <Receipt className="h-4 w-4" />
                 <span>{t('invoice')}</span>
+                <ArrowUpRight className="settings-index__arrow h-3.5 w-3.5" />
+              </a>
+              <a className="settings-index__link" href="#offline">
+                <CloudOff className="h-4 w-4" />
+                <span>{to('offlineData')}</span>
                 <ArrowUpRight className="settings-index__arrow h-3.5 w-3.5" />
               </a>
               <a className="settings-index__link" href="#about">
@@ -445,6 +475,43 @@ export default function SettingsClient({
               </div>
             </section>
 
+            <section id="offline" className="settings-card" aria-labelledby="offline-title">
+              <div className="settings-card__header">
+                <div className="settings-card__heading">
+                  <span className="settings-card__number">04</span>
+                  <div>
+                    <span className="settings-card__eyebrow">{t('settingsSection')}</span>
+                    <h2 id="offline-title">{to('offlineData')}</h2>
+                    <p>{to('offlineDataDesc')}</p>
+                  </div>
+                </div>
+                <span className="settings-card__pill">
+                  {pendingCount > 0 ? to('statusPending') : to('statusUpToDate')}
+                </span>
+              </div>
+
+              <div className="settings-offline-zone">
+                <div className="settings-offline-zone__icon">
+                  <CloudOff className="h-6 w-6" />
+                </div>
+                <div className="settings-offline-zone__copy">
+                  <strong>{to('clearLocalData')}</strong>
+                  <p>{to('clearLocalDataDesc')}</p>
+                  {clearError && <p className="settings-offline-zone__error">{to('internalError')}</p>}
+                  {cleared && <p className="settings-offline-zone__success">{to('cleared')}</p>}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setClearConfirmOpen(true)}
+                  disabled={isClearing}
+                  className="button-danger settings-offline-zone__button disabled:opacity-50"
+                >
+                  {isClearing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                  <span>{isClearing ? t('saving') : to('clearLocalData')}</span>
+                </button>
+              </div>
+            </section>
+
             <section id="about" className="settings-about-card" aria-labelledby="about-title">
               <div className="settings-about-card__brand">
                 <div className="settings-about-card__logo">
@@ -468,6 +535,15 @@ export default function SettingsClient({
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={isClearConfirmOpen}
+        onClose={() => setClearConfirmOpen(false)}
+        onConfirm={handleClearLocalData}
+        title={to('confirmClearLocal')}
+        message={to('clearLocalDataDesc')}
+        confirmText={to('clearLocalData')}
+      />
     </main>
   );
 }

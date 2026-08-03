@@ -108,3 +108,15 @@ export const appSettings = sqliteTable('app_settings', {
   key: text('key').primaryKey(),
   value: text('value').notNull(),
 });
+
+// 11. Offline sync outbox (idempotency ledger for queued client mutations)
+export const syncMutations = sqliteTable('sync_mutations', {
+  operationId: text('operation_id').primaryKey(),
+  deviceId: text('device_id').notNull(),
+  operationType: text('operation_type').notNull(),
+  status: text('status', { enum: ['processing', 'applied', 'rejected'] }).notNull(),
+  result: text('result'),
+  errorCode: text('error_code'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  processedAt: integer('processed_at', { mode: 'timestamp' }),
+});

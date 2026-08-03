@@ -8,6 +8,9 @@ import { useTranslations } from 'next-intl';
 import { Wallet, Plus, Loader2, User, Hash, Banknote, Utensils, Bird } from 'lucide-react';
 import { recordSale, updateSale, createClient } from '@/actions/sales';
 import { shareInvoice, normalizePhone } from '@/lib/invoices/shareInvoice';
+import { useOfflineStatus } from '@/lib/offline/useOfflineStatus';
+import { enqueueLocalOperation, newId, nowIso, isNetworkError } from '@/lib/offline/queue';
+import { OFFLINE_INVOICE_PLACEHOLDER } from '@/lib/offline/types';
 import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
@@ -56,10 +59,13 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   const t = useTranslations('Sales');
   const ti = useTranslations('Invoice');
   const tc = useTranslations('Clients');
+  const to = useTranslations('Offline');
+  const { online } = useOfflineStatus();
   const [isPending, startTransition] = useTransition();
   const [showNewClient, setShowNewClient] = useState(false);
   const [isDebt, setIsDebt] = useState(editData ? editData.amountPaid === 0 : false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [downloadError, setDownloadError] = useState(false);
   const [sendViaWhatsApp, setSendViaWhatsApp] = useState(false);
   const [shareError, setShareError] = useState<string | null>(null);
@@ -116,8 +122,89 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
     }
   }, [total, setValue, editData, isDebt]);
 
+  const queueOffline = async (values: FormValues) => {
+    let clientId = values.clientId || undefined;
+    const dependsOn: string[] = [];
+
+    if (showNewClient && values.newClientName) {
+      const cid = newId();
+      clientId = cid;
+      const opId = await enqueueLocalOperation({
+        store: 'clients',
+        type: 'createClient',
+        entityId: cid,
+        payload: {
+          id: cid,
+          name: values.newClientName,
+          phone: values.newClientPhone?.trim() || null,
+          address: null,
+          createdAt: nowIso(),
+        },
+        record: {
+          id: cid,
+          name: values.newClientName,
+          phone: values.newClientPhone?.trim() || null,
+          address: null,
+        },
+      });
+      dependsOn.push(opId);
+    }
+
+    const saleId = newId();
+    const totalPrice = values.quantity * values.unitPrice;
+    const amountPaid = Math.min(Math.max(values.amountPaid || 0, 0), totalPrice);
+
+    await enqueueLocalOperation({
+      store: 'sales',
+      type: 'recordSale',
+      entityId: saleId,
+      payload: {
+        id: saleId,
+        batchId: values.batchId,
+        clientId: clientId || null,
+        date: nowIso(),
+        quantity: values.quantity,
+        unitPrice: values.unitPrice,
+        feedConsumedBags: values.feedConsumedBags,
+        amountPaid,
+        type: values.type,
+      },
+      dependsOn,
+      record: {
+        id: saleId,
+        batchId: values.batchId,
+        clientId: clientId || null,
+        date: nowIso(),
+        quantity: values.quantity,
+        unitPrice: values.unitPrice,
+        totalPrice,
+        amountPaid,
+        feedConsumedBags: values.feedConsumedBags,
+        type: values.type,
+        invoiceNumber: OFFLINE_INVOICE_PLACEHOLDER,
+        batchName: batches.find((b) => b.id === values.batchId)?.name ?? null,
+        clientName: clientId
+          ? initialClients.find((c) => c.id === clientId)?.name ?? values.newClientName ?? null
+          : null,
+        clientPhone: clientId
+          ? initialClients.find((c) => c.id === clientId)?.phone ?? values.newClientPhone?.trim() ?? null
+          : null,
+      },
+    });
+
+    setNotice(to('savedLocally'));
+    if (sendViaWhatsApp) setShareError(to('invoicePending'));
+    setError(null);
+    setDownloadError(false);
+    reset();
+    setSendViaWhatsApp(false);
+    setShowNewClient(false);
+    if (onComplete) onComplete();
+  };
+
   const onSubmit = (values: FormValues) => {
     setError(null);
+    setNotice(null);
     setShareError(null);
 
     const selectedPhone = showNewClient && values.newClientName
@@ -138,71 +225,84 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
     }
 
     startTransition(async () => {
-      let clientId = values.clientId;
-
-      if (showNewClient && values.newClientName) {
-        const clientResult = await createClient({ name: values.newClientName, phone: values.newClientPhone?.trim() || undefined });
-        if (clientResult.success) clientId = clientResult.id;
+      if (!online || (typeof navigator !== 'undefined' && !navigator.onLine)) {
+        await queueOffline(values);
+        return;
       }
 
-      let result: Awaited<ReturnType<typeof updateSale>> | Awaited<ReturnType<typeof recordSale>>;
-      if (editData) {
-        result = await updateSale(editData.id, {
-          batchId: values.batchId,
-          clientId: clientId || undefined,
-          quantity: values.quantity,
-          unitPrice: values.unitPrice,
-          feedConsumedBags: values.feedConsumedBags,
-          amountPaid: values.amountPaid,
-          type: values.type,
-        });
-      } else {
-        result = await recordSale({
-          batchId: values.batchId,
-          clientId: clientId || undefined,
-          quantity: values.quantity,
-          unitPrice: values.unitPrice,
-          feedConsumedBags: values.feedConsumedBags,
-          amountPaid: values.amountPaid,
-          type: values.type,
-        });
-      }
+      try {
+        let clientId = values.clientId;
 
-      if (result.success) {
-        if (!editData && 'saleId' in result && result.saleId) {
-          triggerInvoiceDownload(result.saleId);
+        if (showNewClient && values.newClientName) {
+          const clientResult = await createClient({ name: values.newClientName, phone: values.newClientPhone?.trim() || undefined });
+          if (clientResult.success) clientId = clientResult.id;
         }
-        if (!editData && sendViaWhatsApp && 'saleId' in result && result.saleId) {
-          try {
-            const shareResult = await shareInvoice({
-              saleId: result.saleId,
-              invoiceNumber: result.invoiceNumber,
-              phone: selectedPhone,
-              message: ti('whatsappShareMessage', { invoiceNumber: result.invoiceNumber }),
-              title: ti('title'),
-            });
-            if (shareResult.status === 'unsupported') {
-              setShareError(ti('whatsappShareUnsupported'));
-            }
-          } catch {
-            setShareError(ti('whatsappShareError'));
+
+        let result: Awaited<ReturnType<typeof updateSale>> | Awaited<ReturnType<typeof recordSale>>;
+        if (editData) {
+          result = await updateSale(editData.id, {
+            batchId: values.batchId,
+            clientId: clientId || undefined,
+            quantity: values.quantity,
+            unitPrice: values.unitPrice,
+            feedConsumedBags: values.feedConsumedBags,
+            amountPaid: values.amountPaid,
+            type: values.type,
+          });
+        } else {
+          result = await recordSale({
+            batchId: values.batchId,
+            clientId: clientId || undefined,
+            quantity: values.quantity,
+            unitPrice: values.unitPrice,
+            feedConsumedBags: values.feedConsumedBags,
+            amountPaid: values.amountPaid,
+            type: values.type,
+          });
+        }
+
+        if (result.success) {
+          if (!editData && 'saleId' in result && result.saleId) {
+            triggerInvoiceDownload(result.saleId);
           }
+          if (!editData && sendViaWhatsApp && 'saleId' in result && result.saleId) {
+            try {
+              const shareResult = await shareInvoice({
+                saleId: result.saleId,
+                invoiceNumber: result.invoiceNumber,
+                phone: selectedPhone,
+                message: ti('whatsappShareMessage', { invoiceNumber: result.invoiceNumber }),
+                title: ti('title'),
+              });
+              if (shareResult.status === 'unsupported') {
+                setShareError(ti('whatsappShareUnsupported'));
+              }
+            } catch {
+              setShareError(ti('whatsappShareError'));
+            }
+          }
+          if (!editData) {
+            reset();
+            setSendViaWhatsApp(false);
+          }
+          setShowNewClient(false);
+          if (onComplete) onComplete();
+        } else {
+          const errorMessage = result.error === 'feedStockInsufficient'
+            ? t('feedStockInsufficient')
+            : result.error === 'feedStockMissing'
+              ? t('feedStockMissing')
+              : result.error === 'kgPerSacMissing'
+                ? t('kgPerSacMissing')
+                : t('error');
+          setError(errorMessage);
         }
-        if (!editData) {
-          reset();
-          setSendViaWhatsApp(false);
+      } catch (e) {
+        if (isNetworkError(e)) {
+          await queueOffline(values);
+        } else {
+          setError(t('error'));
         }
-        setShowNewClient(false);
-        if (onComplete) onComplete();
-      } else {
-        const errorMessage = result.error === 'feedStockInsufficient'
-          ? t('feedStockInsufficient')
-          : result.error === 'feedStockMissing'
-            ? t('feedStockMissing')
-            : result.error === 'kgPerSacMissing'
-              ? t('kgPerSacMissing')
-              : t('error');
-        setError(errorMessage);
       }
     });
   };
@@ -211,6 +311,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
     <div className={`${editData ? '' : 'form-card'}`}>
       {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
       {error && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{error}</div>}
+      {notice && <div className="mb-5 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-center text-sm font-bold text-emerald-700">{notice}</div>}
       {downloadError && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{ti('downloadError')}</div>}
       {shareError && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{shareError}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">

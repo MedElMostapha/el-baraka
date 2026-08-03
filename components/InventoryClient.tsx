@@ -4,11 +4,13 @@ import React from 'react';
 import { InventoryForm } from './InventoryForm';
 import { Package, Layers, Trash2, Pencil, Loader2, Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { deleteInventoryItem } from '@/actions/inventory';
 import { ConfirmModal } from './ConfirmModal';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
 import { PageHeader } from '@/components/PageHeader';
+import { mergeIntoList, usePendingRecords } from '@/lib/offline/merge';
 
 const PAGE_SIZE = 8;
 
@@ -19,6 +21,7 @@ interface InventoryItem {
   quantity: number;
   unit: string;
   lastUpdated: string | null;
+  isPending?: boolean;
 }
 
 interface InventoryTranslations {
@@ -35,10 +38,25 @@ interface InventoryTranslations {
 
 export default function InventoryClient({ initialItems, t, kgPerSac = 0 }: { initialItems: InventoryItem[], t: InventoryTranslations, kgPerSac?: number }) {
   const router = useRouter();
+  const to = useTranslations('Offline');
   const [page, setPage] = React.useState(1);
-  const pageCount = Math.max(1, Math.ceil(initialItems.length / PAGE_SIZE));
+
+  const { records: items, pendingIds } = mergeIntoList(
+    initialItems,
+    usePendingRecords('inventory'),
+    (r) => ({
+      id: r.id,
+      name: r.name as string,
+      category: r.category as string,
+      quantity: r.quantity as number,
+      unit: r.unit as string,
+      lastUpdated: (r.lastUpdated as string | null) ?? null,
+    }),
+  );
+
+  const pageCount = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
   const currentPage = Math.min(page, pageCount);
-  const visibleItems = initialItems.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const visibleItems = items.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const handleComplete = () => {
     router.refresh();
@@ -59,7 +77,7 @@ export default function InventoryClient({ initialItems, t, kgPerSac = 0 }: { ini
               <div className="empty-state">{t.addNew}</div>
             )}
             {visibleItems.map((item) => (
-              <InventoryItemCard key={item.id} item={item} t={t} router={router} kgPerSac={kgPerSac} />
+              <InventoryItemCard key={item.id} item={item} t={t} router={router} kgPerSac={kgPerSac} pendingLabel={to('statusPending')} />
             ))}
             <Pagination page={currentPage} pageCount={pageCount} onPageChange={setPage} />
           </section>
@@ -69,7 +87,7 @@ export default function InventoryClient({ initialItems, t, kgPerSac = 0 }: { ini
   );
 }
 
-function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryItem, t: InventoryTranslations, router: ReturnType<typeof useRouter>, kgPerSac?: number }) {
+function InventoryItemCard({ item, t, router, kgPerSac = 0, pendingLabel }: { item: InventoryItem, t: InventoryTranslations, router: ReturnType<typeof useRouter>, kgPerSac?: number, pendingLabel: string }) {
   const [expanded, setExpanded] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [confirmDelete, setConfirmDelete] = React.useState(false);
@@ -90,7 +108,12 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
             </div>
             <div>
                <h3 className="record-card__title">{item.name}</h3>
-              <div className="flex items-center gap-3 mt-1">
+               <div className="flex items-center gap-3 mt-1">
+                 {item.isPending && (
+                   <span className="rounded-md bg-orange-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-orange-600">
+                     {pendingLabel}
+                   </span>
+                 )}
                  <span className="rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-orange-600">
                   {t[item.category] || item.category}
                 </span>
@@ -125,6 +148,8 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {!item.isPending && (
+                <>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -144,6 +169,8 @@ function InventoryItemCard({ item, t, router, kgPerSac = 0 }: { item: InventoryI
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
               </button>
+                </>
+              )}
             </div>
           </div>
         )}

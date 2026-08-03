@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Wallet, Bird, Calendar, FileText, Trash2, Loader2, Pencil } from "lucide-react";
 import { deleteExpense } from "@/actions/expenses";
 import { ConfirmModal } from './ConfirmModal';
@@ -10,6 +10,7 @@ import { Modal } from './Modal';
 import { Pagination } from './Pagination';
 import { FilterMenu } from './FilterMenu';
 import { DatePicker, parseInputDate, toInputDate } from './DatePicker';
+import { mergeIntoList, usePendingRecords } from '@/lib/offline/merge';
 
 const PAGE_SIZE = 8;
 
@@ -21,6 +22,7 @@ interface Expense {
   description: string | null;
   batchId: string | null;
   batchName: string | null;
+  isPending?: boolean;
 }
 
 interface Translations {
@@ -41,6 +43,7 @@ interface Translations {
 
 export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { expenses: Expense[]; batches: { id: string; name: string }[]; feedPricePerSac: number; t: Translations }) {
   const locale = useLocale();
+  const to = useTranslations('Offline');
   const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
   const [selectedDate, setSelectedDate] = useState('');
   const [generalOnly, setGeneralOnly] = useState(false);
@@ -49,7 +52,21 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
   const [page, setPage] = useState(1);
 
-  const filteredExpenses = expenses.filter((expense) => {
+  const { records: mergedExpenses, pendingIds } = mergeIntoList(
+    expenses,
+    usePendingRecords('expenses'),
+    (r) => ({
+      id: r.id,
+      date: new Date(r.date as string),
+      amount: r.amount as number,
+      category: r.category as string,
+      description: (r.description as string | null) ?? null,
+      batchId: (r.batchId as string | null) ?? null,
+      batchName: (r.batchName as string | null) ?? null,
+    }),
+  );
+
+  const filteredExpenses = mergedExpenses.filter((expense) => {
     const expenseDate = new Date(expense.date);
     const now = new Date();
 
@@ -167,7 +184,12 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
                        <h3 className="record-card__amount">
                         {expense.amount.toLocaleString()} <span className="text-xs text-slate-400 ml-1 font-bold uppercase">{t.currency}</span>
                       </h3>
-                      <div className="mt-1">
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        {expense.isPending && (
+                          <span className="rounded-lg bg-orange-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-orange-600">
+                            {to('statusPending')}
+                          </span>
+                        )}
                         <span className="text-[10px] font-black text-red-500 bg-red-50 px-2.5 py-1 rounded-lg uppercase tracking-wider group-hover:bg-red-100 transition-colors">
                           {t.categories[expense.category] || expense.category}
                         </span>
@@ -176,6 +198,8 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
                   </div>
 
                    <div className="hidden items-center gap-1 rounded-xl bg-slate-50 p-1 md:flex">
+                    {!expense.isPending && (
+                      <>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -196,6 +220,8 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
                     >
                       {loadingId === expense.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     </button>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -221,6 +247,8 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
                   </div>
 
                    <div className="md:hidden flex items-center gap-1 rounded-xl bg-slate-50 p-1">
+                    {!expense.isPending && (
+                      <>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -241,6 +269,8 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
                     >
                       {loadingId === expense.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

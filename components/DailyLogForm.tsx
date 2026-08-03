@@ -8,6 +8,9 @@ import { useTranslations } from 'next-intl';
 import { Skull, Utensils, Droplets, Pill, Save, Loader2, Bird } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { createDailyLog } from '@/actions/daily-log';
+import { useOfflineStatus } from '@/lib/offline/useOfflineStatus';
+import { enqueueLocalOperation, newId, nowIso, isNetworkError } from '@/lib/offline/queue';
+import { getCachedSettings } from '@/lib/offline/repository';
 import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
@@ -27,7 +30,9 @@ interface DailyLogFormProps {
 
 export function DailyLogForm({ batches }: DailyLogFormProps) {
   const t = useTranslations('DailyTracking');
+  const to = useTranslations('Offline');
   const router = useRouter();
+  const { online } = useOfflineStatus();
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -43,23 +48,69 @@ export function DailyLogForm({ batches }: DailyLogFormProps) {
     },
   });
 
+  const queueOffline = async (values: FormValues) => {
+    const id = newId();
+    const cachedSettings = await getCachedSettings();
+    const kgPerSac = cachedSettings && cachedSettings.kg_per_sac ? parseFloat(cachedSettings.kg_per_sac) || 0 : 0;
+    const feedConsumedKg = kgPerSac > 0 ? values.feedConsumedBags * kgPerSac : 0;
+    await enqueueLocalOperation({
+      store: 'dailyLogs',
+      type: 'createDailyLog',
+      entityId: id,
+      payload: {
+        id,
+        batchId: values.batchId,
+        date: nowIso(),
+        mortality: values.mortality,
+        feedConsumedBags: values.feedConsumedBags,
+        waterConsumed: values.waterConsumed,
+        medications: values.medications || null,
+        notes: values.notes || null,
+      },
+      record: {
+        id,
+        batchId: values.batchId,
+        date: nowIso(),
+        mortality: values.mortality,
+        feedConsumed: feedConsumedKg,
+        waterConsumed: values.waterConsumed,
+        medications: values.medications || null,
+        notes: values.notes || null,
+      },
+    });
+    setMessage({ type: 'success', text: to('savedLocally') });
+    reset();
+  };
+
   const onSubmit = (values: FormValues) => {
     setMessage(null);
     startTransition(async () => {
-      const result = await createDailyLog(values);
-      if (result.success) {
-        setMessage({ type: 'success', text: t('success') });
-        reset();
-        router.refresh();
-      } else {
-        const errorMessage = result.error === 'feedStockInsufficient'
-          ? t('insufficientStock')
-          : result.error === 'feedStockMissing'
-            ? t('feedStockMissing')
-            : result.error === 'kgPerSacMissing'
-              ? t('kgPerSacMissing')
-              : t('error');
-        setMessage({ type: 'error', text: errorMessage });
+      if (!online || (typeof navigator !== 'undefined' && !navigator.onLine)) {
+        await queueOffline(values);
+        return;
+      }
+      try {
+        const result = await createDailyLog(values);
+        if (result.success) {
+          setMessage({ type: 'success', text: t('success') });
+          reset();
+          router.refresh();
+        } else {
+          const errorMessage = result.error === 'feedStockInsufficient'
+            ? t('insufficientStock')
+            : result.error === 'feedStockMissing'
+              ? t('feedStockMissing')
+              : result.error === 'kgPerSacMissing'
+                ? t('kgPerSacMissing')
+                : t('error');
+          setMessage({ type: 'error', text: errorMessage });
+        }
+      } catch (e) {
+        if (isNetworkError(e)) {
+          await queueOffline(values);
+        } else {
+          setMessage({ type: 'error', text: t('error') });
+        }
       }
     });
   };

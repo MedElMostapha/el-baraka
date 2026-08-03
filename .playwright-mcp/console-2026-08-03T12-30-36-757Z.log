@@ -1,3 +1,633 @@
 [   99686ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
 [  100068ms] [LOG] [Fast Refresh] done in 481ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
 [  102996ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 1687196ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1687242ms] [LOG] [Fast Refresh] done in 117ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1700794ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1701107ms] [ERROR] ./app/[locale]/globals.css
+Error evaluating Node.js code
+Error: Cannot find module 'nanoid/non-secure'
+    [at <anonymous> (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at PreviousMap (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at exec (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+    [at runModuleExecutionHooksFn (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:69:5)]
+    [at instantiateModuleShared (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:648:5)]
+    [at instantiateModule (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:73:21)]
+    [at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:143:21)]
+    [at Context.commonJsRequire (turbopack:///[turbopack]/shared/runtime/runtime-utils.ts:440:10)]
+    [at Input (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/map-generator.js:7:5)]
+    [at <anonymous> (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+
+Import trace:
+  Client Component Browser:
+    ./app/[locale]/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701107ms] [ERROR] ./node_modules/next/node_modules/postcss/lib/input.js:6:18
+Module not found: Can't resolve 'nanoid/non-secure'
+
+Import trace:
+  postcss:
+    ./node_modules/next/node_modules/postcss/lib/input.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.mjs
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701173ms] [ERROR] ./app/[locale]/globals.css
+Error evaluating Node.js code
+Error: Cannot find module 'nanoid/non-secure'
+    [at <anonymous> (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at PreviousMap (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at exec (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+    [at runModuleExecutionHooksFn (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:69:5)]
+    [at instantiateModuleShared (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:648:5)]
+    [at instantiateModule (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:73:21)]
+    [at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:143:21)]
+    [at Context.commonJsRequire (turbopack:///[turbopack]/shared/runtime/runtime-utils.ts:440:10)]
+    [at Input (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/map-generator.js:7:5)]
+    [at <anonymous> (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+
+Import trace:
+  Client Component Browser:
+    ./app/[locale]/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701173ms] [ERROR] ./node_modules/next/node_modules/postcss/lib/input.js:6:18
+Module not found: Can't resolve 'nanoid/non-secure'
+
+Import trace:
+  postcss:
+    ./node_modules/next/node_modules/postcss/lib/input.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.mjs
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701208ms] [ERROR] ./app/[locale]/globals.css
+Error evaluating Node.js code
+Error: Cannot find module 'nanoid/non-secure'
+    [at <anonymous> (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at PreviousMap (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at exec (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+    [at runModuleExecutionHooksFn (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:69:5)]
+    [at instantiateModuleShared (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:648:5)]
+    [at instantiateModule (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:73:21)]
+    [at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:143:21)]
+    [at Context.commonJsRequire (turbopack:///[turbopack]/shared/runtime/runtime-utils.ts:440:10)]
+    [at Input (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/map-generator.js:7:5)]
+    [at <anonymous> (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+
+Import trace:
+  Client Component Browser:
+    ./app/[locale]/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701208ms] [ERROR] ./node_modules/next/node_modules/postcss/lib/input.js:6:18
+Module not found: Can't resolve 'nanoid/non-secure'
+
+Import trace:
+  postcss:
+    ./node_modules/next/node_modules/postcss/lib/input.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.mjs
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701246ms] [ERROR] ./app/[locale]/globals.css
+Error evaluating Node.js code
+Error: Cannot find module 'nanoid/non-secure'
+    [at <anonymous> (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at PreviousMap (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at exec (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+    [at runModuleExecutionHooksFn (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:69:5)]
+    [at instantiateModuleShared (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:648:5)]
+    [at instantiateModule (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:73:21)]
+    [at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:143:21)]
+    [at Context.commonJsRequire (turbopack:///[turbopack]/shared/runtime/runtime-utils.ts:440:10)]
+    [at Input (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/map-generator.js:7:5)]
+    [at <anonymous> (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+
+Import trace:
+  Client Component Browser:
+    ./app/[locale]/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701246ms] [ERROR] ./node_modules/next/node_modules/postcss/lib/input.js:6:18
+Module not found: Can't resolve 'nanoid/non-secure'
+
+Import trace:
+  postcss:
+    ./node_modules/next/node_modules/postcss/lib/input.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.mjs
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701282ms] [ERROR] ./app/[locale]/globals.css
+Error evaluating Node.js code
+Error: Cannot find module 'nanoid/non-secure'
+    [at <anonymous> (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at PreviousMap (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at exec (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+    [at runModuleExecutionHooksFn (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:69:5)]
+    [at instantiateModuleShared (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:648:5)]
+    [at instantiateModule (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:73:21)]
+    [at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:143:21)]
+    [at Context.commonJsRequire (turbopack:///[turbopack]/shared/runtime/runtime-utils.ts:440:10)]
+    [at Input (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/map-generator.js:7:5)]
+    [at <anonymous> (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+
+Import trace:
+  Client Component Browser:
+    ./app/[locale]/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701282ms] [ERROR] ./node_modules/next/node_modules/postcss/lib/input.js:6:18
+Module not found: Can't resolve 'nanoid/non-secure'
+
+Import trace:
+  postcss:
+    ./node_modules/next/node_modules/postcss/lib/input.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.mjs
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1701347ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1702405ms] [ERROR] ./app/[locale]/globals.css
+Error evaluating Node.js code
+Error: Cannot find module 'nanoid/non-secure'
+    [at <anonymous> (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at PreviousMap (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/input.js:6:15)]
+    [at exec (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+    [at runModuleExecutionHooksFn (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:69:5)]
+    [at instantiateModuleShared (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:648:5)]
+    [at instantiateModule (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:73:21)]
+    [at getOrInstantiateModuleFromParent (turbopack:///[turbopack]/nodejs/runtime/dev-base.ts:143:21)]
+    [at Context.commonJsRequire (turbopack:///[turbopack]/shared/runtime/runtime-utils.ts:440:10)]
+    [at Input (turbopack:///[project]/node_modules/next/node_modules/postcss/lib/map-generator.js:7:5)]
+    [at <anonymous> (turbopack:///[turbopack]/shared/runtime/hmr-runtime.ts:650:21)]
+
+Import trace:
+  Client Component Browser:
+    ./app/[locale]/globals.css [Client Component Browser]
+    ./app/[locale]/layout.tsx [Server Component] @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1702405ms] [ERROR] ./node_modules/next/node_modules/postcss/lib/input.js:6:18
+Module not found: Can't resolve 'nanoid/non-secure'
+
+Import trace:
+  postcss:
+    ./node_modules/next/node_modules/postcss/lib/input.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.js
+    ./node_modules/next/node_modules/postcss/lib/postcss.mjs
+
+https://nextjs.org/docs/messages/module-not-found @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 1702525ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1703471ms] [LOG] [Fast Refresh] done in 1033ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1703576ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1703581ms] [LOG] [Fast Refresh] done in 105ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1705240ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1705269ms] [LOG] [Fast Refresh] done in 129ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1710939ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1710943ms] [LOG] [Fast Refresh] done in 104ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1715435ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1715592ms] [LOG] [Fast Refresh] done in 62ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1809874ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1809877ms] [LOG] [Fast Refresh] done in 104ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1899959ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1900120ms] [LOG] [Fast Refresh] done in 198ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1904943ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1905061ms] [LOG] [Fast Refresh] done in 95ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1987252ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1987331ms] [LOG] [Fast Refresh] done in 146ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1992282ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 1992334ms] [LOG] [Fast Refresh] done in 119ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2019659ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2019686ms] [LOG] [Fast Refresh] done in 65ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2024489ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2024605ms] [LOG] [Fast Refresh] done in 107ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2038675ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2038788ms] [LOG] [Fast Refresh] done in 130ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2038898ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2039117ms] [LOG] [Fast Refresh] done in 319ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2042181ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2042203ms] [LOG] [Fast Refresh] done in 71ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2054452ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2054577ms] [LOG] [Fast Refresh] done in 121ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2054685ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2054926ms] [LOG] [Fast Refresh] done in 341ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2060860ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2060953ms] [LOG] [Fast Refresh] done in 113ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2154913ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2155008ms] [LOG] [Fast Refresh] done in 107ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2155117ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2155316ms] [LOG] [Fast Refresh] done in 300ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2158784ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2158875ms] [LOG] [Fast Refresh] done in 80ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2414160ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2414284ms] [LOG] [Fast Refresh] done in 66ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2426516ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2426641ms] [LOG] [Fast Refresh] done in 76ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2446245ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2446363ms] [LOG] [Fast Refresh] done in 70ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2450035ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2450597ms] [LOG] [Fast Refresh] done in 659ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2451704ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2451751ms] [LOG] [Fast Refresh] done in 146ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2451986ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2452037ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2452255ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2452554ms] [LOG] [Fast Refresh] done in 425ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2455762ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 2545537ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2545559ms] [LOG] [Fast Refresh] done in 122ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2560013ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2560032ms] [LOG] [Fast Refresh] done in 68ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2566124ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2566254ms] [LOG] [Fast Refresh] done in 110ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2566359ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2566588ms] [LOG] [Fast Refresh] done in 330ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2570086ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2570110ms] [LOG] [Fast Refresh] done in 90ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2570155ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 2574261ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2574308ms] [LOG] [Fast Refresh] done in 119ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2577964ms] [ERROR] ./components/SalesListClient.tsx:295:21
+Expected '</', got 'ident'
+  293 |                       {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" ...
+  294 |                     </button>
+> 295 |                   </div>
+      |                     ^^^
+  296 |                 </div>
+  297 |
+  298 |                 <div className="record-card__footer">
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/SalesListClient.tsx
+    ./app/[locale]/sales/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2577986ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2581225ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2581394ms] [LOG] [Fast Refresh] done in 73ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2584739ms] [ERROR] ./components/SalesListClient.tsx:366:21
+Expected '</', got 'ident'
+  364 |                       {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" ...
+  365 |                     </button>
+> 366 |                   </div>
+      |                     ^^^
+  367 |                 </div>
+  368 |               </div>
+  369 |             );
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/SalesListClient.tsx
+    ./app/[locale]/sales/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2584764ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2588323ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2588465ms] [LOG] [Fast Refresh] done in 66ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2746800ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2746884ms] [LOG] [Fast Refresh] done in 79ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2746994ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2747166ms] [LOG] [Fast Refresh] done in 272ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2770131ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2770213ms] [ERROR] ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2770254ms] [ERROR] ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2770356ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2770733ms] [ERROR] ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2770834ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2770930ms] [ERROR] ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2771079ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/sales?_rsc=1yl4s:0
+[ 2771214ms] [ERROR] ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2771246ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/sales?_rsc=1yl4s:0
+[ 2771290ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/sales:0
+[ 2771463ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_react-dom_0bruynb._.js:15305
+[ 2771543ms] Error: ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx
+
+
+    at <unknown> (Error: ./components/DebtsListClient.tsx:279:21)
+    at Object.getCompilationErrors (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/dev/hot-reloader-turbopack.js:1186:59)
+    at DevBundlerService.getCompilationError (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/lib/dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/dev/next-dev-server.js:719:42)
+    at DevServer.findPageComponents (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/dev/next-dev-server.js:689:43)
+    at async DevServer.renderErrorToResponseImpl (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/base-server.js:1745:26)
+[ 2771539ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2771549ms] [ERROR] ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[ 2771556ms] [ERROR] ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[ 2771580ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/favicon.ico:0
+[ 2771622ms] [ERROR] ./components/DebtsListClient.tsx:279:21
+Expected '</', got 'ident'
+  277 |                       </button>
+  278 |                     )}
+> 279 |                   </div>
+      |                     ^^^
+  280 |                 </div>
+  281 |
+  282 |                 {/* Description */}
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[ 2771658ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2773818ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2773848ms] [LOG] [Fast Refresh] done in 70ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2774060ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2774301ms] [LOG] [Fast Refresh] done in 341ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2774732ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2774770ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2774977ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2775000ms] [LOG] [Fast Refresh] done in 126ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2775260ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2775266ms] [LOG] [Fast Refresh] done in 105ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2777453ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2777478ms] [ERROR] ./components/DebtsListClient.tsx:343:21
+Expected '</', got 'ident'
+  341 |                       </button>
+  342 |                     )}
+> 343 |                   </div>
+      |                     ^^^
+  344 |                 </div>
+  345 |               </div>
+  346 |             );
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2777600ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/sales?_rsc=1yl4s:0
+[ 2777617ms] [ERROR] ./components/DebtsListClient.tsx:343:21
+Expected '</', got 'ident'
+  341 |                       </button>
+  342 |                     )}
+> 343 |                   </div>
+      |                     ^^^
+  344 |                 </div>
+  345 |               </div>
+  346 |             );
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2777696ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/sales?_rsc=1yl4s:0
+[ 2777711ms] [ERROR] ./components/DebtsListClient.tsx:343:21
+Expected '</', got 'ident'
+  341 |                       </button>
+  342 |                     )}
+> 343 |                   </div>
+      |                     ^^^
+  344 |                 </div>
+  345 |               </div>
+  346 |             );
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
+[ 2777726ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/sales:0
+[ 2777783ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_react-dom_0bruynb._.js:15305
+[ 2777803ms] Error: ./components/DebtsListClient.tsx:343:21
+Expected '</', got 'ident'
+  341 |                       </button>
+  342 |                     )}
+> 343 |                   </div>
+      |                     ^^^
+  344 |                 </div>
+  345 |               </div>
+  346 |             );
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx
+
+
+    at <unknown> (Error: ./components/DebtsListClient.tsx:343:21)
+    at Object.getCompilationErrors (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/dev/hot-reloader-turbopack.js:1186:59)
+    at DevBundlerService.getCompilationError (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/lib/dev-bundler-service.js:44:55)
+    at DevServer.getCompilationError (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/dev/next-dev-server.js:719:42)
+    at DevServer.findPageComponents (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/dev/next-dev-server.js:689:43)
+    at async DevServer.renderErrorToResponseImpl (file:///home/medlemine/projects/el-baraka/node_modules/next/dist/server/base-server.js:1745:26)
+[ 2777806ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2777808ms] [ERROR] ./components/DebtsListClient.tsx:343:21
+Expected '</', got 'ident'
+  341 |                       </button>
+  342 |                     )}
+> 343 |                   </div>
+      |                     ^^^
+  344 |                 </div>
+  345 |               </div>
+  346 |             );
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[ 2777838ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/favicon.ico:0
+[ 2777915ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2777915ms] [ERROR] ./components/DebtsListClient.tsx:343:21
+Expected '</', got 'ident'
+  341 |                       </button>
+  342 |                     )}
+> 343 |                   </div>
+      |                     ^^^
+  344 |                 </div>
+  345 |               </div>
+  346 |             );
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/DebtsListClient.tsx
+    ./app/[locale]/debts/page.tsx @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1945
+[ 2781657ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2781700ms] [LOG] [Fast Refresh] done in 54ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_0u_w_5s._.js:1226
+[ 2782618ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2782692ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2786603ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 2862865ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2862895ms] [LOG] [Fast Refresh] done in 106ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2883519ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2883559ms] [LOG] [Fast Refresh] done in 69ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2883668ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2883736ms] [LOG] [Fast Refresh] done in 169ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2922048ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2922201ms] [LOG] [Fast Refresh] done in 69ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2941314ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2941324ms] [LOG] [Fast Refresh] done in 111ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2947299ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2947538ms] [LOG] [Fast Refresh] done in 246ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2951949ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2951968ms] [LOG] [Fast Refresh] done in 120ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2966664ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2966774ms] [LOG] [Fast Refresh] done in 109ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2966893ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 2967101ms] [LOG] [Fast Refresh] done in 308ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3000520ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3000617ms] [LOG] [Fast Refresh] done in 168ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3003789ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3003859ms] [LOG] [Fast Refresh] done in 141ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3187619ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3187662ms] [LOG] [Fast Refresh] done in 143ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3188654ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3188657ms] [LOG] [Fast Refresh] done in 103ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3188772ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3188796ms] [LOG] [Fast Refresh] done in 124ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3378726ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3380992ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3381040ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3385350ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 3410493ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3413160ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3413204ms] [LOG] [HMR] connected @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3413455ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3413526ms] [LOG] [Fast Refresh] done in 231ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3418288ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 3545736ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3545799ms] [LOG] [Fast Refresh] done in 163ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3646378ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3646404ms] [LOG] [Fast Refresh] done in 104ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3655148ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3655164ms] [LOG] [Fast Refresh] done in 117ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3751635ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3751721ms] [LOG] [Fast Refresh] done in 78ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3754695ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 3760638ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3760640ms] [LOG] [Fast Refresh] done in 102ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3763743ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3763816ms] [LOG] [Fast Refresh] done in 66ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3766802ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 3773712ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3773812ms] [LOG] [Fast Refresh] done in 73ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3776837ms] [WARNING] The resource http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__0sztc7e._.css was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally. @ http://localhost:3000/sales:0
+[ 3883952ms] [LOG] [Fast Refresh] rebuilding @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[ 3883952ms] [LOG] [Fast Refresh] done in 101ms @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431

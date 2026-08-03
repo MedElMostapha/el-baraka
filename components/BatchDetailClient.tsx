@@ -21,11 +21,13 @@ import {
   Pencil
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/PageHeader';
 import { updateBatch } from '@/actions/batch';
 import { Modal } from '@/components/Modal';
 import { Pagination } from '@/components/Pagination';
 import { BatchForm } from '@/components/BatchForm';
+import { mergeIntoList, usePendingRecords } from '@/lib/offline/merge';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -90,6 +92,7 @@ function formatBreed(breed: string | null, t: any): string {
 
 export default function BatchDetailClient({ batch, logs, sales, expenses, stats, kgPerSac, t }: BatchDetailClientProps) {
   const router = useRouter();
+  const to = useTranslations('Offline');
   const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -99,6 +102,22 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
   const [showEditModal, setShowEditModal] = useState(false);
   const [salesPage, setSalesPage] = useState(1);
   const [expensesPage, setExpensesPage] = useState(1);
+
+  const { records: mergedLogs } = mergeIntoList(
+    logs,
+    usePendingRecords('dailyLogs').filter((r) => r.batchId === batch.id),
+    (r) => r,
+  );
+  const { records: mergedSales, pendingIds: salesPendingIds } = mergeIntoList(
+    sales,
+    usePendingRecords('sales').filter((r) => r.batchId === batch.id),
+    (r) => r,
+  );
+  const { records: mergedExpenses } = mergeIntoList(
+    expenses,
+    usePendingRecords('expenses').filter((r) => r.batchId === batch.id),
+    (r) => r,
+  );
 
   const handleRecharge = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -152,21 +171,21 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
     pieData.push({ name: t.remainingBirds, value: stats.birdsPlaced });
   }
 
-  const activityData = [...logs].reverse().map(log => ({
+  const activityData = [...mergedLogs].reverse().map(log => ({
     date: new Date(log.date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }),
     mortality: log.mortality,
     feed: log.feedConsumed,
   }));
 
-  const salesPageCount = Math.max(1, Math.ceil(sales.length / ACTIVITY_PAGE_SIZE));
+  const salesPageCount = Math.max(1, Math.ceil(mergedSales.length / ACTIVITY_PAGE_SIZE));
   const currentSalesPage = Math.min(salesPage, salesPageCount);
-  const visibleSales = sales.slice(
+  const visibleSales = mergedSales.slice(
     (currentSalesPage - 1) * ACTIVITY_PAGE_SIZE,
     currentSalesPage * ACTIVITY_PAGE_SIZE,
   );
-  const expensesPageCount = Math.max(1, Math.ceil(expenses.length / ACTIVITY_PAGE_SIZE));
+  const expensesPageCount = Math.max(1, Math.ceil(mergedExpenses.length / ACTIVITY_PAGE_SIZE));
   const currentExpensesPage = Math.min(expensesPage, expensesPageCount);
-  const visibleExpenses = expenses.slice(
+  const visibleExpenses = mergedExpenses.slice(
     (currentExpensesPage - 1) * ACTIVITY_PAGE_SIZE,
     currentExpensesPage * ACTIVITY_PAGE_SIZE,
   );
@@ -415,17 +434,17 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
             <h2 className="text-xl font-black text-slate-800">{t.activity}</h2>
             <div className="flex gap-2">
               <span className="bg-white border border-slate-100 px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-slate-400 shadow-sm">
-                {sales.length} {t.salesLabel}
+                {mergedSales.length} {t.salesLabel}
               </span>
               <span className="bg-white border border-slate-100 px-4 py-1.5 rounded-full text-[10px] font-black uppercase text-slate-400 shadow-sm">
-                {expenses.length} {t.expensesLabel}
+                {mergedExpenses.length} {t.expensesLabel}
               </span>
             </div>
           </div>
           <p className="formula-caption">{t.transactionCountFormula}</p>
 
           <div className="space-y-3">
-             {sales.length === 0 && expenses.length === 0 && logs.length === 0 ? (
+             {mergedSales.length === 0 && mergedExpenses.length === 0 && mergedLogs.length === 0 ? (
                <div className="empty-state">
                  <p className="text-slate-400 font-bold">{t.noActivity}</p>
                </div>
@@ -445,7 +464,13 @@ export default function BatchDetailClient({ batch, logs, sales, expenses, stats,
                            <p className="text-[10px] font-bold text-slate-400 uppercase">{new Date(sale.date).toLocaleDateString()}</p>
                          </div>
                        </div>
-                       <p className="font-black text-slate-800">{sale.totalPrice} <span className="text-[10px] text-slate-400">{t.currency}</span></p>
+                       <p className="font-black text-slate-800">{sale.totalPrice} <span className="text-[10px] text-slate-400">{t.currency}</span>
+                         {salesPendingIds.has(sale.id) && (
+                           <span className="ml-2 rounded-lg bg-orange-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-orange-600">
+                             {to('statusPending')}
+                           </span>
+                         )}
+                       </p>
                       </div>
                     ))}
                     <Pagination page={currentSalesPage} pageCount={salesPageCount} onPageChange={setSalesPage} />

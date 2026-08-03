@@ -1,0 +1,128 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "Primary navigation" [ref=e3]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: EL BARAKA
+        - generic [ref=e8]: Farm operations
+      - navigation [ref=e9]:
+        - link "Tableau de bord" [ref=e10] [cursor=pointer]:
+          - /url: /
+        - link "Lots" [ref=e18] [cursor=pointer]:
+          - /url: /batches
+        - link "Stocks" [ref=e25] [cursor=pointer]:
+          - /url: /inventory
+        - link "Ventes" [ref=e31] [cursor=pointer]:
+          - /url: /sales
+        - link "Dépenses" [ref=e37] [cursor=pointer]:
+          - /url: /expenses
+        - link "Dettes" [ref=e43] [cursor=pointer]:
+          - /url: /debts
+        - link "Réglages" [ref=e51] [cursor=pointer]:
+          - /url: /settings
+      - generic [ref=e57]: Local workspace
+    - generic [ref=e60]:
+      - generic [ref=e62]:
+        - generic [ref=e63]: À jour
+        - button "Synchroniser" [ref=e67] [cursor=pointer]
+      - main [ref=e73]:
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]:
+              - generic [ref=e77]: Gestion Avicole
+              - heading "EL BARAKA" [level=1] [ref=e78]
+            - generic [ref=e79]:
+              - img "El Baraka" [ref=e80]
+              - generic "Connected" [ref=e81]
+          - generic [ref=e82]:
+            - generic [ref=e83]:
+              - generic [ref=e84]: Performance financière
+              - strong [ref=e85]: Activité Récente
+            - generic [ref=e88]:
+              - link "7J" [ref=e89] [cursor=pointer]:
+                - /url: "?range=7d"
+              - link "30J" [ref=e90] [cursor=pointer]:
+                - /url: "?range=30d"
+              - link "TOUT" [ref=e91] [cursor=pointer]:
+                - /url: "?range=all"
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - generic [ref=e94]: Connectivité · Cloud
+              - paragraph [ref=e96]: Chiffre d'Affaires
+              - generic [ref=e97]: 12 000 MRU
+              - paragraph [ref=e98]: Σ total des ventes
+              - paragraph [ref=e99]: "Encaissé (Net): 5 250 MRU · Créances clients: 0 MRU"
+              - generic [ref=e100]:
+                - generic [ref=e101]: Bénéfice Net
+                - strong [ref=e102]: 1 450 MRU
+                - generic [ref=e103]: Σ ventes − Σ dépenses − Σ coût des poussins
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - text: Encaissé (Net)
+                - strong [ref=e106]: 5 250 MRU
+                - generic [ref=e107]: Σ paiements reçus − Σ dépenses enregistrées (sans solde initial)
+              - generic [ref=e108]:
+                - text: Lots actifs
+                - strong [ref=e109]: 0 · 0
+                - generic [ref=e110]: Σ (mis en place − morts − vendus)
+              - generic [ref=e111]:
+                - text: Créances clients
+                - strong [ref=e112]: 0 MRU
+                - generic [ref=e113]: Σ max(0, total − payé)
+          - region "Key metrics" [ref=e114]:
+            - generic [ref=e115]:
+              - generic [ref=e121]: Lots actifs
+              - strong [ref=e122]: "0"
+              - text: Nombre de lots avec le statut « En cours »
+            - generic [ref=e123]:
+              - generic [ref=e127]: Taux de Mortalité
+              - strong [ref=e128]: 0.0%
+              - text: Σ morts ÷ Σ mis en place × 100
+            - generic [ref=e129]:
+              - generic [ref=e135]: Aliment
+              - strong [ref=e136]: 800 kg
+              - text: Σ stock d'aliment converti en kg
+            - generic [ref=e137]:
+              - generic [ref=e142]: Total Dépenses
+              - strong [ref=e143]: 6 750 MRU
+              - text: Σ dépenses enregistrées
+          - generic [ref=e144]:
+            - generic [ref=e145]:
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - generic [ref=e148]: Performance financière
+                  - heading "Chiffre d'Affaires / Total Dépenses" [level=3] [ref=e149]
+                - generic [ref=e150]: MRU
+              - paragraph [ref=e151]: Ventes brutes = Σ ventes · Dépenses = Σ dépenses
+            - generic [ref=e155]:
+              - generic [ref=e157]:
+                - generic [ref=e158]: Daily operations
+                - heading "Suivi Journalier" [level=2] [ref=e159]
+              - generic [ref=e164]:
+                - generic [ref=e165]:
+                  - generic [ref=e166]: Sélectionner un Lot
+                  - button "Sélectionner un Lot" [ref=e168] [cursor=pointer]:
+                    - generic [ref=e169]: Choisir le lot...
+                - generic [ref=e170]:
+                  - generic [ref=e171]:
+                    - generic [ref=e172]: Mortalité
+                    - spinbutton [ref=e174]: "0"
+                  - generic [ref=e175]:
+                    - generic [ref=e176]: Sacs consommés
+                    - generic [ref=e177]:
+                      - spinbutton [ref=e178]: "0"
+                      - generic [ref=e179]: sacs
+                  - generic [ref=e180]:
+                    - generic [ref=e181]: Eau
+                    - generic [ref=e182]:
+                      - spinbutton [ref=e183]: "0"
+                      - generic [ref=e184]: L
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: Médicaments / Vaccins
+                    - 'textbox "ex: Vitamines, Gumboro..." [ref=e188]'
+                - button "Enregistrer le suivi" [ref=e189] [cursor=pointer]
+          - generic [ref=e195]:
+            - paragraph [ref=e196]: Bienvenue !
+            - paragraph [ref=e197]: Commencez par créer votre premier lot pour débloquer le suivi en temps réel.
+            - link "Ajouter le premier lot" [ref=e198] [cursor=pointer]:
+              - /url: /batches
+  - alert [ref=e199]

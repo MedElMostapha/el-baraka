@@ -11,6 +11,7 @@ import { Modal } from './Modal';
 import { Pagination } from './Pagination';
 import { FilterMenu } from './FilterMenu';
 import { DatePicker, parseInputDate, toInputDate } from './DatePicker';
+import { mergeIntoList, usePendingRecords } from '@/lib/offline/merge';
 
 const PAGE_SIZE = 8;
 
@@ -29,6 +30,7 @@ interface Sale {
   clientName: string | null;
   clientPhone: string | null;
   invoiceNumber: string | null;
+  isPending?: boolean;
 }
 
 interface BatchOption {
@@ -63,6 +65,7 @@ interface Translations {
 export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[]; batches: BatchOption[]; clients: ClientOption[]; t: Translations }) {
   const locale = useLocale();
   const ti = useTranslations('Invoice');
+  const to = useTranslations('Offline');
   const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'month' | 'unpaid'>('all');
   const [selectedDate, setSelectedDate] = useState('');
   const [loadingId, setLoadingId] = useState<string | null>(null);
@@ -71,6 +74,27 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
   const [page, setPage] = useState(1);
   const [sharingId, setSharingId] = useState<string | null>(null);
   const [shareError, setShareError] = useState<string | null>(null);
+
+  const { records: mergedSales, pendingIds } = mergeIntoList(
+    sales,
+    usePendingRecords('sales'),
+    (r) => ({
+      id: r.id,
+      date: new Date(r.date as string),
+      batchId: r.batchId as string,
+      clientId: (r.clientId as string | null) ?? null,
+      quantity: r.quantity as number,
+      unitPrice: r.unitPrice as number,
+      totalPrice: r.totalPrice as number,
+      amountPaid: r.amountPaid as number,
+      feedConsumedBags: r.feedConsumedBags as number,
+      type: r.type as 'wholesale' | 'retail',
+      batchName: (r.batchName as string | null) ?? null,
+      clientName: (r.clientName as string | null) ?? null,
+      clientPhone: (r.clientPhone as string | null) ?? null,
+      invoiceNumber: (r.invoiceNumber as string | null) ?? null,
+    }),
+  );
 
   const handleShare = async (sale: Sale) => {
     setSharingId(sale.id);
@@ -93,7 +117,7 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
     }
   };
 
-  const filteredSales = sales.filter((sale) => {
+  const filteredSales = mergedSales.filter((sale) => {
     const saleDate = new Date(sale.date);
     const now = new Date();
 
@@ -198,6 +222,11 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                         {sale.totalPrice.toLocaleString()} <span className="text-xs text-slate-400 ml-1 font-bold uppercase">{t.currency}</span>
                       </h3>
                       <div className="mt-1 flex flex-wrap items-center gap-2">
+                        {sale.isPending && (
+                          <span className="rounded-lg bg-orange-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-orange-600">
+                            {to('statusPending')}
+                          </span>
+                        )}
                         <span className="text-[10px] font-black text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg uppercase tracking-wider">
                           {sale.clientName || t.cashClient}
                         </span>
@@ -212,6 +241,8 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                   </div>
 
                   <div className="hidden items-center gap-1 rounded-xl bg-slate-50 p-1 md:flex">
+                    {!sale.isPending && (
+                      <>
                     <a
                       href={`/sales/${sale.id}/invoice`}
                       download
@@ -259,8 +290,10 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                        className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-red-50 hover:text-red-500"
                        aria-label="Delete sale"
                     >
-                      {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                       {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     </button>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -279,6 +312,8 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                   </div>
 
                   <div className="md:hidden flex items-center gap-1 rounded-xl bg-slate-50 p-1">
+                    {!sale.isPending && (
+                      <>
                     <a
                       href={`/sales/${sale.id}/invoice`}
                       download
@@ -326,8 +361,10 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                        className="rounded-lg p-2.5 text-slate-400 hover:bg-red-50 hover:text-red-500"
                        aria-label="Delete sale"
                     >
-                      {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                       {loadingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                     </button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

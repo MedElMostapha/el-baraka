@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useTransition } from 'react';
+import React, { useTransition, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Save, Loader2, FileText, DollarSign, User, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { addDebt, updateDebt } from '@/actions/debts';
+import { useOfflineStatus } from '@/lib/offline/useOfflineStatus';
+import { enqueueLocalOperation, newId, nowIso, isNetworkError } from '@/lib/offline/queue';
 
 const formSchema = z.object({
   personName: z.string().min(1),
@@ -24,7 +26,10 @@ interface DebtFormProps {
 
 export function DebtForm({ onComplete, editData }: DebtFormProps) {
   const t = useTranslations('Debts');
+  const to = useTranslations('Offline');
+  const { online } = useOfflineStatus();
   const [isPending, startTransition] = useTransition();
+  const [notice, setNotice] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, watch } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -38,15 +43,53 @@ export function DebtForm({ onComplete, editData }: DebtFormProps) {
 
   const selectedType = watch('type');
 
-  const onSubmit = (values: FormValues) => {
-    startTransition(async () => {
-      const result = editData
-        ? await updateDebt(editData.id, values)
-        : await addDebt(values);
+  const queueOffline = async (values: FormValues) => {
+    const id = newId();
+    await enqueueLocalOperation({
+      store: 'debts',
+      type: 'addDebt',
+      entityId: id,
+      payload: {
+        id,
+        personName: values.personName,
+        amount: values.amount,
+        type: values.type,
+        description: values.description || null,
+      },
+      record: {
+        id,
+        personName: values.personName,
+        amount: values.amount,
+        type: values.type,
+        description: values.description || null,
+      },
+    });
+    setNotice(to('savedLocally'));
+    reset();
+    if (onComplete) onComplete();
+  };
 
-      if (result.success) {
-        if (!editData) reset();
-        if (onComplete) onComplete();
+  const onSubmit = (values: FormValues) => {
+    setNotice(null);
+    startTransition(async () => {
+      if (!editData && (!online || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+        await queueOffline(values);
+        return;
+      }
+
+      try {
+        const result = editData
+          ? await updateDebt(editData.id, values)
+          : await addDebt(values);
+
+        if (result.success) {
+          if (!editData) reset();
+          if (onComplete) onComplete();
+        }
+      } catch (e) {
+        if (!editData && isNetworkError(e)) {
+          await queueOffline(values);
+        }
       }
     });
   };
@@ -54,6 +97,7 @@ export function DebtForm({ onComplete, editData }: DebtFormProps) {
   return (
     <div className={`${editData ? '' : 'form-card'}`}>
       {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
+      {notice && <div className="mb-5 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-center text-sm font-bold text-emerald-700">{notice}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-4">
 

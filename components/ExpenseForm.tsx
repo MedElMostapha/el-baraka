@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useTransition, useEffect } from 'react';
+import React, { useTransition, useEffect, useState } from 'react';
 import { Controller, useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Wallet, Save, Loader2, FileText, Banknote, Hash, DollarSign, Bird } from 'lucide-react';
 import { addExpense, updateExpense } from '@/actions/expenses';
+import { useOfflineStatus } from '@/lib/offline/useOfflineStatus';
+import { enqueueLocalOperation, newId, nowIso, isNetworkError } from '@/lib/offline/queue';
 import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
@@ -29,7 +31,10 @@ interface ExpenseFormProps {
 
 export function ExpenseForm({ batches, onComplete, editData, feedPricePerSac = 0 }: ExpenseFormProps) {
   const t = useTranslations('Expenses');
+  const to = useTranslations('Offline');
+  const { online } = useOfflineStatus();
   const [isPending, startTransition] = useTransition();
+  const [notice, setNotice] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, watch, setValue, control } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -63,20 +68,70 @@ export function ExpenseForm({ batches, onComplete, editData, feedPricePerSac = 0
     }
   }, [watchUnitPrice, watchQuantity, setValue]);
 
+  const queueOffline = async (values: FormValues) => {
+    const id = newId();
+    const amount =
+      values.unitPrice !== undefined && values.quantity !== undefined && values.unitPrice > 0
+        ? values.unitPrice * values.quantity
+        : values.amount;
+    await enqueueLocalOperation({
+      store: 'expenses',
+      type: 'addExpense',
+      entityId: id,
+      payload: {
+        id,
+        date: nowIso(),
+        amount,
+        unitPrice: values.unitPrice ?? null,
+        quantity: values.quantity ?? null,
+        category: values.category,
+        description: values.description || null,
+        batchId: values.batchId || null,
+      },
+      record: {
+        id,
+        date: nowIso(),
+        amount,
+        unitPrice: values.unitPrice ?? null,
+        quantity: values.quantity ?? null,
+        category: values.category,
+        description: values.description || null,
+        batchId: values.batchId || null,
+        batchName: batches.find((b) => b.id === values.batchId)?.name ?? null,
+        saleId: null,
+      },
+    });
+    setNotice(to('savedLocally'));
+    reset();
+    if (onComplete) onComplete();
+  };
+
   const onSubmit = (values: FormValues) => {
+    setNotice(null);
     startTransition(async () => {
       const data = {
         ...values,
         batchId: values.batchId || undefined,
       };
 
-      const result = editData
-        ? await updateExpense(editData.id, data)
-        : await addExpense(data);
+      if (!editData && (!online || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+        await queueOffline(values);
+        return;
+      }
 
-      if (result.success) {
-        if (!editData) reset();
-        if (onComplete) onComplete();
+      try {
+        const result = editData
+          ? await updateExpense(editData.id, data)
+          : await addExpense(data);
+
+        if (result.success) {
+          if (!editData) reset();
+          if (onComplete) onComplete();
+        }
+      } catch (e) {
+        if (!editData && isNetworkError(e)) {
+          await queueOffline(values);
+        }
       }
     });
   };
@@ -84,6 +139,7 @@ export function ExpenseForm({ batches, onComplete, editData, feedPricePerSac = 0
   return (
     <div className={`${editData ? '' : 'form-card'}`}>
       {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
+      {notice && <div className="mb-5 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-center text-sm font-bold text-emerald-700">{notice}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-4">
 

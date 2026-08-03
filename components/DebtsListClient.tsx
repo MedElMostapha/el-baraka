@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { ArrowDownLeft, ArrowUpRight, Calendar, FileText, Trash2, Loader2, Pencil, CheckCircle2, Undo2, User } from "lucide-react";
 import { deleteDebt, markDebtPaid, markDebtUnpaid } from "@/actions/debts";
 import { markSalePaid } from "@/actions/sales";
@@ -11,6 +11,7 @@ import { Modal } from './Modal';
 import { Pagination } from './Pagination';
 import { FilterMenu } from './FilterMenu';
 import { DatePicker, parseInputDate, toInputDate } from './DatePicker';
+import { mergeIntoList, usePendingRecords } from '@/lib/offline/merge';
 
 const PAGE_SIZE = 8;
 
@@ -25,6 +26,7 @@ interface Debt {
   paidDate: Date | null;
   kind: 'manual' | 'sale';
   saleId?: string;
+  isPending?: boolean;
 }
 
 interface Translations {
@@ -53,6 +55,7 @@ interface Translations {
 
 export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }) {
   const locale = useLocale();
+  const pendingLabel = useTranslations('Offline')('statusPending');
   const [filter, setFilter] = useState<'all' | 'borrowing' | 'lending' | 'pending' | 'paid'>('all');
   const [selectedDate, setSelectedDate] = useState('');
   const [loadingId, setLoadingId] = useState<string | null>(null);
@@ -60,7 +63,23 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
   const [editDebt, setEditDebt] = useState<Debt | null>(null);
   const [page, setPage] = useState(1);
 
-  const filteredDebts = debts.filter((debt) => {
+  const { records: mergedDebts, pendingIds } = mergeIntoList(
+    debts,
+    usePendingRecords('debts'),
+    (r): Debt => ({
+      id: r.id,
+      personName: r.personName as string,
+      amount: r.amount as number,
+      type: r.type as string,
+      description: (r.description as string | null) ?? null,
+      date: new Date(r.date as string),
+      isPaid: r.isPaid as boolean,
+      paidDate: r.paidDate ? new Date(r.paidDate as string) : null,
+      kind: 'manual',
+    }),
+  );
+
+  const filteredDebts = mergedDebts.filter((debt) => {
     if (selectedDate) {
       return toInputDate(new Date(debt.date)) === selectedDate;
     }
@@ -72,8 +91,8 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
   });
 
   // Calculate summary totals (only pending debts)
-  const totalBorrowed = debts.filter(d => d.type === 'borrowing' && !d.isPaid).reduce((sum, d) => sum + d.amount, 0);
-  const totalLent = debts.filter(d => d.type === 'lending' && !d.isPaid).reduce((sum, d) => sum + d.amount, 0);
+  const totalBorrowed = mergedDebts.filter(d => d.type === 'borrowing' && !d.isPaid).reduce((sum, d) => sum + d.amount, 0);
+  const totalLent = mergedDebts.filter(d => d.type === 'lending' && !d.isPaid).reduce((sum, d) => sum + d.amount, 0);
 
   const filters = [
     { id: 'all', label: t.filterAll },
@@ -191,6 +210,11 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                         {debt.amount.toLocaleString()} <span className="text-xs text-slate-400 ml-1 font-bold uppercase">{t.currency}</span>
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
+                        {debt.isPending && (
+                          <span className="rounded-lg bg-orange-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-orange-600">
+                            {pendingLabel}
+                          </span>
+                        )}
                         <span className={`text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider ${
                           debt.isPaid
                             ? 'text-slate-400 bg-slate-100'
@@ -216,6 +240,8 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
 
                   {/* Desktop actions */}
                   <div className="hidden items-center gap-1 rounded-xl bg-slate-50 p-1 md:flex">
+                    {!debt.isPending && (
+                      <>
                     <button
                       onClick={() => handleTogglePaid(debt)}
                       disabled={loadingId === debt.id}
@@ -250,6 +276,8 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                         <Trash2 className="w-4 h-4" />
                       </button>
                     )}
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -277,6 +305,8 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
 
                   {/* Mobile actions */}
                   <div className="md:hidden flex items-center gap-1 rounded-xl bg-slate-50 p-1">
+                    {!debt.isPending && (
+                      <>
                     <button
                       onClick={() => handleTogglePaid(debt)}
                       disabled={loadingId === debt.id}
@@ -309,6 +339,8 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                       >
                         {loadingId === debt.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                       </button>
+                    )}
+                      </>
                     )}
                   </div>
                 </div>

@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useTransition } from 'react';
+import React, { useTransition, useState } from 'react';
 import { Controller, useForm, UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Package, Plus, Save, Loader2, Tag } from 'lucide-react';
 import { addInventoryItem, updateInventoryItem } from '@/actions/inventory';
+import { useOfflineStatus } from '@/lib/offline/useOfflineStatus';
+import { enqueueLocalOperation, newId, nowIso, isNetworkError } from '@/lib/offline/queue';
 import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
@@ -20,7 +22,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComplete: () => void, editData?: any, kgPerSac?: number }) {
   const t = useTranslations('Inventory');
+  const to = useTranslations('Offline');
+  const { online } = useOfflineStatus();
   const [isPending, startTransition] = useTransition();
+  const [notice, setNotice] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, watch, control } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -36,16 +41,57 @@ export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComple
   const quantity = watch('quantity');
   const kgEquivalent = unit === 'sac' && kgPerSac > 0 ? (quantity || 0) * kgPerSac : null;
 
+  const queueOffline = async (values: FormValues) => {
+    const id = newId();
+    const finalName = values.name && values.name.trim() !== '' ? values.name : (t(values.category) || values.category);
+    await enqueueLocalOperation({
+      store: 'inventory',
+      type: 'addInventoryItem',
+      entityId: id,
+      payload: {
+        id,
+        name: finalName,
+        category: values.category,
+        quantity: values.quantity,
+        unit: values.unit,
+      },
+      record: {
+        id,
+        name: finalName,
+        category: values.category,
+        quantity: values.quantity,
+        unit: values.unit,
+        lastUpdated: nowIso(),
+      },
+    });
+    setNotice(to('savedLocally'));
+    reset();
+    onComplete();
+  };
+
   const onSubmit = (values: FormValues) => {
+    setNotice(null);
     startTransition(async () => {
       const finalName = values.name && values.name.trim() !== '' ? values.name : (t(values.category) || values.category);
       const finalValues = { ...values, name: finalName };
-      const result = editData
-        ? await updateInventoryItem(editData.id, finalValues)
-        : await addInventoryItem(finalValues as any);
-      if (result.success) {
-        if (!editData) reset();
-        onComplete();
+
+      if (!editData && (!online || (typeof navigator !== 'undefined' && !navigator.onLine))) {
+        await queueOffline(finalValues as FormValues);
+        return;
+      }
+
+      try {
+        const result = editData
+          ? await updateInventoryItem(editData.id, finalValues)
+          : await addInventoryItem(finalValues as any);
+        if (result.success) {
+          if (!editData) reset();
+          onComplete();
+        }
+      } catch (e) {
+        if (!editData && isNetworkError(e)) {
+          await queueOffline(finalValues as FormValues);
+        }
       }
     });
   };
@@ -53,6 +99,7 @@ export function InventoryForm({ onComplete, editData, kgPerSac = 0 }: { onComple
   return (
     <div className={`${editData ? '' : 'form-card'}`}>
       {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
+      {notice && <div className="mb-5 rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-center text-sm font-bold text-emerald-700">{notice}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-4">
           <InputGroup label={t('name')} icon={<Package className="w-5 h-5 text-orange-500" />} register={register('name')} />
