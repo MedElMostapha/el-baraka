@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useLocale } from 'next-intl';
 import { Wallet, Bird, Calendar, FileText, Trash2, Loader2, Pencil } from "lucide-react";
-import { deleteExpense, updateExpense } from "@/actions/expenses";
+import { deleteExpense } from "@/actions/expenses";
 import { ConfirmModal } from './ConfirmModal';
 import { ExpenseForm } from './ExpenseForm';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
 import { FilterMenu } from './FilterMenu';
+import { DatePicker, parseInputDate, toInputDate } from './DatePicker';
 
 const PAGE_SIZE = 8;
 
@@ -17,6 +19,7 @@ interface Expense {
   amount: number;
   category: string;
   description: string | null;
+  batchId: string | null;
   batchName: string | null;
 }
 
@@ -26,6 +29,8 @@ interface Translations {
   filterToday: string;
   filterWeek: string;
   filterMonth: string;
+  filterDate: string;
+  filterGeneral: string;
   empty: string;
   categories: Record<string, string>;
   generalExpense: string;
@@ -34,8 +39,11 @@ interface Translations {
   deleteConfirm: string;
 }
 
-export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { expenses: Expense[]; batches: any[]; feedPricePerSac: number; t: Translations }) {
+export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { expenses: Expense[]; batches: { id: string; name: string }[]; feedPricePerSac: number; t: Translations }) {
+  const locale = useLocale();
   const [filter, setFilter] = useState<'all' | 'today' | 'week' | 'month'>('all');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [generalOnly, setGeneralOnly] = useState(false);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editExpense, setEditExpense] = useState<Expense | null>(null);
@@ -45,23 +53,23 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
     const expenseDate = new Date(expense.date);
     const now = new Date();
 
-    if (filter === 'today') {
-      return expenseDate.getDate() === now.getDate() &&
-             expenseDate.getMonth() === now.getMonth() &&
-             expenseDate.getFullYear() === now.getFullYear();
-    }
-
-    if (filter === 'week') {
+    if (selectedDate) {
+      if (toInputDate(expenseDate) !== selectedDate) return false;
+    } else if (filter === 'today') {
+      if (expenseDate.getDate() !== now.getDate() ||
+          expenseDate.getMonth() !== now.getMonth() ||
+          expenseDate.getFullYear() !== now.getFullYear()) return false;
+    } else if (filter === 'week') {
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      return expenseDate >= sevenDaysAgo;
+      if (expenseDate < sevenDaysAgo) return false;
+    } else if (filter === 'month') {
+      if (expenseDate.getMonth() !== now.getMonth() ||
+          expenseDate.getFullYear() !== now.getFullYear()) return false;
     }
 
-    if (filter === 'month') {
-      return expenseDate.getMonth() === now.getMonth() &&
-             expenseDate.getFullYear() === now.getFullYear();
-    }
+    if (generalOnly && expense.batchId !== null) return false;
 
-    return true; // 'all'
+    return true;
   });
 
   const filters = [
@@ -74,18 +82,68 @@ export function ExpensesListClient({ expenses, batches, feedPricePerSac, t }: { 
   const pageCount = Math.max(1, Math.ceil(filteredExpenses.length / PAGE_SIZE));
   const currentPage = Math.min(page, pageCount);
   const visibleExpenses = filteredExpenses.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const selectedDateLabel = selectedDate
+    ? parseInputDate(selectedDate)?.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })
+    : undefined;
+
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+    setPage(1);
+  };
 
   return (
     <section className="space-y-4">
       <FilterMenu
+        activeLabel={selectedDateLabel}
         options={filters.map((f) => ({
           ...f,
-          active: filter === f.id,
+          active: filter === f.id && !selectedDate,
           onSelect: () => {
             setFilter(f.id);
+            setSelectedDate('');
             setPage(1);
           },
         }))}
+        desktopExtra={
+          <>
+            <DatePicker
+              value={selectedDate}
+              label={t.filterDate}
+              onChange={handleDateChange}
+            />
+            <label className="filter-checkbox">
+              <input
+                type="checkbox"
+                checked={generalOnly}
+                onChange={(e) => {
+                  setGeneralOnly(e.target.checked);
+                  setPage(1);
+                }}
+              />
+              <span>{t.filterGeneral}</span>
+            </label>
+          </>
+        }
+        mobileExtra={
+          <>
+            <DatePicker
+              value={selectedDate}
+              label={t.filterDate}
+              onChange={handleDateChange}
+            />
+            <label className="filter-checkbox">
+              <input
+                type="checkbox"
+                checked={generalOnly}
+                onChange={(e) => {
+                  setGeneralOnly(e.target.checked);
+                  setPage(1);
+                }}
+              />
+              <span>{t.filterGeneral}</span>
+            </label>
+          </>
+        }
       />
 
       <div className="space-y-4">

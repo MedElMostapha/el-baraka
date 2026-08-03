@@ -18,6 +18,7 @@ export default async function ExpensesPage() {
       amount: expenses.amount,
       category: expenses.category,
       description: expenses.description,
+      batchId: expenses.batchId,
       batchName: batches.name,
     })
     .from(expenses)
@@ -46,6 +47,8 @@ export default async function ExpensesPage() {
               filterToday: t('filterToday'),
               filterWeek: t('filterWeek'),
               filterMonth: t('filterMonth'),
+              filterDate: t('filterDate'),
+              filterGeneral: t('filterGeneral'),
               empty: t('empty'),
               generalExpense: t('generalExpense'),
               editTitle: t('editTitle'),

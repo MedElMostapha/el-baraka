@@ -289,7 +289,9 @@
     },
     "editTitle": "Modifier la Dépense",
     "deleteTitle": "Supprimer la Dépense",
-    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette dépense ?"
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette dépense ?",
+    "filterDate": "Date précise",
+    "filterGeneral": "Dépenses générales"
   },
   "Errors": {
     "title": "Une erreur est survenue",
