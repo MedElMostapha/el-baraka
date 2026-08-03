@@ -1,0 +1,83 @@
+- generic [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - navigation "Mobile navigation" [ref=f2e3]:
+      - generic [ref=f2e4]:
+        - link "لوحة التحكم" [ref=f2e5] [cursor=pointer]:
+          - /url: /
+        - link "الدفعات" [ref=f2e12] [cursor=pointer]:
+          - /url: /batches
+        - link "المخزون" [ref=f2e18] [cursor=pointer]:
+          - /url: /inventory
+        - link "المبيعات" [ref=f2e23] [cursor=pointer]:
+          - /url: /sales
+        - button "خيارات تنقل إضافية" [ref=f2e29] [cursor=pointer]:
+          - generic [ref=f2e34]: المزيد
+    - main [ref=f2e36]:
+      - generic [ref=f2e37]:
+        - generic [ref=f2e38]:
+          - generic [ref=f2e39]:
+            - generic [ref=f2e40]: القروض والسلف
+            - heading "إدارة الديون" [level=1] [ref=f2e41]
+          - generic [ref=f2e42]:
+            - img "El Baraka" [ref=f2e43]
+            - generic "Connected" [ref=f2e44]
+        - generic [ref=f2e45]:
+          - generic [ref=f2e47]:
+            - heading "دين جديد" [level=2] [ref=f2e48]
+            - generic [ref=f2e49]:
+              - generic [ref=f2e50]:
+                - generic [ref=f2e51]:
+                  - generic [ref=f2e52]: النوع
+                  - generic [ref=f2e53]:
+                    - generic [ref=f2e54] [cursor=pointer]:
+                      - radio "اقترضت" [checked] [ref=f2e55]
+                      - generic [ref=f2e56]: اقترضت
+                    - generic [ref=f2e61] [cursor=pointer]:
+                      - radio "أقرضت" [ref=f2e62]
+                      - generic [ref=f2e63]: أقرضت
+                - generic [ref=f2e68]:
+                  - generic [ref=f2e69]: اسم الشخص
+                  - textbox "اسم الشخص" [ref=f2e71]
+                - generic [ref=f2e72]:
+                  - generic [ref=f2e73]: المبلغ
+                  - spinbutton [ref=f2e75]: "0"
+                - generic [ref=f2e76]:
+                  - generic [ref=f2e77]: الوصف (اختياري)
+                  - textbox [ref=f2e79]
+              - button "تسجيل الدين" [ref=f2e80] [cursor=pointer]
+          - generic [ref=f2e86]:
+            - generic [ref=f2e87]:
+              - generic [ref=f2e88]:
+                - generic [ref=f2e89]: إجمالي الاقتراض
+                - paragraph [ref=f2e94]: 0 أوقية
+                - paragraph [ref=f2e95]: مجموع الاقتراض غير المسدد
+              - generic [ref=f2e96]:
+                - generic [ref=f2e97]: إجمالي الإقراض
+                - paragraph [ref=f2e102]: 1 000 أوقية
+                - paragraph [ref=f2e103]: مجموع الإقراض غير المسترد
+            - generic [ref=f2e105]:
+              - button "الفلاتر" [expanded] [active] [ref=f2e106] [cursor=pointer]:
+                - strong [ref=f2e110]: الكل
+              - menu "الفلاتر" [ref=f2e163]:
+                - menuitemradio "الكل" [checked] [ref=f2e164] [cursor=pointer]
+                - menuitemradio "قيد التسديد" [ref=f2e168] [cursor=pointer]
+                - menuitemradio "اقتراض" [ref=f2e170] [cursor=pointer]
+                - menuitemradio "إقراض" [ref=f2e172] [cursor=pointer]
+                - menuitemradio "مسددة" [ref=f2e174] [cursor=pointer]
+                - button "تاريخ محدد" [ref=f2e178] [cursor=pointer]:
+                  - generic [ref=f2e181]: اختر تاريخا
+            - generic [ref=f2e114]:
+              - generic [ref=f2e121]:
+                - heading "1 000 أوقية" [level=3] [ref=f2e122]
+                - generic [ref=f2e123]: مدين لي
+              - generic [ref=f2e125]: test description
+              - generic [ref=f2e130]:
+                - generic [ref=f2e132]:
+                  - generic [ref=f2e133]: test person
+                  - generic [ref=f2e137]: 03/08/2026
+                - generic [ref=f2e140]:
+                  - button [ref=f2e141] [cursor=pointer]
+                  - button "Edit debt" [ref=f2e145] [cursor=pointer]
+                  - button "Delete debt" [ref=f2e149] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=f2e158] [cursor=pointer]
+  - alert [ref=f2e162]

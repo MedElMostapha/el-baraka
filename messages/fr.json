@@ -383,6 +383,9 @@
     "totalLent": "Total prêté",
     "borrowedFormula": "Σ emprunts non réglés",
     "lentFormula": "Σ prêts non réglés",
-    "date": "Date"
+    "date": "Date",
+    "filterDate": "Date précise",
+    "saleDebt": "Vente non réglée",
+    "cashClient": "Passant / Cash"
   }
 }

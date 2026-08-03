@@ -1,0 +1,130 @@
+- generic [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - navigation "Mobile navigation" [ref=f1e228]:
+      - generic [ref=f1e229]:
+        - link "Tableau de bord" [ref=f1e230] [cursor=pointer]:
+          - /url: /
+        - link "Lots" [ref=f1e237] [cursor=pointer]:
+          - /url: /batches
+        - link "Stocks" [ref=f1e243] [cursor=pointer]:
+          - /url: /inventory
+        - link "Ventes" [ref=f1e248] [cursor=pointer]:
+          - /url: /sales
+        - button "Plus d’options de navigation" [ref=f1e254] [cursor=pointer]:
+          - generic [ref=f1e259]: Plus
+    - main [ref=f1e61]:
+      - generic [ref=f1e62]:
+        - generic [ref=f1e63]:
+          - generic [ref=f1e64]:
+            - generic [ref=f1e65]: Emprunts & Prêts
+            - heading "Gestion des Dettes" [level=1] [ref=f1e66]
+          - generic [ref=f1e67]:
+            - img "El Baraka" [ref=f1e68]
+            - generic "Connected" [ref=f1e69]
+        - generic [ref=f1e70]:
+          - generic [ref=f1e72]:
+            - heading "Nouvelle Dette" [level=2] [ref=f1e73]
+            - generic [ref=f1e74]:
+              - generic [ref=f1e75]:
+                - generic [ref=f1e76]:
+                  - generic [ref=f1e77]: Type
+                  - generic [ref=f1e78]:
+                    - generic [ref=f1e79] [cursor=pointer]:
+                      - radio "J'ai emprunté" [checked] [ref=f1e80]
+                      - generic [ref=f1e81]: J'ai emprunté
+                    - generic [ref=f1e86] [cursor=pointer]:
+                      - radio "J'ai prêté" [ref=f1e87]
+                      - generic [ref=f1e88]: J'ai prêté
+                - generic [ref=f1e93]:
+                  - generic [ref=f1e94]: Nom de la personne
+                  - textbox "Nom de la personne" [ref=f1e96]
+                - generic [ref=f1e97]:
+                  - generic [ref=f1e98]: Montant
+                  - spinbutton [ref=f1e100]: "0"
+                - generic [ref=f1e101]:
+                  - generic [ref=f1e102]: Description (Optionnel)
+                  - textbox [ref=f1e104]
+              - button "Enregistrer la dette" [ref=f1e105] [cursor=pointer]
+          - generic [ref=f1e111]:
+            - generic [ref=f1e112]:
+              - generic [ref=f1e113]:
+                - generic [ref=f1e114]: Total emprunté
+                - paragraph [ref=f1e119]: 0 MRU
+                - paragraph [ref=f1e120]: Σ emprunts non réglés
+              - generic [ref=f1e121]:
+                - generic [ref=f1e122]: Total prêté
+                - paragraph [ref=f1e127]: 1 000 MRU
+                - paragraph [ref=f1e128]: Σ prêts non réglés
+            - generic [ref=f1e260]:
+              - button "Filtres" [expanded] [ref=f1e261] [cursor=pointer]:
+                - strong [ref=f1e265]: Tout
+              - menu "Filtres" [ref=f1e281]:
+                - menuitemradio "Tout" [checked] [ref=f1e282] [cursor=pointer]
+                - menuitemradio "En cours" [ref=f1e286] [cursor=pointer]
+                - menuitemradio "Emprunts" [ref=f1e288] [cursor=pointer]
+                - menuitemradio "Prêts" [ref=f1e290] [cursor=pointer]
+                - menuitemradio "Réglées" [ref=f1e292] [cursor=pointer]
+                - generic [ref=f1e295]:
+                  - button "Date précise" [expanded] [active] [ref=f1e296] [cursor=pointer]:
+                    - generic [ref=f1e299]: Choisir une date
+                  - dialog "Date précise" [ref=f1e302]:
+                    - generic [ref=f1e303]:
+                      - strong [ref=f1e304]: août 2026
+                      - generic [ref=f1e305]:
+                        - button "Mois précédent" [ref=f1e306] [cursor=pointer]
+                        - button "Mois suivant" [ref=f1e309] [cursor=pointer]
+                    - generic [ref=f1e312]:
+                      - generic [ref=f1e313]: dim.
+                      - generic [ref=f1e314]: lun.
+                      - generic [ref=f1e315]: mar.
+                      - generic [ref=f1e316]: mer.
+                      - generic [ref=f1e317]: jeu.
+                      - generic [ref=f1e318]: ven.
+                      - generic [ref=f1e319]: sam.
+                    - generic [ref=f1e320]:
+                      - button "1" [ref=f1e327] [cursor=pointer]
+                      - button "2" [ref=f1e328] [cursor=pointer]
+                      - button "3" [ref=f1e329] [cursor=pointer]
+                      - button "4" [ref=f1e330] [cursor=pointer]
+                      - button "5" [ref=f1e331] [cursor=pointer]
+                      - button "6" [ref=f1e332] [cursor=pointer]
+                      - button "7" [ref=f1e333] [cursor=pointer]
+                      - button "8" [ref=f1e334] [cursor=pointer]
+                      - button "9" [ref=f1e335] [cursor=pointer]
+                      - button "10" [ref=f1e336] [cursor=pointer]
+                      - button "11" [ref=f1e337] [cursor=pointer]
+                      - button "12" [ref=f1e338] [cursor=pointer]
+                      - button "13" [ref=f1e339] [cursor=pointer]
+                      - button "14" [ref=f1e340] [cursor=pointer]
+                      - button "15" [ref=f1e341] [cursor=pointer]
+                      - button "16" [ref=f1e342] [cursor=pointer]
+                      - button "17" [ref=f1e343] [cursor=pointer]
+                      - button "18" [ref=f1e344] [cursor=pointer]
+                      - button "19" [ref=f1e345] [cursor=pointer]
+                      - button "20" [ref=f1e346] [cursor=pointer]
+                      - button "21" [ref=f1e347] [cursor=pointer]
+                      - button "22" [ref=f1e348] [cursor=pointer]
+                      - button "23" [ref=f1e349] [cursor=pointer]
+                      - button "24" [ref=f1e350] [cursor=pointer]
+                      - button "25" [ref=f1e351] [cursor=pointer]
+                      - button "26" [ref=f1e352] [cursor=pointer]
+                      - button "27" [ref=f1e353] [cursor=pointer]
+                      - button "28" [ref=f1e354] [cursor=pointer]
+                      - button "29" [ref=f1e355] [cursor=pointer]
+                      - button "30" [ref=f1e356] [cursor=pointer]
+                      - button "31" [ref=f1e357] [cursor=pointer]
+            - generic [ref=f1e147]:
+              - generic [ref=f1e154]:
+                - heading "1 000 MRU" [level=3] [ref=f1e155]
+                - generic [ref=f1e156]: On me doit
+              - generic [ref=f1e171]: test description
+              - generic [ref=f1e176]:
+                - generic [ref=f1e178]:
+                  - generic [ref=f1e179]: test person
+                  - generic [ref=f1e183]: 03/08/2026
+                - generic [ref=f1e268]:
+                  - button [ref=f1e269] [cursor=pointer]
+                  - button "Edit debt" [ref=f1e273] [cursor=pointer]
+                  - button "Delete debt" [ref=f1e277] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=f1e223] [cursor=pointer]
+  - alert [ref=f1e227]

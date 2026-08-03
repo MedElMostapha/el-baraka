@@ -1,0 +1,113 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "Primary navigation" [ref=e3]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: EL BARAKA
+        - generic [ref=e8]: Farm operations
+      - navigation [ref=e9]:
+        - link "لوحة التحكم" [ref=e10] [cursor=pointer]:
+          - /url: /
+        - link "الدفعات" [ref=e18] [cursor=pointer]:
+          - /url: /batches
+        - link "المخزون" [ref=e25] [cursor=pointer]:
+          - /url: /inventory
+        - link "المبيعات" [ref=e31] [cursor=pointer]:
+          - /url: /sales
+        - link "المصاريف" [ref=e37] [cursor=pointer]:
+          - /url: /expenses
+        - link "الديون" [ref=e43] [cursor=pointer]:
+          - /url: /debts
+        - link "الإعدادات" [ref=e51] [cursor=pointer]:
+          - /url: /settings
+      - generic [ref=e57]: Local workspace
+    - main [ref=e61]:
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: القروض والسلف
+            - heading "إدارة الديون" [level=1] [ref=e66]
+          - generic [ref=e67]:
+            - img "El Baraka" [ref=e68]
+            - generic "Connected" [ref=e69]
+        - generic [ref=e70]:
+          - generic [ref=e72]:
+            - heading "دين جديد" [level=2] [ref=e73]
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - generic [ref=e76]:
+                  - generic [ref=e77]: النوع
+                  - generic [ref=e78]:
+                    - generic [ref=e79] [cursor=pointer]:
+                      - radio "اقترضت" [ref=e80]
+                      - generic [ref=e81]: اقترضت
+                    - generic [ref=e86] [cursor=pointer]:
+                      - radio "أقرضت" [ref=e87]
+                      - generic [ref=e88]: أقرضت
+                - generic [ref=e93]:
+                  - generic [ref=e94]: اسم الشخص
+                  - textbox "اسم الشخص" [ref=e96]
+                - generic [ref=e97]:
+                  - generic [ref=e98]: المبلغ
+                  - spinbutton [ref=e100]
+                - generic [ref=e101]:
+                  - generic [ref=e102]: الوصف (اختياري)
+                  - textbox [ref=e104]
+              - button "تسجيل الدين" [ref=e105] [cursor=pointer]
+          - generic [ref=e111]:
+            - generic [ref=e112]:
+              - generic [ref=e113]:
+                - generic [ref=e114]: إجمالي الاقتراض
+                - paragraph [ref=e119]: 0 أوقية
+                - paragraph [ref=e120]: مجموع الاقتراض غير المسدد
+              - generic [ref=e121]:
+                - generic [ref=e122]: إجمالي الإقراض
+                - paragraph [ref=e127]: 9 000 أوقية
+                - paragraph [ref=e128]: مجموع الإقراض غير المسترد
+            - generic [ref=e130]:
+              - generic [ref=e131]:
+                - button "الكل" [ref=e134] [cursor=pointer]
+                - button "قيد التسديد" [ref=e135] [cursor=pointer]
+                - button "اقتراض" [ref=e136] [cursor=pointer]
+                - button "إقراض" [ref=e137] [cursor=pointer]
+                - button "مسددة" [ref=e138] [cursor=pointer]
+              - button "تاريخ محدد" [ref=e140] [cursor=pointer]:
+                - generic [ref=e143]: اختر تاريخا
+            - generic [ref=e146]:
+              - generic [ref=e147]:
+                - generic [ref=e148]:
+                  - generic [ref=e154]:
+                    - heading "1 000 أوقية" [level=3] [ref=e155]
+                    - generic [ref=e156]: مدين لي
+                  - generic [ref=e158]:
+                    - button "تسديد" [ref=e159] [cursor=pointer]
+                    - button "Edit debt" [ref=e163] [cursor=pointer]
+                    - button "Delete debt" [ref=e167] [cursor=pointer]
+                - generic [ref=e171]: test description
+                - generic [ref=e178]:
+                  - generic [ref=e179]: test person
+                  - generic [ref=e183]: 03/08/2026
+              - generic [ref=e186]:
+                - generic [ref=e187]:
+                  - generic [ref=e193]:
+                    - heading "3 000 أوقية" [level=3] [ref=e194]
+                    - generic [ref=e195]:
+                      - generic [ref=e196]: مدين لي
+                      - generic [ref=e197]: مبيعات غير مسددة
+                  - button "تسديد" [ref=e199] [cursor=pointer]
+                - generic [ref=e203]: lot
+                - generic [ref=e210]:
+                  - generic [ref=e211]: lmou56ar
+                  - generic [ref=e215]: 03/08/2026
+              - generic [ref=e218]:
+                - generic [ref=e219]:
+                  - generic [ref=e225]:
+                    - heading "5 000 أوقية" [level=3] [ref=e226]
+                    - generic [ref=e227]:
+                      - generic [ref=e228]: مدين لي
+                      - generic [ref=e229]: مبيعات غير مسددة
+                  - button "تسديد" [ref=e231] [cursor=pointer]
+                - generic [ref=e235]: lot
+                - generic [ref=e242]:
+                  - generic [ref=e243]: زبون عابر / نقدي
+                  - generic [ref=e247]: 03/08/2026
+  - button "Open Next.js Dev Tools" [ref=e255] [cursor=pointer]

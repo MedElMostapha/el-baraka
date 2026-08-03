@@ -1,0 +1,83 @@
+- generic [ref=f1e1]:
+  - generic [ref=f1e2]:
+    - navigation "Mobile navigation" [ref=f1e228]:
+      - generic [ref=f1e229]:
+        - link "Tableau de bord" [ref=f1e230] [cursor=pointer]:
+          - /url: /
+        - link "Lots" [ref=f1e237] [cursor=pointer]:
+          - /url: /batches
+        - link "Stocks" [ref=f1e243] [cursor=pointer]:
+          - /url: /inventory
+        - link "Ventes" [ref=f1e248] [cursor=pointer]:
+          - /url: /sales
+        - button "Plus d’options de navigation" [ref=f1e254] [cursor=pointer]:
+          - generic [ref=f1e259]: Plus
+    - main [ref=f1e61]:
+      - generic [ref=f1e62]:
+        - generic [ref=f1e63]:
+          - generic [ref=f1e64]:
+            - generic [ref=f1e65]: Emprunts & Prêts
+            - heading "Gestion des Dettes" [level=1] [ref=f1e66]
+          - generic [ref=f1e67]:
+            - img "El Baraka" [ref=f1e68]
+            - generic "Connected" [ref=f1e69]
+        - generic [ref=f1e70]:
+          - generic [ref=f1e72]:
+            - heading "Nouvelle Dette" [level=2] [ref=f1e73]
+            - generic [ref=f1e74]:
+              - generic [ref=f1e75]:
+                - generic [ref=f1e76]:
+                  - generic [ref=f1e77]: Type
+                  - generic [ref=f1e78]:
+                    - generic [ref=f1e79] [cursor=pointer]:
+                      - radio "J'ai emprunté" [checked] [ref=f1e80]
+                      - generic [ref=f1e81]: J'ai emprunté
+                    - generic [ref=f1e86] [cursor=pointer]:
+                      - radio "J'ai prêté" [ref=f1e87]
+                      - generic [ref=f1e88]: J'ai prêté
+                - generic [ref=f1e93]:
+                  - generic [ref=f1e94]: Nom de la personne
+                  - textbox "Nom de la personne" [ref=f1e96]
+                - generic [ref=f1e97]:
+                  - generic [ref=f1e98]: Montant
+                  - spinbutton [ref=f1e100]: "0"
+                - generic [ref=f1e101]:
+                  - generic [ref=f1e102]: Description (Optionnel)
+                  - textbox [ref=f1e104]
+              - button "Enregistrer la dette" [ref=f1e105] [cursor=pointer]
+          - generic [ref=f1e111]:
+            - generic [ref=f1e112]:
+              - generic [ref=f1e113]:
+                - generic [ref=f1e114]: Total emprunté
+                - paragraph [ref=f1e119]: 0 MRU
+                - paragraph [ref=f1e120]: Σ emprunts non réglés
+              - generic [ref=f1e121]:
+                - generic [ref=f1e122]: Total prêté
+                - paragraph [ref=f1e127]: 1 000 MRU
+                - paragraph [ref=f1e128]: Σ prêts non réglés
+            - generic [ref=f1e260]:
+              - button "Filtres" [expanded] [active] [ref=f1e261] [cursor=pointer]:
+                - strong [ref=f1e265]: Tout
+              - menu "Filtres" [ref=f1e281]:
+                - menuitemradio "Tout" [checked] [ref=f1e282] [cursor=pointer]
+                - menuitemradio "En cours" [ref=f1e286] [cursor=pointer]
+                - menuitemradio "Emprunts" [ref=f1e288] [cursor=pointer]
+                - menuitemradio "Prêts" [ref=f1e290] [cursor=pointer]
+                - menuitemradio "Réglées" [ref=f1e292] [cursor=pointer]
+                - button "Date précise" [ref=f1e296] [cursor=pointer]:
+                  - generic [ref=f1e299]: Choisir une date
+            - generic [ref=f1e147]:
+              - generic [ref=f1e154]:
+                - heading "1 000 MRU" [level=3] [ref=f1e155]
+                - generic [ref=f1e156]: On me doit
+              - generic [ref=f1e171]: test description
+              - generic [ref=f1e176]:
+                - generic [ref=f1e178]:
+                  - generic [ref=f1e179]: test person
+                  - generic [ref=f1e183]: 03/08/2026
+                - generic [ref=f1e268]:
+                  - button [ref=f1e269] [cursor=pointer]
+                  - button "Edit debt" [ref=f1e273] [cursor=pointer]
+                  - button "Delete debt" [ref=f1e277] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=f1e223] [cursor=pointer]
+  - alert [ref=f1e227]

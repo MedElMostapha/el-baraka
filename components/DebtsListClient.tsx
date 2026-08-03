@@ -1,13 +1,16 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useLocale } from 'next-intl';
 import { ArrowDownLeft, ArrowUpRight, Calendar, FileText, Trash2, Loader2, Pencil, CheckCircle2, Undo2, User } from "lucide-react";
 import { deleteDebt, markDebtPaid, markDebtUnpaid } from "@/actions/debts";
+import { markSalePaid } from "@/actions/sales";
 import { ConfirmModal } from './ConfirmModal';
 import { DebtForm } from './DebtForm';
 import { Modal } from './Modal';
 import { Pagination } from './Pagination';
 import { FilterMenu } from './FilterMenu';
+import { DatePicker, parseInputDate, toInputDate } from './DatePicker';
 
 const PAGE_SIZE = 8;
 
@@ -20,6 +23,8 @@ interface Debt {
   date: Date;
   isPaid: boolean;
   paidDate: Date | null;
+  kind: 'manual' | 'sale';
+  saleId?: string;
 }
 
 interface Translations {
@@ -29,6 +34,8 @@ interface Translations {
   filterLending: string;
   filterPending: string;
   filterPaid: string;
+  filterDate: string;
+  saleDebt: string;
   empty: string;
   editTitle: string;
   deleteTitle: string;
@@ -45,13 +52,18 @@ interface Translations {
 }
 
 export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }) {
+  const locale = useLocale();
   const [filter, setFilter] = useState<'all' | 'borrowing' | 'lending' | 'pending' | 'paid'>('all');
+  const [selectedDate, setSelectedDate] = useState('');
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editDebt, setEditDebt] = useState<Debt | null>(null);
   const [page, setPage] = useState(1);
 
   const filteredDebts = debts.filter((debt) => {
+    if (selectedDate) {
+      return toInputDate(new Date(debt.date)) === selectedDate;
+    }
     if (filter === 'borrowing') return debt.type === 'borrowing';
     if (filter === 'lending') return debt.type === 'lending';
     if (filter === 'pending') return !debt.isPaid;
@@ -74,10 +86,20 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
   const pageCount = Math.max(1, Math.ceil(filteredDebts.length / PAGE_SIZE));
   const currentPage = Math.min(page, pageCount);
   const visibleDebts = filteredDebts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const selectedDateLabel = selectedDate
+    ? parseInputDate(selectedDate)?.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' })
+    : undefined;
+
+  const handleDateChange = (date: string) => {
+    setSelectedDate(date);
+    setPage(1);
+  };
 
   const handleTogglePaid = async (debt: Debt) => {
     setLoadingId(debt.id);
-    if (debt.isPaid) {
+    if (debt.kind === 'sale' && debt.saleId) {
+      await markSalePaid(debt.saleId, 0, null);
+    } else if (debt.isPaid) {
       await markDebtUnpaid(debt.id);
     } else {
       await markDebtPaid(debt.id);
@@ -112,14 +134,30 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
       </div>
 
       <FilterMenu
+        activeLabel={selectedDateLabel}
         options={filters.map((f) => ({
           ...f,
-          active: filter === f.id,
+          active: filter === f.id && !selectedDate,
           onSelect: () => {
             setFilter(f.id);
+            setSelectedDate('');
             setPage(1);
           },
         }))}
+        desktopExtra={
+          <DatePicker
+            value={selectedDate}
+            label={t.filterDate}
+            onChange={handleDateChange}
+          />
+        }
+        mobileExtra={
+          <DatePicker
+            value={selectedDate}
+            label={t.filterDate}
+            onChange={handleDateChange}
+          />
+        }
       />
 
       {/* Debt List */}
@@ -167,6 +205,11 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                             {t.statusPaid}
                           </span>
                         )}
+                        {debt.kind === 'sale' && (
+                          <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                            {t.saleDebt}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -185,24 +228,28 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                     >
                       {loadingId === debt.id ? <Loader2 className="w-4 h-4 animate-spin" /> : debt.isPaid ? <Undo2 className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
                     </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditDebt(debt);
-                      }}
-                      className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-white hover:text-slate-600 hover:shadow-sm"
-                      aria-label="Edit debt"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setConfirmDeleteId(debt.id)}
-                      disabled={loadingId === debt.id}
-                      className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-red-50 hover:text-red-500"
-                      aria-label="Delete debt"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    {debt.kind !== 'sale' && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditDebt(debt);
+                        }}
+                        className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-white hover:text-slate-600 hover:shadow-sm"
+                        aria-label="Edit debt"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    )}
+                    {debt.kind !== 'sale' && (
+                      <button
+                        onClick={() => setConfirmDeleteId(debt.id)}
+                        disabled={loadingId === debt.id}
+                        className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-red-50 hover:text-red-500"
+                        aria-label="Delete debt"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -241,24 +288,28 @@ export function DebtsListClient({ debts, t }: { debts: Debt[]; t: Translations }
                     >
                       {loadingId === debt.id ? <Loader2 className="w-4 h-4 animate-spin" /> : debt.isPaid ? <Undo2 className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
                     </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditDebt(debt);
-                      }}
-                       className="rounded-lg bg-white p-2.5 text-slate-400 shadow-sm"
-                       aria-label="Edit debt"
-                    >
-                      <Pencil className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setConfirmDeleteId(debt.id)}
-                      disabled={loadingId === debt.id}
-                       className="rounded-lg p-2.5 text-slate-400 hover:bg-red-50 hover:text-red-500"
-                       aria-label="Delete debt"
-                    >
-                      {loadingId === debt.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                    </button>
+                    {debt.kind !== 'sale' && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditDebt(debt);
+                        }}
+                         className="rounded-lg bg-white p-2.5 text-slate-400 shadow-sm"
+                         aria-label="Edit debt"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                    )}
+                    {debt.kind !== 'sale' && (
+                      <button
+                        onClick={() => setConfirmDeleteId(debt.id)}
+                        disabled={loadingId === debt.id}
+                         className="rounded-lg p-2.5 text-slate-400 hover:bg-red-50 hover:text-red-500"
+                         aria-label="Delete debt"
+                      >
+                        {loadingId === debt.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
