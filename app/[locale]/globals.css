@@ -1272,6 +1272,8 @@ button:disabled {
 }
 
 .filter-menu__extra {
+  display: grid;
+  gap: 8px;
   border-top: 1px solid #edf2ed;
   margin-top: 4px;
   padding: 10px 4px 2px;
