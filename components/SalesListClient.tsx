@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Wallet, Bird, Calendar, Trash2, CheckCircle, Loader2, Pencil, Download } from "lucide-react";
+import { Wallet, Bird, Calendar, Trash2, CheckCircle, Loader2, Pencil, Download, Share2 } from "lucide-react";
 import { deleteSale, markSalePaid } from '@/actions/sales';
+import { shareInvoice } from '@/lib/invoices/shareInvoice';
 import { ConfirmModal } from './ConfirmModal';
 import { SalesForm } from './SalesForm';
 import { Modal } from './Modal';
@@ -26,6 +27,8 @@ interface Sale {
   type: 'wholesale' | 'retail';
   batchName: string | null;
   clientName: string | null;
+  clientPhone: string | null;
+  invoiceNumber: string | null;
 }
 
 interface BatchOption {
@@ -37,6 +40,7 @@ interface BatchOption {
 interface ClientOption {
   id: string;
   name: string;
+  phone: string | null;
 }
 
 interface Translations {
@@ -65,6 +69,29 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [editSale, setEditSale] = useState<Sale | null>(null);
   const [page, setPage] = useState(1);
+  const [sharingId, setSharingId] = useState<string | null>(null);
+  const [shareError, setShareError] = useState<string | null>(null);
+
+  const handleShare = async (sale: Sale) => {
+    setSharingId(sale.id);
+    setShareError(null);
+    try {
+      const result = await shareInvoice({
+        saleId: sale.id,
+        invoiceNumber: sale.invoiceNumber || undefined,
+        phone: sale.clientPhone,
+        message: ti('whatsappShareMessage', { invoiceNumber: sale.invoiceNumber || '' }),
+        title: ti('title'),
+      });
+      if (result.status === 'unsupported') {
+        setShareError(ti('whatsappShareUnsupported'));
+      }
+    } catch {
+      setShareError(ti('whatsappShareError'));
+    } finally {
+      setSharingId(null);
+    }
+  };
 
   const filteredSales = sales.filter((sale) => {
     const saleDate = new Date(sale.date);
@@ -146,6 +173,8 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
         }
       />
 
+      {shareError && <div className="rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{shareError}</div>}
+
       <div className="space-y-4">
         {filteredSales.length === 0 ? (
            <div className="empty-state">
@@ -191,6 +220,14 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                     >
                       <Download className="w-4 h-4" />
                     </a>
+                    <button
+                      onClick={() => handleShare(sale)}
+                      disabled={sharingId === sale.id}
+                      aria-label={ti('shareWhatsApp')}
+                       className="rounded-lg p-2.5 text-slate-400 transition-all hover:bg-green-50 hover:text-green-600"
+                    >
+                      {sharingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
+                    </button>
                     <button
                       onClick={() => {
                         setEditSale(sale);
@@ -250,6 +287,14 @@ export function SalesListClient({ sales, batches, clients, t }: { sales: Sale[];
                     >
                       <Download className="w-4 h-4" />
                     </a>
+                    <button
+                      onClick={() => handleShare(sale)}
+                      disabled={sharingId === sale.id}
+                      aria-label={ti('shareWhatsApp')}
+                       className="rounded-lg bg-white p-2.5 text-slate-400 shadow-sm hover:bg-green-50 hover:text-green-600"
+                    >
+                      {sharingId === sale.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
+                    </button>
                     <button
                       onClick={() => {
                         setEditSale(sale);

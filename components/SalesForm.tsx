@@ -7,12 +7,14 @@ import * as z from 'zod';
 import { useTranslations } from 'next-intl';
 import { Wallet, Plus, Loader2, User, Hash, Banknote, Utensils, Bird } from 'lucide-react';
 import { recordSale, updateSale, createClient } from '@/actions/sales';
+import { shareInvoice, normalizePhone } from '@/lib/invoices/shareInvoice';
 import { CustomSelect } from './CustomSelect';
 
 const formSchema = z.object({
   batchId: z.string().min(1),
   clientId: z.string().optional(),
   newClientName: z.string().optional(),
+  newClientPhone: z.string().optional(),
   quantity: z.number().min(1),
   unitPrice: z.number().min(0),
   feedConsumedBags: z.number().min(0),
@@ -24,6 +26,7 @@ interface FormValues {
   batchId: string;
   clientId?: string;
   newClientName?: string;
+  newClientPhone?: string;
   quantity: number;
   unitPrice: number;
   feedConsumedBags: number;
@@ -44,7 +47,7 @@ interface SaleEditData {
 
 interface SalesFormProps {
   batches: { id: string; name: string; remainingQuantity: number }[];
-  clients: { id: string; name: string }[];
+  clients: { id: string; name: string; phone: string | null }[];
   onComplete?: () => void;
   editData?: SaleEditData | null;
 }
@@ -58,6 +61,8 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
   const [isDebt, setIsDebt] = useState(editData ? editData.amountPaid === 0 : false);
   const [error, setError] = useState<string | null>(null);
   const [downloadError, setDownloadError] = useState(false);
+  const [sendViaWhatsApp, setSendViaWhatsApp] = useState(false);
+  const [shareError, setShareError] = useState<string | null>(null);
 
   const triggerInvoiceDownload = (saleId: string) => {
     try {
@@ -113,11 +118,30 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
 
   const onSubmit = (values: FormValues) => {
     setError(null);
+    setShareError(null);
+
+    const selectedPhone = showNewClient && values.newClientName
+      ? values.newClientPhone?.trim() || null
+      : values.clientId
+        ? initialClients.find((c) => c.id === values.clientId)?.phone || null
+        : null;
+
+    if (sendViaWhatsApp && !editData) {
+      if (!selectedPhone) {
+        setError(ti('whatsappPhoneRequired'));
+        return;
+      }
+      if (!normalizePhone(selectedPhone)) {
+        setError(ti('whatsappPhoneInvalid'));
+        return;
+      }
+    }
+
     startTransition(async () => {
       let clientId = values.clientId;
 
       if (showNewClient && values.newClientName) {
-        const clientResult = await createClient({ name: values.newClientName });
+        const clientResult = await createClient({ name: values.newClientName, phone: values.newClientPhone?.trim() || undefined });
         if (clientResult.success) clientId = clientResult.id;
       }
 
@@ -148,7 +172,26 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
         if (!editData && 'saleId' in result && result.saleId) {
           triggerInvoiceDownload(result.saleId);
         }
-        if (!editData) reset();
+        if (!editData && sendViaWhatsApp && 'saleId' in result && result.saleId) {
+          try {
+            const shareResult = await shareInvoice({
+              saleId: result.saleId,
+              invoiceNumber: result.invoiceNumber,
+              phone: selectedPhone,
+              message: ti('whatsappShareMessage', { invoiceNumber: result.invoiceNumber }),
+              title: ti('title'),
+            });
+            if (shareResult.status === 'unsupported') {
+              setShareError(ti('whatsappShareUnsupported'));
+            }
+          } catch {
+            setShareError(ti('whatsappShareError'));
+          }
+        }
+        if (!editData) {
+          reset();
+          setSendViaWhatsApp(false);
+        }
         setShowNewClient(false);
         if (onComplete) onComplete();
       } else {
@@ -169,6 +212,7 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
       {!editData && <h2 className="form-card__title">{t('addNew')}</h2>}
       {error && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{error}</div>}
       {downloadError && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{ti('downloadError')}</div>}
+      {shareError && <div className="mb-5 rounded-xl border border-red-100 bg-red-50 p-3 text-center text-sm font-bold text-red-600">{shareError}</div>}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="space-y-3">
 
@@ -230,16 +274,25 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
                   )}
                 />
               ) : (
-                <input
-                  placeholder={tc('name')}
-                  {...register('newClientName')}
-                  className="field-input h-12 flex-1"
-                />
+                <div className="flex flex-col gap-2 self-start">
+                  <input
+                    placeholder={tc('name')}
+                    {...register('newClientName')}
+                    className="field-input h-12"
+                  />
+                  <input
+                    placeholder={tc('phone')}
+                    {...register('newClientPhone')}
+                    className="field-input h-12"
+                    inputMode="tel"
+                    autoComplete="tel"
+                  />
+                </div>
               )}
               <button
                 type="button"
                 onClick={() => setShowNewClient(!showNewClient)}
-                className="button-secondary h-12 w-12 shrink-0 p-0"
+                className="button-secondary h-12 w-12 shrink-0 self-start p-0"
               >
                 {showNewClient ? <User className="w-5 h-5 text-orange-500" /> : <Plus className="w-5 h-5" />}
               </button>
@@ -290,6 +343,21 @@ export function SalesForm({ batches, clients: initialClients, onComplete, editDa
            </div>
            <p className="formula-caption">{t('totalFormula')}</p>
          </div>
+
+        {!editData && (
+          <label className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 transition-colors hover:border-slate-300">
+            <input
+              type="checkbox"
+              checked={sendViaWhatsApp}
+              onChange={(e) => setSendViaWhatsApp(e.target.checked)}
+              className="mt-0.5 h-4 w-4 shrink-0 accent-green-600"
+            />
+            <span className="flex flex-col gap-0.5">
+              <span className="text-sm font-bold text-slate-700">{ti('sendViaWhatsApp')}</span>
+              <span className="text-xs text-slate-500">{ti('shareWhatsAppHint')}</span>
+            </span>
+          </label>
+        )}
 
         <button
           disabled={isPending}

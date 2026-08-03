@@ -24,6 +24,7 @@ export default async function SalesPage() {
       invoiceNumber: sales.invoiceNumber,
       batchName: batches.name,
       clientName: clients.name,
+      clientPhone: clients.phone,
     })
     .from(sales)
     .leftJoin(batches, eq(sales.batchId, batches.id))

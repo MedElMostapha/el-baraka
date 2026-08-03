@@ -188,7 +188,15 @@
     "statusUnpaid": "Non payée",
     "thankYou": "Merci de votre confiance !",
     "download": "Télécharger la facture",
-    "downloadError": "Impossible de télécharger la facture. Réessayez depuis la liste des ventes."
+    "downloadError": "Impossible de télécharger la facture. Réessayez depuis la liste des ventes.",
+    "sendViaWhatsApp": "Partager la facture via WhatsApp",
+    "shareWhatsAppHint": "WhatsApp s'ouvrira avec la facture prête à envoyer ; confirmez le destinataire et l'envoi.",
+    "shareWhatsApp": "Partager via WhatsApp",
+    "whatsappPhoneRequired": "Ajoutez un numéro de téléphone au client pour partager la facture via WhatsApp.",
+    "whatsappPhoneInvalid": "Numéro de téléphone invalide. Utilisez le format international, par exemple +22212345678.",
+    "whatsappShareError": "La vente a été enregistrée, mais la facture n'a pas pu être partagée.",
+    "whatsappShareUnsupported": "Le partage de fichiers n'est pas disponible sur ce navigateur. La facture a été téléchargée ; envoyez-la manuellement dans WhatsApp.",
+    "whatsappShareMessage": "Voici votre facture {invoiceNumber}. Merci !"
   },
   "Navigation": {
     "dashboard": "Tableau de bord",
